@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Alert, StyleSheet, View, Text, Pressable, TextInput } from 'react-native'
 import { supabase } from '../lib/supabase'
+import { Link, useRouter } from 'expo-router'
 
 export default function Auth() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -15,22 +17,9 @@ export default function Auth() {
     })
 
     if (error) Alert.alert(error.message)
+    else router.replace('/dashboard')
     setLoading(false)
-  }
-
-  async function signUpWithEmail() {
-    setLoading(true)
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    })
-
-    if (error) Alert.alert(error.message)
-    if (!session) Alert.alert('Please check your inbox for email verification!')
-    setLoading(false)
+  
   }
 
   return (
@@ -69,14 +58,9 @@ export default function Auth() {
         </Pressable>
       </View>
       <View style={styles.container}>
-        <Pressable 
-        disabled={loading} 
-        onPress={() => signUpWithEmail()} 
-        style={{
-          marginBottom: 10
-        }}>
+        <Link href="/signUp">
           <Text style={{ color: '#053547', fontFamily: 'Montserrat-SemiBold'}}>Don&apos;t have an account? Sign up</Text>
-        </Pressable>
+        </Link>
       </View>
     </View>
   )
@@ -84,12 +68,13 @@ export default function Auth() {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    alignItems: 'left',
     justifyContent: 'center',
   },
   label: {
     fontSize: 16, 
-    fontFamily: 'Montserrat-Medium'
+    fontFamily: 'Montserrat-Medium',
+    marginBottom: 10
   },
   input: {
     borderWidth: 1,
@@ -97,7 +82,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     padding: 10,
     marginBottom: 10,
-    width: 300,
     height: 42,
     alignItems: 'center',
     justifyContent: 'center',
@@ -107,11 +91,10 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 25,
     marginTop: 10,
-    width: 100,
     height: 42,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
   },
   buttonText: {
     color: '#fff', 
