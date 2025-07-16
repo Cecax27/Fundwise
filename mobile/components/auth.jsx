@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Alert, StyleSheet, View, Text, Pressable, TextInput } from 'react-native'
-import { supabase } from '../lib/supabase'
+import { signIn } from '../lib/supabase/auth'
 import { Link, useRouter } from 'expo-router'
 
 export default function Auth() {
@@ -11,10 +11,7 @@ export default function Auth() {
 
   async function signInWithEmail() {
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    })
+    const { error } = await signIn(email, password)
 
     if (error) Alert.alert(error.message)
     else router.replace('/dashboard')
@@ -33,6 +30,9 @@ export default function Auth() {
           value={email}
           placeholder="Email"
           autoCapitalize={'none'}
+          keyboardType="email-address"
+          autoComplete="username"
+          textContentType="emailAddress"
           style={styles.input}
         />
       </View>
@@ -46,6 +46,9 @@ export default function Auth() {
           secureTextEntry={true}
           placeholder="Password"
           autoCapitalize={'none'}
+          keyboardType="default"
+          autoComplete="new-password"
+          textContentType="newPassword"
           style={styles.input}
         />
       </View>

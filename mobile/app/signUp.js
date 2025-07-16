@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Alert, Pressable, TextInput } from 'react-native';
 import 'react-native-url-polyfill/auto'
 import React, { useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase/client'
 import { Link } from 'expo-router';
 
 const logo = require('../assets/icon.png')

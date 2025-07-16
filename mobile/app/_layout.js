@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import * as Font from 'expo-font';
 import { useEffect, useState } from 'react';
 import 'react-native-url-polyfill/auto'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase/client'
 import Auth from '../components/auth'
 import { Slot } from 'expo-router';
 

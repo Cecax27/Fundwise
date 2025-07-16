@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import 'react-native-url-polyfill/auto'
 import Auth from '../components/auth'
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase/client'
 import { Redirect } from 'expo-router'
 
 const logo = require('../assets/icon.png')

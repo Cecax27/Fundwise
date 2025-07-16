@@ -1,7 +1,9 @@
 import { View, Text, Pressable, Alert } from 'react-native'
-import styles from '../assets/uiStyles'
-import { supabase } from '../lib/supabase'
+import styles from '../../assets/uiStyles'
+import { supabase } from '../../lib/supabase/client'
 import { useRouter } from 'expo-router'
+import Resume from '../../components/resume'
+
 
 export default function Dashboard() {
 
@@ -16,6 +18,7 @@ export default function Dashboard() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Dashboard</Text>
+            <Resume />
             <Pressable 
             style={styles.button}
             onPress={() => signOut()}>
