@@ -20,3 +20,26 @@ export const getMonthlySpendings = async (month = null) => {
     })
     return { data, error }
   }
+
+export const getSpendingsTable = async (
+  start_date = null,
+  end_date = null,
+  account = null,
+  category = null,
+  budget_group = null
+) => {
+  const { data, error } = await supabase
+  .rpc('get_filtered_spendings', {
+    date_start_range: start_date,
+    date_end_range: end_date,
+    account: account,
+    category: category,
+    p_budget_group: budget_group
+  });
+
+if (error) {
+  console.error('Error al obtenfer gastos:', error);
+} else {
+  return data
+}
+}

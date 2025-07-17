@@ -20,25 +20,29 @@ export default function Resume() {
             supabase.auth.onAuthStateChange((_event, session) => {
               setSession(session)
             })
-            getMonthlyBalance().then(({ data, error }) => {
-              if (error) Alert.alert(error.message)
-              else {
-                setMonthBalance(data)
-              }
-            })
-            getMonthlyIncomes().then(({ data, error }) => {
-              if (error) Alert.alert(error.message)
-              else {
-                setIncomes(data)
-              }
-            })
-            getMonthlySpendings().then(({ data, error }) => {
-              if (error) Alert.alert(error.message)
-              else {
-                setSpendings(data)
-              }
-            })
-            setPercentage((incomes - spendings) / incomes * 100)
+            const getData = async () => {
+                
+                getMonthlyBalance().then(({ data, error }) => {
+                  if (error) Alert.alert(error.message)
+                  else {
+                    setMonthBalance(data)
+                  }
+                })
+                getMonthlyIncomes().then(({ data, error }) => {
+                  if (error) Alert.alert(error.message)
+                  else {
+                    setIncomes(data)
+                  }
+                })
+                getMonthlySpendings().then(({ data, error }) => {
+                  if (error) Alert.alert(error.message)
+                  else {
+                    setSpendings(data)
+                  }
+                })
+            }
+            getData().then(setPercentage((incomes - spendings) / incomes * 100))
+            
           }, []);
       
     return (

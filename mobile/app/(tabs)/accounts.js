@@ -1,14 +1,13 @@
-import { Text, StyleSheet, View } from 'react-native'
-import React, { Component } from 'react'
+import { View, Pressable, Alert } from 'react-native'
+import styles from '../../assets/uiStyles'
+import Resume from '../../components/resume'
 
-export default class accounts extends Component {
-  render() {
+
+export default function Accounts() {
+
+
     return (
-      <View>
-        <Text>accounts</Text>
-      </View>
+        <View style={styles.container}>
+        </View>
     )
-  }
 }
-
-const styles = StyleSheet.create({})

@@ -1,14 +1,26 @@
-import { Text, StyleSheet, View } from 'react-native'
-import React, { Component } from 'react'
+import { View, Text, Pressable, Alert } from 'react-native'
+import styles from '../../assets/uiStyles'
+import { supabase } from '../../lib/supabase/client'
+import { useRouter } from 'expo-router'
 
-export default class configuration extends Component {
-  render() {
+
+export default function Configuration() {
+
+    const router = useRouter()
+
+    async function signOut() {
+        const { error } = await supabase.auth.signOut()
+        if (error) Alert.alert(error.message)
+        else router.replace('/')
+    }
+
     return (
-      <View>
-        <Text>configuration</Text>
-      </View>
+        <View style={styles.container}>
+            <Pressable 
+            style={styles.button}
+            onPress={() => signOut()}>
+                <Text style={styles.buttonText}>Sign out</Text>
+            </Pressable>
+        </View>
     )
-  }
 }
-
-const styles = StyleSheet.create({})

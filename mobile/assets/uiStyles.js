@@ -6,7 +6,7 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'left',
-    paddingTop: 70,
+    paddingTop: 20,
     padding: 20
   },
   logo: {
@@ -23,7 +23,7 @@ export default StyleSheet.create({
   title: {
     fontSize: 24, 
     fontFamily: 'Quicksand-Bold', 
-    marginBottom: 30
+    marginTop: 20
   },
   label: {
     fontSize: 16, 

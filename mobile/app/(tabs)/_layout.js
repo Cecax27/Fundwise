@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import 'react-native-url-polyfill/auto'
 import { Slot } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import styles from '../../assets/uiStyles'
 
 const logo = require('../../assets/icon.png')
 
@@ -34,40 +35,69 @@ export default function TabsLayout() {
   }
 
   return (
+    
     <Tabs>
       <Tabs.Screen
       name="dashboard"
       options={{
-        title: 'Home',
+        title: 'Dashboard',
         tabBarIcon: ({color}) => <MaterialIcons name={ "home" } size={32} color={color}/> ,
-        headerShown: false
+        headerTitle: 'Dashboard',
+        headerTitleStyle: styles.title,
+        headerStyle: {
+          backgroundColor: '#fff',
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+        headerShown: true
       }} />
       <Tabs.Screen
       name="transactions"
       options={{
         title: 'Transactions',
         tabBarIcon: ({color}) => <MaterialIcons name={ "payments" } size={32} color={color}/> ,
-        headerShown: false
+        headerTitle: 'Transactions',
+        headerTitleStyle: styles.title,
+        headerStyle: {
+          backgroundColor: '#fff',
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+        headerShown: true
       }} />
       <Tabs.Screen
       name="accounts"
       options={{
         title: 'Accounts',
         tabBarIcon: ({color}) => <MaterialIcons name={ "wallet" } size={32} color={color}/> ,
-        headerShown: false
+        headerTitle: 'Accounts',
+        headerTitleStyle: styles.title,
+        headerStyle: {
+          backgroundColor: '#fff',
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+        headerShown: true
       }} />
       <Tabs.Screen
       name="configuration"
       options={{
-        title: 'Configuration',
+        title: 'Settings',
         tabBarIcon: ({color}) => <MaterialIcons name={ "settings" } size={32} color={color}/> ,
-        headerShown: false
+        headerTitle: 'Settings',
+        headerTitleStyle: styles.title,
+        headerStyle: {
+          backgroundColor: '#fff',
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+        headerShown: true
       }} />
     </Tabs>
   );
 }
 
-const styles = StyleSheet.create({
+const layouStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
