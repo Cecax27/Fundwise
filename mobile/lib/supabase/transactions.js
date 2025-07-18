@@ -43,3 +43,30 @@ if (error) {
   return data
 }
 }
+
+export const getAccounts = async () => {
+  const { data, error } = await supabase.from('accounts').select('*');
+  if (error) {
+    console.error('Error al obtener cuentas:', error);
+  } else {
+    return data
+  }
+}
+
+export const getCategories = async () => {
+  const { data, error } = await supabase.from('spendings_categories').select('*');
+  if (error) {
+    console.error('Error al obtener categorías:', error);
+  } else {
+    return data
+  }
+}
+
+export const getBudgetGroups = async () => {
+  const { data, error } = await supabase.from('budget_groups').select('*');
+  if (error) {
+    console.error('Error al obtener grupos de presupuesto:', error);
+  } else {
+    return data
+  }
+}

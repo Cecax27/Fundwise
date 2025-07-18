@@ -35,3 +35,4 @@ mobile/.env*.local
 
 # typescript
 mobile/*.tsbuildinfo
+node_modules
