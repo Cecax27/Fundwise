@@ -13,21 +13,17 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22
+    marginTop: 22,
   },
   modalView: {
-    margin: 20,
+    margin: 10,
     backgroundColor: "white",
-    borderRadius: 20,
+    borderRadius: 30,
     padding: 35,
-    alignItems: "center",
+    alignItems: "left",
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 1,
+    shadowRadius: 1,
     elevation: 5
   },
   modalHeader: {
@@ -53,7 +49,7 @@ export default StyleSheet.create({
   },
   filterLabel: {
     fontSize: 16,
-    fontFamily: 'Quicksand-Bold',
+    fontFamily: 'Montserrat-Medium',
     marginBottom: 8
   },
   dateInputs: {
@@ -147,5 +143,14 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: 'Montserrat-Medium'
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 10,
+    justifyContent: 'flex-end',
+  },
+
+  formSection: {
+    width: '100%'
   }
 });

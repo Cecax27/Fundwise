@@ -1,5 +1,27 @@
 import { supabase } from './client'
 
+export const addTransaction = async ({date, amount, description, category_id, account_id}) => {
+  console.log(date)
+  const { data, error } = await supabase
+    .from('spendings')
+    .insert([{
+      date,
+      amount, 
+      description,
+      category_id,
+      account_id
+    }])
+    .select();
+
+  if (error) {
+    console.error('Error adding transaction to supabase:', error);
+    throw error;
+  } else {
+    console.log('Exito')
+  }
+  return data[0];
+};
+
 export const getMonthlyBalance = async (month = null) => {
   const { data, error } = await supabase.rpc('get_monthly_balance', {
     p_month: month // o puedes omitirlo si tienes default en la función
@@ -68,5 +90,19 @@ export const getBudgetGroups = async () => {
     console.error('Error al obtener grupos de presupuesto:', error);
   } else {
     return data
+  }
+}
+
+export const getCreditCardSpendings = async (account_id, year, month) => {
+  const { data, error } = await supabase.rpc('get_credit_card_spendings', {
+    p_account_id: account_id,
+    p_year: year,
+    p_month: month
+  });
+
+  if (error) {
+    console.error(('Error al obtener gastos de tarjeta de credito:', error));
+  } else {
+    return data;
   }
 }

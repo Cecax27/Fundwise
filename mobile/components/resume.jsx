@@ -44,6 +44,10 @@ export default function Resume() {
             getData().then(setPercentage((incomes - spendings) / incomes * 100))
             
           }, []);
+
+    useEffect(() => {
+        setPercentage((incomes - spendings) / incomes * 100)
+    }, [incomes, spendings])
       
     return (
         <View style={resumeStyles.resumeContainer}>
