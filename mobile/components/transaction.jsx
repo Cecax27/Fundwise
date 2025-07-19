@@ -1,14 +1,6 @@
 import { Text, View, StyleSheet, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-
-const formatCurrency = (num) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(num);
-};
+import { formatCurrency } from '../lib/utils';
 
 export default function Transaction ({icon, description, account, amount, color}) {
 
