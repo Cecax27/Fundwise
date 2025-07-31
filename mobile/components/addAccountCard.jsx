@@ -1,21 +1,17 @@
-import { Text, View, StyleSheet } from 'react-native'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { MaterialIcons } from '@expo/vector-icons';
-import { getContrastTextColor, formatCurrency } from '../lib/utils';
-import { useState, useEffect } from 'react';
-import ChipSvg from './svg/chip';
 
 import styles from '../assets/uiStyles'
 
-export function AddAccountCard () {
-
-    
-    
+export function AddAccountCard ({ onClick }) {
 
     return (
-        <View style={[accountStyles.card]}>
-            <MaterialIcons name={'add'} size={42} style={accountStyles.icon} color={'#0c0c0c'}/>
-        </View>
+        <TouchableOpacity onPress={onClick}>
+            <View style={[accountStyles.card]}>
+                <MaterialIcons name={'add'} size={42} style={accountStyles.icon} color={'#0c0c0c'}/>
+            </View>
+        </TouchableOpacity>
     )
 }
 

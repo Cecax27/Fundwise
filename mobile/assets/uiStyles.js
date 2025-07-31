@@ -120,6 +120,10 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  textInput: {
+    fontSize: 14,
+    color: '#444444'
+  },
   button: {
     backgroundColor: '#053547',
     padding: 10,

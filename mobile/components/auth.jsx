@@ -14,7 +14,7 @@ export default function Auth() {
     const { error } = await signIn(email, password)
 
     if (error) Alert.alert(error.message)
-    else router.replace('/dashboard')
+    else router.replace('/index')
     setLoading(false)
   
   }

@@ -38,7 +38,7 @@ export default function TabsLayout() {
     
     <Tabs>
       <Tabs.Screen
-      name="dashboard"
+      name="index"
       options={{
         title: 'Dashboard',
         tabBarIcon: ({color}) => <MaterialIcons name={ "home" } size={32} color={color}/> ,

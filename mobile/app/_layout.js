@@ -43,9 +43,7 @@ export default function RootLayout() {
   }
 
   return (
-    <View style={styles.container}>
       <Slot />
-    </View>
   );
 }
 

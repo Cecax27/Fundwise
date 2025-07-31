@@ -1,14 +1,15 @@
 import { View, Pressable, Alert, FlatList, StyleSheet } from 'react-native'
-import styles from '../../assets/uiStyles'
-import Resume from '../../components/resume'
+import styles from '../../../assets/uiStyles'
+import Resume from '../../../components/resume'
 import { useState, useEffect } from 'react'
+import { getAccounts } from '../../../lib/supabase/transactions'
+import { useRouter } from 'expo-router'
 
-import { getAccounts } from '../../lib/supabase/transactions'
+import {Account} from '../../../components/account'
+import {AddAccountCard} from '../../../components/addAccountCard'
 
-import {Account} from '../../components/account'
-import {AddAccountCard} from '../../components/addAccountCard'
-
-export default function Accounts() {
+export default function HomeScreen() {
+    const router = useRouter()
     const [accounts, setAccounts] = useState([])
 
     useEffect(() => {
@@ -17,7 +18,7 @@ export default function Accounts() {
 
     return (
         <View style={accountsStyle.cardContainer}>
-            <AddAccountCard />
+            <AddAccountCard onClick={() => {router.push('/(tabs)/accounts/newaccount')}}/>
             <FlatList
                 data={accounts}
                 renderItem={({ item }) => <Account account={item} />}
@@ -25,7 +26,7 @@ export default function Accounts() {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={accountsStyle.listContent}
-            />
+                />
         </View>
     )
 }

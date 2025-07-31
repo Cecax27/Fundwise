@@ -1,7 +1,6 @@
 import { supabase } from './client'
 
 export const addTransaction = async ({date, amount, description, category_id, account_id}) => {
-  console.log(date)
   const { data, error } = await supabase
     .from('spendings')
     .insert([{
@@ -66,10 +65,103 @@ if (error) {
 }
 }
 
+export const addAccount = async (params) => {
+  console.log(params)
+  if (params.account_type === 1 || params.account_type === 3){
+    const { data, error } = await supabase.from('accounts').insert([
+      {
+        name: params.name,
+        account_type: params.account_type,
+        color: params.color,
+        icon: params.icon,
+        bank_name: params.bank_name,
+        is_primary_account: params.is_primary_account,
+      }
+    ]);
+    if (error) {
+      console.error('Error al agregar cuenta de debito:', error);
+      return false
+    } else {
+      console.log('Cuenta agregada exitosamente:', data);
+      return true
+    }
+  } else if (params.account_type === 2) {
+    const { data, error } = await supabase.from('accounts').insert([
+      {
+        name: params.name,
+        account_type: params.account_type,
+        color: params.color,
+        icon: params.icon,
+        bank_name: params.bank_name,
+        is_primary_account: params.is_primary_account,
+        cutt_off_day: params.cutoff_day,
+        credit_limit: params.credit_limit
+      }
+    ]);
+    if (error) {
+      console.error('Error al agregar cuenta de credito:', error);
+      return false
+    } else {
+      console.log('Cuenta agregada exitosamente:', data);
+      return true
+    }
+  } else if (params.account_type === 4){
+    const { data, error } = await supabase.from('accounts').insert([
+      {
+        name: params.name,
+        account_type: params.account_type,
+        color: params.color,
+        icon: params.icon,
+        bank_name: params.bank_name,
+        is_primary_account: params.is_primary_account,
+        platform: params.platform,
+        initial_amount: params.initial_amount,
+        estimated_return_rate: params.estimated_return_rate
+      }
+    ]);
+    if (error) {
+      console.error('Error al agregar cuenta de credito:', error);
+      return false
+    } else {
+      console.log('Cuenta agregada exitosamente:', data);
+      return true
+    }
+  } else if (params.account_type === 5){
+    const { data, error } = await supabase.from('accounts').insert([
+      {
+        name: params.name,
+        account_type: params.account_type,
+        color: params.color,
+        icon: params.icon,
+        bank_name: params.bank_name,
+        is_primary_account: params.is_primary_account,
+        loan_amount: params.loan_amount,
+        interest_rate: params.interest_rate
+      }
+    ]);
+    if (error) {
+      console.error('Error al agregar cuenta de credito:', error);
+      return false
+    } else {
+      console.log('Cuenta agregada exitosamente:', data);
+      return true
+    }
+  }
+}
+
 export const getAccounts = async () => {
   const { data, error } = await supabase.from('accounts').select('*');
   if (error) {
     console.error('Error al obtener cuentas:', error);
+  } else {
+    return data
+  }
+}
+
+export const getAccountsTypes = async () => {
+  const { data, error } = await supabase.from('accounts_types').select('*');
+  if (error) {
+    console.error('Error al obtener tipos de cuentas:', error);
   } else {
     return data
   }
