@@ -149,12 +149,46 @@ export const addAccount = async (params) => {
   }
 }
 
+export const updateAccount = async (params) => {
+  const { data, error} = await supabase.from('accounts').update({
+    name: params.name,
+    account_type: params.account_type,
+    color: params.color,
+    icon: params.icon,
+    bank_name: params.bank_name,
+    is_primary_account: params.is_primary_account,
+    cutt_off_day: params.cutoff_day,
+    credit_limit: params.credit_limit,
+    estimated_return_rate: params.estimated_return_rate,
+    platform: params.platform,
+    initial_amount: params.initial_amount,
+    loan_amount: params.loan_amount,
+    interest_rate: params.interest_rate
+  }).eq('id', params.id)
+  if (error) {
+    console.error('Error al actualizar cuenta:', error);
+    return false
+  } else {
+    console.log('Cuenta actualizada exitosamente:', data);
+    return true
+  }
+}
+
 export const getAccounts = async () => {
   const { data, error } = await supabase.from('accounts').select('*');
   if (error) {
     console.error('Error al obtener cuentas:', error);
   } else {
     return data
+  }
+}
+
+export const getAccount = async (account_id) => {
+  const { data, error } = await supabase.from('accounts').select('*').eq('id', account_id);
+  if (error) {
+    console.error('Error al obtener cuentas:', error);
+  } else {
+    return data[0]
   }
 }
 

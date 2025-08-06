@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Pressable, Alert, ScrollView, TextInput, Text, TouchableOpacity, Switch, KeyboardAvoidingView, Platform } from 'react-native'
-import styles from '../../../assets/uiStyles'
+import { View, Alert, ScrollView, TextInput, Text, TouchableOpacity, Switch, KeyboardAvoidingView, Platform } from 'react-native'
+import styles from '../../../../assets/uiStyles'
 import { Picker } from '@react-native-picker/picker'
-import { useRouter } from 'expo-router'
-import { getAccountsTypes, addAccount } from '../../../lib/supabase/transactions'
+import { useRouter,useLocalSearchParams } from 'expo-router'
+import { getAccountsTypes, getAccount, updateAccount } from '../../../../lib/supabase/transactions'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import { ACCOUNT_COLORS } from '../../constants/colors';
-import { ACCOUNT_ICONS } from '../../constants/icons';
+import { ACCOUNT_COLORS } from '../../../constants/colors';
+import { ACCOUNT_ICONS } from '../../../constants/icons';
 
-export default function NewAccount () {
+export default function EditAccount () {
+    const params = useLocalSearchParams()
+
     const router = useRouter()
     const [accountsTypes, setAccountsTypes] = useState([])
     const [succesful, setSuccesful] = useState(null)
-
     const [formData, setFormData] = useState({
         name: '',
         account_type: 1,
@@ -31,12 +32,17 @@ export default function NewAccount () {
     })
 
     useEffect(() => {
+        
         const fetchAccountsTypes = async () => {
             const accountsTypesData = await getAccountsTypes()
             setAccountsTypes(accountsTypesData)
+            const accountData = await getAccount(params.id)
+            setFormData(accountData)
         }
+
         fetchAccountsTypes()
-    }, [])
+
+    }, [params.id])
 
     const onClose = () => {
         router.replace('/(tabs)/accounts')
@@ -54,7 +60,7 @@ export default function NewAccount () {
     }, [succesful])
     
     const handleSubmit = async () => {
-        const response = await addAccount(formData)
+        const response = await updateAccount(formData)
         setSuccesful(response)
     }
 
@@ -65,9 +71,9 @@ export default function NewAccount () {
                 keyboardVerticalOffset={100}
             >
                 <View style={styles.modalHeader}>
-                    <Text style={styles.modalTitle}>New Account</Text>
+                    <Text style={styles.modalTitle}>Edit Account</Text>
                     <TouchableOpacity onPress={onClose}>
-                        <Text style={styles.closeButton}>Go back</Text>
+                        <Icon name="arrow-back" size={20} color="#c2bb00" />
                     </TouchableOpacity>
                 </View>
 
@@ -277,7 +283,7 @@ export default function NewAccount () {
                             style={[styles.button, styles.buttonClose]}
                             onPress={handleSubmit}
                         >
-                            <Text style={styles.textStyle}>Add Account</Text>
+                            <Text style={styles.textStyle}>Update Account</Text>
                         </TouchableOpacity>
                     </View>
             </KeyboardAvoidingView>

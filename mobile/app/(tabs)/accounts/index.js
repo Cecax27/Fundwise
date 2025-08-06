@@ -4,7 +4,8 @@ import styles from '../../../assets/uiStyles'
 import Resume from '../../../components/resume'
 import { useState, useEffect } from 'react'
 import { getAccounts, getAccountsTypes, getCreditCardSpendings, deleteAccount } from '../../../lib/supabase/transactions'
-import { useRouter } from 'expo-router'
+import { useRouter, Link } from 'expo-router'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import {Account} from '../../../components/account'
 import {AddAccountCard} from '../../../components/addAccountCard'
@@ -117,6 +118,16 @@ export default function HomeScreen() {
                 />
             {!loading && !loadingTypes && accountsWithAddCard[selectedIndex] && !accountsWithAddCard[selectedIndex].isAddButton &&
             <View style={accountsStyle.infoContainer}>
+                <View style={accountsStyle.optionsMenu}>
+                    <Link href={'/accounts/editaccount/' + accountsWithAddCard[selectedIndex].id} asChild>
+                    <TouchableOpacity>
+                        <Icon name="edit" size={20} color="#c2bb00" />
+                    </TouchableOpacity>
+                    </Link>
+                    <TouchableOpacity onPress={handleDeleteButton}>
+                        <Icon name="delete" size={20} color="#e1523d" />
+                    </TouchableOpacity>
+                </View>
                 <View style={accountsStyle.propertyView}>
                     <Text style={accountsStyle.label}>Account type</Text>
                     <Text style={accountsStyle.data}>{accountTypes.find(type => type.id === accountsWithAddCard[selectedIndex].account_type).type.replace('_', ' ').replace(/\w/, c => c.toUpperCase())}</Text>
@@ -133,11 +144,6 @@ export default function HomeScreen() {
                     <Text style={accountsStyle.data}>{creditCardSpendings?formatMoney(creditCardSpendings??0):'Loading'}</Text>
                 </View>
                 }
-                <View style={accountsStyle.propertyView}>
-                    <TouchableOpacity onPress={handleDeleteButton}>
-                        <Text style={[accountsStyle.label, {color:'#bb0000'}]}>Eliminar cuenta</Text>
-                    </TouchableOpacity>
-                </View>
             </View>
             }
         </View>
@@ -164,6 +170,11 @@ const accountsStyle = StyleSheet.create({
     },
     propertyView: {
         gap: 2
+    },
+    optionsMenu: {
+        gap: 15,
+        flexDirection:'row',
+        justifyContent: 'flex-end'
     },
     label: {
         fontSize: 12,
