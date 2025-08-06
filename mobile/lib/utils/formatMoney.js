@@ -2,7 +2,7 @@ export const formatMoney = (value) => {
     if (!value) return '';
     
     // Remove any existing formatting
-    const cleanedValue = value.replace(/[^0-9.]/g, '');
+    const cleanedValue = value.toString().replace(/[^0-9.]/g, '');
     
     // Format as currency
     return new Intl.NumberFormat('en-US', {

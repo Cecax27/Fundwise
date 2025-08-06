@@ -19,8 +19,8 @@ export default AddAccountCard
 
 const accountStyles = StyleSheet.create({
     card:{
-        width: 70,
-        height: 120,
+        width: 173,
+        height: 254,
         borderRadius: 10,
         backgroundColor: '#c2bb00',
         opacity: .21,

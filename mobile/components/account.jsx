@@ -10,7 +10,7 @@ import styles from '../assets/uiStyles'
 import { getCreditCardSpendings } from '../lib/supabase/transactions';
 
 
-export function Account ({account}) {
+export function Account ({account, isSelected}) {
     const [balance, setBalance] = useState(0)
 
     useEffect(() => {
@@ -24,7 +24,7 @@ export function Account ({account}) {
     const textColor = getContrastTextColor(account.color);
 
     return (
-        <View style={[accountStyles.card, {backgroundColor: account.color}]}>
+        <View style={[accountStyles.card, {backgroundColor: account.color, opacity: isSelected ? 1 : 0.5}]}>
             <MaterialIcons name={account.icon} size={22} color={textColor} style={accountStyles.icon}/>
             <Text style={[accountStyles.name, { color: textColor }]}>{account.name}</Text>
             <Text style={[accountStyles.balance, { color: textColor }]}>Balance</Text>

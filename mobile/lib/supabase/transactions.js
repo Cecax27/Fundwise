@@ -158,6 +158,16 @@ export const getAccounts = async () => {
   }
 }
 
+export const deleteAccount = async (account_id) => {
+  const { data, error } = await supabase.from('accounts').delete().eq('id', account_id);
+  if (error) {
+    console.log(error)
+    return error
+  } else {
+    return true
+  }
+}
+
 export const getAccountsTypes = async () => {
   const { data, error } = await supabase.from('accounts_types').select('*');
   if (error) {
