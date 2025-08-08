@@ -20,12 +20,12 @@ const styles = StyleSheet.create({
     justifyContent: 'top',
   },
   date: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 500,
     fontFamily: 'Montserrat, Segoe-UI, Sans-Serif',
     color: "0c0c0c",
-    opacity: .6,
-    marginBottom: 28
+    opacity: .4,
+    marginBottom: 22
   },
   cards: {
     flexDirection: 'column',

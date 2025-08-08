@@ -21,6 +21,26 @@ export const addTransaction = async ({date, amount, description, category_id, ac
   return data[0];
 };
 
+export const addIncome = async ({date, amount, description, account_id}) => {
+  const { data, error } = await supabase
+    .from('incomes')
+    .insert([{
+      date,
+      amount,
+      description,
+      account_id
+    }])
+    .select();
+
+    if (error) {
+      console.error('Error adding income to supabase:', error);
+      throw error;
+    } else {
+      console.log('Exito')
+    }
+    return data[0];
+  }
+
 export const getMonthlyBalance = async (month = null) => {
   const { data, error } = await supabase.rpc('get_monthly_balance', {
     p_month: month // o puedes omitirlo si tienes default en la función

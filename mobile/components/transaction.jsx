@@ -2,7 +2,7 @@ import { Text, View, StyleSheet, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { formatCurrency } from '../lib/utils';
 
-export default function Transaction ({icon, description, account, amount, color}) {
+export default function Transaction ({icon, description, account, amount, color, income = false}) {
 
   return (
     <View style={styles.container}>
@@ -15,8 +15,8 @@ export default function Transaction ({icon, description, account, amount, color}
           {account}
         </Text>
       </View>
-      <Text style={styles.amount}>
-        {formatCurrency(amount)}
+      <Text style={[styles.amount, income ? styles.incomeText : styles.spendingText]}>
+        {(income ? '+ ' : '- ' )+ formatCurrency(amount)}
       </Text>
     </View>
   );
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     fontFamily:'Montserrat, Segoe-UI, Sans-Serif',
     fontSize: 12,
     color:"#0c0c0c",
-    opacity:.6
+    opacity:.4
   },
   info: {
     justifyContent: 'center',
@@ -51,13 +51,17 @@ const styles = StyleSheet.create({
     width: 42,
     resizeMode: 'center',
     backgroundColor: "#fff",
-    padding:5,
-    borderRadius:23,
-    borderWidth: 2,
+    padding:6,
   },
   amount:{
     fontSize:17,
     fontFamily:'Montserrat-Bold, Segoe-UI, Sans-Serif',
     fontWeight:900
+  },
+  incomeText: {
+    color: '#C2BB00'
+  },
+  spendingText: {
+    color: '#E1523D'
   }
 });
