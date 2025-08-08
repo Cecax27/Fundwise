@@ -16,3 +16,19 @@ export const ACCOUNT_COLORS = [
     '#546E7A', // Gris azulado
     '#37474F', // Gris oscuro
   ];
+
+export const APP_COLORS = {
+  PRIMARY: '#003547',
+  SECONDARY: '#F9A825',
+  BACKGROUND: '#F5F5F5',
+  TEXT: '#0c0c0c',
+  GREEN: '#c2bb00',
+  RED: '#e1523d',
+  error: '#D32F2F',
+  success: '#388E3C',
+  warning: '#F57C00',
+  info: '#1976D2',
+  lightText: '#FFFFFF',
+  darkText: '#000000',
+  borderColor: '#E0E0E0'
+}

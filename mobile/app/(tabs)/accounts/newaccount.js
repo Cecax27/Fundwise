@@ -6,8 +6,8 @@ import { useRouter } from 'expo-router'
 import { getAccountsTypes, addAccount } from '../../../lib/supabase/transactions'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import { ACCOUNT_COLORS } from '../../constants/colors';
-import { ACCOUNT_ICONS } from '../../constants/icons';
+import { ACCOUNT_COLORS } from '../../../constants/colors';
+import { ACCOUNT_ICONS } from '../../../constants/icons';
 
 export default function NewAccount () {
     const router = useRouter()

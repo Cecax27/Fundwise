@@ -89,6 +89,7 @@ export default function Transactions() {
                       account={transaction.account_name}
                       amount={transaction.amount}
                       color={transaction.account_color}
+                      id={transaction.id}
                       income={transaction.category_name === 'income'}
                     />
                   )}

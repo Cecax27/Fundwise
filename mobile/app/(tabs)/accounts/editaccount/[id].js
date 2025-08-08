@@ -6,8 +6,8 @@ import { useRouter,useLocalSearchParams } from 'expo-router'
 import { getAccountsTypes, getAccount, updateAccount } from '../../../../lib/supabase/transactions'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import { ACCOUNT_COLORS } from '../../../constants/colors';
-import { ACCOUNT_ICONS } from '../../../constants/icons';
+import { ACCOUNT_COLORS } from '../../../../constants/colors';
+import { ACCOUNT_ICONS } from '../../../../constants/icons';
 
 export default function EditAccount () {
     const params = useLocalSearchParams()

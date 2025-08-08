@@ -10,6 +10,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import {Account} from '../../../components/account'
 import {AddAccountCard} from '../../../components/addAccountCard'
 import { formatMoney } from '../../../lib/utils/formatMoney'
+import OptionsMenu from '../../../components/optionsmenu'
 
 const ITEM_SIZE = 193;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -118,16 +119,12 @@ export default function HomeScreen() {
                 />
             {!loading && !loadingTypes && accountsWithAddCard[selectedIndex] && !accountsWithAddCard[selectedIndex].isAddButton &&
             <View style={accountsStyle.infoContainer}>
-                <View style={accountsStyle.optionsMenu}>
+                <OptionsMenu>
                     <Link href={'/accounts/editaccount/' + accountsWithAddCard[selectedIndex].id} asChild>
-                    <TouchableOpacity>
-                        <Icon name="edit" size={20} color="#c2bb00" />
-                    </TouchableOpacity>
+                        <OptionsMenu.Item icon='edit' color="#c2bb00"/>
                     </Link>
-                    <TouchableOpacity onPress={handleDeleteButton}>
-                        <Icon name="delete" size={20} color="#e1523d" />
-                    </TouchableOpacity>
-                </View>
+                    <OptionsMenu.Item icon='delete' color="#e1523d" onPress={handleDeleteButton}/>
+                </OptionsMenu>
                 <View style={accountsStyle.propertyView}>
                     <Text style={accountsStyle.label}>Account type</Text>
                     <Text style={accountsStyle.data}>{accountTypes.find(type => type.id === accountsWithAddCard[selectedIndex].account_type).type.replace('_', ' ').replace(/\w/, c => c.toUpperCase())}</Text>

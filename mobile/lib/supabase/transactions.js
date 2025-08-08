@@ -41,6 +41,34 @@ export const addIncome = async ({date, amount, description, account_id}) => {
     return data[0];
   }
 
+export const getTransaction = async (transaction_id, income) => {
+  const table = income ? 'incomes' : 'spendings';
+  const { data, error } = await supabase
+    .from(table)
+    .select('*')
+    .eq('id', transaction_id)
+    .single();
+
+  if (error) {
+    console.error(`Error fetching ${income ? 'income' : 'transaction'}:`, error);
+    throw error;
+  }
+  return data;
+}
+
+export const deleteTransaction = async (transaction_id, income) => {
+  const table = income ? 'incomes' : 'spendings';
+  const { data, error } = await supabase
+    .from(table)
+    .delete()
+    .eq('id', transaction_id)
+
+  if (error) {
+    return error
+  }
+  return true;
+}
+
 export const getMonthlyBalance = async (month = null) => {
   const { data, error } = await supabase.rpc('get_monthly_balance', {
     p_month: month // o puedes omitirlo si tienes default en la función

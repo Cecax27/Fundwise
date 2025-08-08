@@ -156,5 +156,9 @@ export default StyleSheet.create({
 
   formSection: {
     width: '100%'
+  },
+  p:{
+    fontFamily:'Montserrat-Regular',
+    fontSize: 12,
   }
 });

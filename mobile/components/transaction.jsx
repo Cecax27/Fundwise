@@ -1,10 +1,13 @@
-import { Text, View, StyleSheet, Image } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { formatCurrency } from '../lib/utils';
+import { useRouter } from 'expo-router';
 
-export default function Transaction ({icon, description, account, amount, color, income = false}) {
+export default function Transaction ({icon, description, account, amount, color, id, income = false}) {
+  const router = useRouter();
 
   return (
+    <TouchableOpacity onPress={() => {router.push({pathname: `/transactions/details/${id}`, params: {income : income}})}}>
     <View style={styles.container}>
       <MaterialIcons name={ icon } style={[styles.icon, { borderColor: color }]} size={28} color={color}/>
       <View style={styles.info}>
@@ -18,7 +21,8 @@ export default function Transaction ({icon, description, account, amount, color,
       <Text style={[styles.amount, income ? styles.incomeText : styles.spendingText]}>
         {(income ? '+ ' : '- ' )+ formatCurrency(amount)}
       </Text>
-    </View>
+    </View> 
+    </TouchableOpacity>
   );
 }
 
