@@ -41,6 +41,21 @@ export const addIncome = async ({date, amount, description, account_id}) => {
     return data[0];
   }
 
+export const updateTransaction = async (transaction_id, type, params ) => {
+  const {data, error} = await supabase
+    .from(type)
+    .update(params)
+    .eq('id', transaction_id)
+    
+  if (error) {
+    console.error('Error al actualizar transaccion:', error);
+    return error
+  } else {
+    console.log('Cuenta actualizada exitosamente:', data);
+    return true
+  }
+}
+
 export const getTransaction = async (transaction_id, income) => {
   const table = income ? 'incomes' : 'spendings';
   const { data, error } = await supabase
