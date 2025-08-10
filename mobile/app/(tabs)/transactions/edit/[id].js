@@ -18,8 +18,6 @@ export default function EditTransaction() {
     const type = params.type
     const [day, month, year] = params.date.split('/')
 
-    console.log(params)
-
     const [spending, setSpending] = useState(type === 'spending' ? true : false)
     const [dateVisible, setDateVisible] = useState(false)
     const [selectedDate, setSelectedDate] = useState(new Date(year, month - 1, day))

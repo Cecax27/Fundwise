@@ -41,6 +41,26 @@ export const addIncome = async ({date, amount, description, account_id}) => {
     return data[0];
   }
 
+export const addTransfer = async ({date, amount, description, from_account_id, to_account_id}) => {
+  const { data, error } = await supabase
+    .from('transfers')
+    .insert([{
+      date,
+      amount,
+      description,
+      from_account_id,
+      to_account_id
+    }])
+    .select();
+
+    if (error) {
+      console.error('Error adding transfer to supabase:', error);
+      return error;
+    } else {
+      return true
+    }
+  }
+
 export const updateTransaction = async (transaction_id, type, params ) => {
   const {data, error} = await supabase
     .from(type)

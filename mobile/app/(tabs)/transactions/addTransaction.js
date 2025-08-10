@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Pressable, Alert, ScrollView, TextInput, Text, TouchableOpacity, Platform } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import styles from '../../../assets/uiStyles'
-import { getAccounts, getCategories, addTransaction, addIncome } from '../../../lib/supabase/transactions';
+import { getAccounts, getCategories, addTransaction, addIncome, addTransfer } from '../../../lib/supabase/transactions';
 import { Picker } from '@react-native-picker/picker'
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -12,7 +12,7 @@ import FButton from '../../../components/fbutton'
 export default function AddTransactionModal() {
     const router = useRouter()
     
-    const [spending, setSpending] = useState(true)
+    const [type, setType] = useState('spending')
     const [dateVisible, setDateVisible] = useState(false)
     const [selectedDate, setSelectedDate] = useState(new Date())
     const [accounts, setAccounts] = useState([])
@@ -22,7 +22,8 @@ export default function AddTransactionModal() {
         description: '',
         amount: '',
         account_id: null,
-        category_id: null
+        category_id: null,
+        to_account_id: null,
     })
 
     useEffect(() => {
@@ -57,11 +58,19 @@ export default function AddTransactionModal() {
             const { date, amount, description, account_id, category_id } = formData
             const formattedDate = date.toISOString().slice(0, 10)
             const parsedAmount = parseFloat(amount)
+            let result = {}
 
-            if (spending) {
+            if (type === 'spending') {
                 await addTransaction({date: formattedDate, amount: parsedAmount, description, category_id, account_id})
-            } else {
+            } else if (type === 'income') {
                 await addIncome({date: formattedDate, amount: parsedAmount, description, account_id})
+            } else if (type === 'transfer') {
+                const { to_account_id, account_id} = formData
+                console.log(to_account_id, account_id)
+                result = await addTransfer({date: formattedDate, amount: parsedAmount, description, from_account_id: account_id, to_account_id})
+            }
+            if (result !== true) {
+                Alert.alert('Error', 'Something were wrong :( ('+result?.message??+')')
             }
             Alert.alert('Success', 'Transaction added successfully!')
             onClose()
@@ -86,8 +95,9 @@ export default function AddTransactionModal() {
 
             <ScrollView style={styles.modalContent}>
                 <View style={[styles.filterSection, transactionStyles.typeButtons]}>
-                    <FButton text='Spending' onPress={() => setSpending(true)} active={spending ? true : false}/>
-                    <FButton text='Income' onPress={() => setSpending(false)} active={spending ? false : true}/>
+                    <FButton text='Spending' onPress={() => setType('spending')} active={type==='spending' ? true : false}/>
+                    <FButton text='Income' onPress={() => setType('income')} active={type==='income' ? true : false}/>
+                    <FButton text='Transfer' onPress={() => setType('transfer')} active={type==='transfer' ? true : false}/>
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
@@ -139,7 +149,7 @@ export default function AddTransactionModal() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>Account</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{type==='transfer'? 'From account': 'Account'}</Text>
                     <View style={{ width: '100%' }}>
                         <Picker
                             selectedValue={formData.account_id}
@@ -154,7 +164,23 @@ export default function AddTransactionModal() {
                     </View>
                 </View>
 
-                {spending && <View style={styles.filterSection}>
+                {type==='transfer' && <View style={[styles.filterSection, { marginBottom: 16 }]}>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>To account</Text>
+                    <View style={{ width: '100%' }}>
+                        <Picker
+                            selectedValue={formData.to_account_id}
+                            onValueChange={(itemValue) => setFormData(prev => ({ ...prev, to_account_id: itemValue }))}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Select account" value={null} />
+                            {accounts.map((account) => (
+                                <Picker.Item key={account.id} label={account.name} value={account.id} />
+                            ))}
+                        </Picker>
+                    </View>
+                </View>}
+
+                {type==='spending' && <View style={styles.filterSection}>
                     <Text style={styles.filterLabel}>Category</Text>
                     <View style={{ width: '100%' }}>
                         <Picker
@@ -176,7 +202,7 @@ export default function AddTransactionModal() {
                     style={[styles.button, styles.buttonClose]}
                     onPress={handleSubmit}
                 >
-                    <Text style={styles.textStyle}>Add {spending ? 'Spending' : 'Income'}</Text>
+                    <Text style={styles.textStyle}>Add {type}</Text>
                 </TouchableOpacity>
             </View>
         </View>
