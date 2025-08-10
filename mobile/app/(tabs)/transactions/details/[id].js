@@ -15,13 +15,13 @@ export default function TransactionDetails () {
     const router = useRouter()
     // {"id": "192", "income": "false"}
     const params = useLocalSearchParams()
-    const income = params.income === 'true' ? true : false
+    const type = params.type
     const id = Number(params.id)
 
     const [transactionData, setTransactionData] = useState(null)
 
     useEffect(() => {
-        getTransaction(id, income).then((data) => {
+        getTransaction(id, type).then((data) => {
 
             setTransactionData({ ... data, 
                 date: new Date(data.date).toLocaleString("es-MX", {
@@ -47,7 +47,7 @@ export default function TransactionDetails () {
     const handleDeleteButton = () => {
             Alert.alert(
                 "Delete transaction",
-                `Are you sure you want to delete this ${income?'income':'spending'}? This action cannot be undone.`,
+                `Are you sure you want to delete this ${type}? This action cannot be undone.`,
                 [
                     {
                         text: "Cancel",
@@ -56,7 +56,7 @@ export default function TransactionDetails () {
                     {
                         text: "Delete",
                         onPress: async () => {
-                            const result = await deleteTransaction(id, income)
+                            const result = await deleteTransaction(id, type)
                             if (result === true) {
                                 router.replace('/(tabs)/transactions')
                             }
@@ -86,14 +86,14 @@ export default function TransactionDetails () {
         router.push({
             pathname: `/transactions/edit/${id}`,
             params: { ... transactionData,
-                type: income ? 'income' : 'spending'
+                type
             }
         })
     }
 
     return (
         <View style={[globalStyles.container, styles.container]}>
-            <Text style={[globalStyles.title]}>{income ? 'Income' : 'Spending'}</Text>
+            <Text style={[globalStyles.title]}>{type}</Text>
             {transactionData && <View style={styles.container}>
                 <OptionsMenu>
                     <OptionsMenu.Item icon="edit" color={APP_COLORS.GREEN} onPress={handleEditButton} />
@@ -104,7 +104,7 @@ export default function TransactionDetails () {
                 <LabelWithText label='Description' text={transactionData?.description??'Loading'}/>
                 <LabelWithText label='Amount' text={formatCurrency(transactionData?.amount??0)}/>
                 <LabelWithText label='Account' text={transactionData?.account_id??'Loading'}/>
-                {!income && <LabelWithText label='Category' text={transactionData?.category_id??'Empty'}/>}
+                {type==='spending' && <LabelWithText label='Category' text={transactionData?.category_id??'Empty'}/>}
                 {transactionData?.deferred_id && <LabelWithText label='Deferred' text={transactionData?.deferred_id??'Loading'}/>}
             </View>}
             {!transactionData && <ActivityIndicator size="large" color={APP_COLORS.PRIMARY} />}

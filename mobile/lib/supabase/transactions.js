@@ -76,8 +76,8 @@ export const updateTransaction = async (transaction_id, type, params ) => {
   }
 }
 
-export const getTransaction = async (transaction_id, income) => {
-  const table = income ? 'incomes' : 'spendings';
+export const getTransaction = async (transaction_id, type) => {
+  const table = type==='spending' ? 'spendings' : type==='income' ? 'incomes' : 'transfers';
   const { data, error } = await supabase
     .from(table)
     .select('*')
@@ -85,14 +85,14 @@ export const getTransaction = async (transaction_id, income) => {
     .single();
 
   if (error) {
-    console.error(`Error fetching ${income ? 'income' : 'transaction'}:`, error);
+    console.error(`Error fetching ${type}:`, error);
     throw error;
   }
   return data;
 }
 
-export const deleteTransaction = async (transaction_id, income) => {
-  const table = income ? 'incomes' : 'spendings';
+export const deleteTransaction = async (transaction_id, type) => {
+  const table = type==='spending' ? 'spendings' : type==='income' ? 'incomes' : 'transfers';
   const { data, error } = await supabase
     .from(table)
     .delete()

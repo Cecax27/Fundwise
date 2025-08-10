@@ -90,7 +90,7 @@ export default function Transactions() {
                       amount={transaction.amount}
                       color={transaction.account_color}
                       id={transaction.id}
-                      income={transaction.category_name === 'income'}
+                      type={transaction.transaction_type}
                     />
                   )}
                   keyExtractor={item => item.id}
