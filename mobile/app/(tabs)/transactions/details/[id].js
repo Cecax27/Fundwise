@@ -41,7 +41,6 @@ export default function TransactionDetails () {
                     timeZone: "UTC"
                 })
             })
-            console.log(transactionData)
         })
     }, [])
 
@@ -83,12 +82,21 @@ export default function TransactionDetails () {
             )
         }
 
+    const handleEditButton = () => {
+        router.push({
+            pathname: `/transactions/edit/${id}`,
+            params: { ... transactionData,
+                type: income ? 'income' : 'spending'
+            }
+        })
+    }
+
     return (
         <View style={[globalStyles.container, styles.container]}>
             <Text style={[globalStyles.title]}>{income ? 'Income' : 'Spending'}</Text>
             {transactionData && <View style={styles.container}>
                 <OptionsMenu>
-                    <OptionsMenu.Item icon="edit" color={APP_COLORS.GREEN} onPress={() => {}} />
+                    <OptionsMenu.Item icon="edit" color={APP_COLORS.GREEN} onPress={handleEditButton} />
                     <OptionsMenu.Item icon="delete" color={APP_COLORS.RED} onPress={handleDeleteButton} />
                 </OptionsMenu>
                 <LabelWithText label='Created at' text={transactionData?.created_at??'Loading'}/>
