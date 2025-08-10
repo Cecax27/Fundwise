@@ -18,7 +18,6 @@ export default function EditTransaction() {
     const type = params.type
     const [day, month, year] = params.date.split('/')
 
-    const [spending, setSpending] = useState(type === 'spending' ? true : false)
     const [dateVisible, setDateVisible] = useState(false)
     const [selectedDate, setSelectedDate] = useState(new Date(year, month - 1, day))
     const [accounts, setAccounts] = useState([])
@@ -26,8 +25,9 @@ export default function EditTransaction() {
     const [formData, setFormData] = useState({
         ... params,
         date: new Date(year, month - 1, day),
-        account_id: params.account_id ? parseInt(params.account_id) : null,
+        account_id: params.account_id ? parseInt(params.account_id) : parseInt(params.from_account_id),
         category_id: params.category_id ? parseInt(params.category_id) : null,
+        to_account_id: params.to_account_id ? parseInt(params.to_account_id) : null,
     })
 
     useEffect(() => {
@@ -59,7 +59,7 @@ export default function EditTransaction() {
 
     const handleSubmit = async () => {
         try {
-            const { date, amount, description, account_id, category_id } = formData
+            const { date, amount, description, account_id, category_id, to_account_id } = formData
             const formattedDate = date.toISOString().slice(0, 10)
             const parsedAmount = parseFloat(amount)
 
@@ -68,11 +68,13 @@ export default function EditTransaction() {
                 date: formattedDate,
                 amount: parsedAmount,
                 description,
-                account_id,
-                ... (type === 'spending' ? { category_id } : {})
+                ... (type !== 'transfer' ? { account_id } : {}),
+                ... (type === 'spending' ? { category_id } : {}),
+                ... (type === 'transfer' ? { from_account_id: account_id } : {}),
+                ... (type === 'transfer' ? { to_account_id } : {})
             }
 
-            const result = await updateTransaction(id, spending ? 'spendings' : 'incomes', params)
+            const result = await updateTransaction(id, type, params)
             if (result === true) {
                 Alert.alert('Success', 'Transaction updated successfully!')
             } else {
@@ -149,7 +151,7 @@ export default function EditTransaction() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>Account</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{type==='transfer'? 'From account': 'Account'}</Text>
                     <View style={{ width: '100%' }}>
                         <Picker
                             selectedValue={formData.account_id}
@@ -163,8 +165,23 @@ export default function EditTransaction() {
                         </Picker>
                     </View>
                 </View>
+                {type==='transfer' && <View style={[styles.filterSection, { marginBottom: 16 }]}>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>To account</Text>
+                    <View style={{ width: '100%' }}>
+                        <Picker
+                            selectedValue={formData.to_account_id}
+                            onValueChange={(itemValue) => setFormData(prev => ({ ...prev, to_account_id: itemValue }))}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Select account" value={null} />
+                            {accounts.map((account) => (
+                                <Picker.Item key={account.id} label={account.name} value={account.id} />
+                            ))}
+                        </Picker>
+                    </View>
+                </View>}
 
-                {spending && <View style={styles.filterSection}>
+                {type==='spending' && <View style={styles.filterSection}>
                     <Text style={styles.filterLabel}>Category</Text>
                     <View style={{ width: '100%' }}>
                         <Picker
