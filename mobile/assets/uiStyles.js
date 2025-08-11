@@ -48,8 +48,8 @@ export default StyleSheet.create({
     width: '100%'
   },
   filterLabel: {
-    fontSize: 16,
-    fontFamily: 'Montserrat-Medium',
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
     marginBottom: 8
   },
   dateInputs: {
@@ -122,7 +122,8 @@ export default StyleSheet.create({
   },
   textInput: {
     fontSize: 14,
-    color: '#444444'
+    color: '#444444',
+    fontFamily: 'Montserrat-Medium',
   },
   button: {
     backgroundColor: '#053547',

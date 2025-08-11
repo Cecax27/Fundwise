@@ -3,7 +3,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { formatCurrency } from '../lib/utils';
 import { useRouter } from 'expo-router';
 
-export default function Transaction ({icon, description, account, amount, color, id, type}) {
+export default function Transaction ({icon, description, account, amount, color, id, type, to_account=null}) {
   const router = useRouter();
 
   return (
@@ -15,7 +15,7 @@ export default function Transaction ({icon, description, account, amount, color,
           {description}
         </Text>
         <Text style={styles.account}>
-          {account}
+          {account}{to_account ? ` → ${to_account}` : ''}
         </Text>
       </View>
       <Text style={[styles.amount, type==='income' ? styles.incomeText : styles.spendingText]}>

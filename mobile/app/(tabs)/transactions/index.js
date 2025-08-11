@@ -52,6 +52,8 @@ export default function Transactions() {
           return new Date(b.originalDate) - new Date(a.originalDate);
         });
 
+        sortedArray.forEach(group => {if(group.deferred_id) group.transaction_type = 'deferred'});
+
         setGroupedData(sortedArray);
 
         setData(transactions);
