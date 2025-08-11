@@ -41,23 +41,94 @@ export const addIncome = async ({date, amount, description, account_id}) => {
     return data[0];
   }
 
-export const getTransaction = async (transaction_id, income) => {
-  const table = income ? 'incomes' : 'spendings';
+export const addTransfer = async ({date, amount, description, from_account_id, to_account_id}) => {
+  const { data, error } = await supabase
+    .from('transfers')
+    .insert([{
+      date,
+      amount,
+      description,
+      from_account_id,
+      to_account_id
+    }])
+    .select();
+
+    if (error) {
+      console.error('Error adding transfer to supabase:', error);
+      return error;
+    } else {
+      return true
+    }
+  }
+
+export const addDeferred = async ({date, amount, description, account_id, category_id, months}) => {
+  const { data, error } = await supabase
+    .from('deferred_spendings')
+    .insert([{
+      start_date: date,
+      total_amount: amount,
+      description,
+      account_id,
+      category_id,
+      months
+    }])
+    .select();
+
+    if (error) {
+      return error;
+    } else {
+      return true
+    }
+  }
+
+export const updateTransaction = async (transaction_id, type, params ) => {
+  let table = ''
+  if (type==='spending') table = 'spendings'
+  else if (type==='income') table = 'incomes'
+  else if (type==='transfer') table = 'transfers'
+  else if (type==='deferred') table = 'deferred_spendings'
+  else return Error('Invalid transaction type');
+
+  const {data, error} = await supabase
+    .from(table)
+    .update(params)
+    .eq('id', transaction_id)
+    
+  if (error) {
+    console.error('Error al actualizar transaccion:', error);
+    return error
+  } else {
+    return true
+  }
+}
+
+export const getTransaction = async (transaction_id, type) => {
+  const table = type==='spending' ? 'spendings' : type==='income' ? 'incomes' : 'transfers';
   const { data, error } = await supabase
     .from(table)
-    .select('*')
+    .select('*, deferred_spendings(months, total_amount)')
     .eq('id', transaction_id)
     .single();
 
   if (error) {
-    console.error(`Error fetching ${income ? 'income' : 'transaction'}:`, error);
+    console.error(`Error fetching ${type}:`, error);
     throw error;
   }
+  data.months = data.deferred_spendings ? data.deferred_spendings.months : null;
+  if (data.deferred_spendings) data.amount = data.deferred_spendings.total_amount;
+  delete data.deferred_spendings;
   return data;
 }
 
-export const deleteTransaction = async (transaction_id, income) => {
-  const table = income ? 'incomes' : 'spendings';
+export const deleteTransaction = async (transaction_id, type) => {
+
+  let table = ''
+  if (type==='spending') table = 'spendings'
+  else if (type==='income') table = 'incomes'
+  else if (type==='transfer') table = 'transfers'
+  else if (type==='deferred') table = 'deferred_spendings'
+  else return Error('Invalid transaction type');
+
   const { data, error } = await supabase
     .from(table)
     .delete()

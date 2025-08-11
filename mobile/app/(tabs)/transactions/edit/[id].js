@@ -1,30 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Pressable, Alert, ScrollView, TextInput, Text, TouchableOpacity, Platform, Switch } from 'react-native'
+import { StyleSheet, View, Pressable, Alert, ScrollView, TextInput, Text, TouchableOpacity, Platform } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import styles from '../../../assets/uiStyles'
-import { getAccounts, getCategories, addTransaction, addIncome, addTransfer, addDeferred } from '../../../lib/supabase/transactions';
+import styles from '../../../../assets/uiStyles'
+import { getAccounts, getCategories, addTransaction, addIncome, updateTransaction } from '../../../../lib/supabase/transactions';
 import { Picker } from '@react-native-picker/picker'
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import FButton from '../../../components/fbutton'
+import FButton from '../../../../components/fbutton'
 
-export default function AddTransactionModal() {
+export default function EditTransaction() {
     const router = useRouter()
     
-    const [type, setType] = useState('spending')
+    const params = useLocalSearchParams()
+ 
+    const id = parseInt(params.deferred_id) || parseInt(params.id)
+    const type = params.type
+    const [day, month, year] = params.date.split('/')
+
     const [dateVisible, setDateVisible] = useState(false)
-    const [selectedDate, setSelectedDate] = useState(new Date())
+    const [selectedDate, setSelectedDate] = useState(new Date(year, month - 1, day))
     const [accounts, setAccounts] = useState([])
     const [categories, setCategories] = useState([])
     const [formData, setFormData] = useState({
-        date: new Date(),
-        description: '',
-        amount: '',
-        account_id: null,
-        category_id: null,
-        to_account_id: null,
-        months: null
+        ... params,
+        date: new Date(year, month - 1, day),
+        account_id: params.account_id ? parseInt(params.account_id) : parseInt(params.from_account_id),
+        category_id: params.category_id ? parseInt(params.category_id) : null,
+        to_account_id: params.to_account_id ? parseInt(params.to_account_id) : null,
     })
 
     useEffect(() => {
@@ -56,26 +59,28 @@ export default function AddTransactionModal() {
 
     const handleSubmit = async () => {
         try {
-            const { date, amount, description, account_id, category_id, months } = formData
+            const { date, amount, description, account_id, category_id, to_account_id, months } = formData
             const formattedDate = date.toISOString().slice(0, 10)
             const parsedAmount = parseFloat(amount)
-            let result = {}
 
-            if (type === 'spending') {
-                result = await addTransaction({date: formattedDate, amount: parsedAmount, description, category_id, account_id})
-            } else if (type === 'deferred') {
-                result = await addDeferred({date: formattedDate, amount: parsedAmount, description, category_id, account_id, months})
-            } else if (type === 'income') {
-                result = await addIncome({date: formattedDate, amount: parsedAmount, description, account_id})
-            } else if (type === 'transfer') {
-                const { to_account_id, account_id} = formData
-                console.log(to_account_id, account_id)
-                result = await addTransfer({date: formattedDate, amount: parsedAmount, description, from_account_id: account_id, to_account_id})
+            const params = {
+                id,
+                description,
+                ... (type!=='deferred'? {date: formattedDate}:{start_date: formattedDate}),
+                ... (type!=='deferred'? {amount: parsedAmount}:{total_amount: parsedAmount}),
+                ... (type !== 'transfer' ? { account_id } : {}),
+                ... ((type === 'spending'||type === 'deferred') ? { category_id } : {}),
+                ... ((type === 'deferred') ? { months } : {}),
+                ... (type === 'transfer' ? { from_account_id: account_id } : {}),
+                ... (type === 'transfer' ? { to_account_id } : {})
             }
-            if (result !== true) {
-                Alert.alert('Error', 'Something were wrong :( ('+result?.message??+')')
+
+            const result = await updateTransaction(id, type, params)
+            if (result === true) {
+                Alert.alert('Success', 'Transaction updated successfully!')
+            } else {
+                Alert.alert('Error', 'Failed to update transaction: ' + result.message)
             }
-            Alert.alert('Success', 'Transaction added successfully!')
             onClose()
         } catch (error) {
             Alert.alert('Error', 'Failed to add transaction')
@@ -90,18 +95,13 @@ export default function AddTransactionModal() {
     return (
         <View style={styles.container}>
             <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Add Transaction</Text>
+                <Text style={styles.modalTitle}>Edit {type}</Text>
                 <TouchableOpacity onPress={onClose}>
                     <Icon name="arrow-back" size={20} color="#c2bb00" />
                 </TouchableOpacity>
             </View>
 
             <ScrollView style={styles.modalContent}>
-                <View style={[styles.filterSection, transactionStyles.typeButtons]}>
-                    <FButton text='Spending' onPress={() => setType('spending')} active={(type==='spending' || type==='deferred') ? true : false}/>
-                    <FButton text='Income' onPress={() => setType('income')} active={type==='income' ? true : false}/>
-                    <FButton text='Transfer' onPress={() => setType('transfer')} active={type==='transfer' ? true : false}/>
-                </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
                     <Text style={[styles.filterLabel, { marginBottom: 8 }]}>Date</Text>
@@ -133,7 +133,7 @@ export default function AddTransactionModal() {
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
                     <Text style={[styles.filterLabel, { marginBottom: 8 }]}>Description</Text>
                     <TextInput
-                        placeholder='A delicious meal'
+                        placeholder='Enter description'
                         value={formData.description}
                         onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
                         style={[styles.textInput]}
@@ -143,7 +143,7 @@ export default function AddTransactionModal() {
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
                     <Text style={[styles.filterLabel, { marginBottom: 8 }]}>Amount</Text>
                     <TextInput
-                        placeholder='123.45'
+                        placeholder='Enter amount'
                         value={formData.amount}
                         onChangeText={(text) => setFormData(prev => ({ ...prev, amount: text }))}
                         keyboardType='numeric'
@@ -166,7 +166,6 @@ export default function AddTransactionModal() {
                         </Picker>
                     </View>
                 </View>
-
                 {type==='transfer' && <View style={[styles.filterSection, { marginBottom: 16 }]}>
                     <Text style={[styles.filterLabel, { marginBottom: 8 }]}>To account</Text>
                     <View style={{ width: '100%' }}>
@@ -199,14 +198,6 @@ export default function AddTransactionModal() {
                     </View>
                 </View>}
 
-                {(type==='spending' || type==='deferred') && <View style={styles.filterSection}>
-                    <Text style={styles.filterLabel}>Deferred spending</Text>
-                        <Switch 
-                            value={type==='deferred'}
-                            onValueChange={(value) => setType(value ? 'deferred' : 'spending')}
-                        />
-                </View>}
-
                 {type==='deferred' && <View style={styles.filterSection}>
                     <Text style={styles.filterLabel}>Months</Text>
                         <TextInput
@@ -224,7 +215,7 @@ export default function AddTransactionModal() {
                     style={[styles.button, styles.buttonClose]}
                     onPress={handleSubmit}
                 >
-                    <Text style={styles.textStyle}>Add {type}</Text>
+                    <Text style={styles.textStyle}>Update {type}</Text>
                 </TouchableOpacity>
             </View>
         </View>

@@ -3,11 +3,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { formatCurrency } from '../lib/utils';
 import { useRouter } from 'expo-router';
 
-export default function Transaction ({icon, description, account, amount, color, id, income = false}) {
+export default function Transaction ({icon, description, account, amount, color, id, type, to_account=null}) {
   const router = useRouter();
 
   return (
-    <TouchableOpacity onPress={() => {router.push({pathname: `/transactions/details/${id}`, params: {income : income}})}}>
+    <TouchableOpacity onPress={() => {router.push({pathname: `/transactions/details/${id}`, params: {type}})}}>
     <View style={styles.container}>
       <MaterialIcons name={ icon } style={[styles.icon, { borderColor: color }]} size={28} color={color}/>
       <View style={styles.info}>
@@ -15,11 +15,11 @@ export default function Transaction ({icon, description, account, amount, color,
           {description}
         </Text>
         <Text style={styles.account}>
-          {account}
+          {account}{to_account ? ` → ${to_account}` : ''}
         </Text>
       </View>
-      <Text style={[styles.amount, income ? styles.incomeText : styles.spendingText]}>
-        {(income ? '+ ' : '- ' )+ formatCurrency(amount)}
+      <Text style={[styles.amount, type==='income' ? styles.incomeText : styles.spendingText]}>
+        {(type==='income' ? '+ ' : '- ' )+ formatCurrency(amount)}
       </Text>
     </View> 
     </TouchableOpacity>
