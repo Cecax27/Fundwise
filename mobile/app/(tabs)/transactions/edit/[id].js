@@ -13,8 +13,8 @@ export default function EditTransaction() {
     const router = useRouter()
     
     const params = useLocalSearchParams()
-
-    const id = parseInt(params.id)
+ 
+    const id = parseInt(params.deferred_id) || parseInt(params.id)
     const type = params.type
     const [day, month, year] = params.date.split('/')
 
@@ -59,17 +59,18 @@ export default function EditTransaction() {
 
     const handleSubmit = async () => {
         try {
-            const { date, amount, description, account_id, category_id, to_account_id } = formData
+            const { date, amount, description, account_id, category_id, to_account_id, months } = formData
             const formattedDate = date.toISOString().slice(0, 10)
             const parsedAmount = parseFloat(amount)
 
             const params = {
                 id,
-                date: formattedDate,
-                amount: parsedAmount,
                 description,
+                ... (type!=='deferred'? {date: formattedDate}:{start_date: formattedDate}),
+                ... (type!=='deferred'? {amount: parsedAmount}:{total_amount: parsedAmount}),
                 ... (type !== 'transfer' ? { account_id } : {}),
-                ... (type === 'spending' ? { category_id } : {}),
+                ... ((type === 'spending'||type === 'deferred') ? { category_id } : {}),
+                ... ((type === 'deferred') ? { months } : {}),
                 ... (type === 'transfer' ? { from_account_id: account_id } : {}),
                 ... (type === 'transfer' ? { to_account_id } : {})
             }
@@ -181,7 +182,7 @@ export default function EditTransaction() {
                     </View>
                 </View>}
 
-                {type==='spending' && <View style={styles.filterSection}>
+                {(type==='spending' || type==='deferred') && <View style={styles.filterSection}>
                     <Text style={styles.filterLabel}>Category</Text>
                     <View style={{ width: '100%' }}>
                         <Picker
@@ -195,6 +196,17 @@ export default function EditTransaction() {
                             ))}
                         </Picker>
                     </View>
+                </View>}
+
+                {type==='deferred' && <View style={styles.filterSection}>
+                    <Text style={styles.filterLabel}>Months</Text>
+                        <TextInput
+                        placeholder='12'
+                        value={formData.months}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, months: text }))}
+                        keyboardType='numeric'
+                        style={[styles.textInput]}
+                    />
                 </View>}
             </ScrollView>
             
