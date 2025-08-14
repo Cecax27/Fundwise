@@ -15,6 +15,7 @@ export default function EditAccount () {
     const styles = useMemo(() => makeStyles(theme), [theme])
 
     const params = useLocalSearchParams()
+    
 
     const router = useRouter()
     const [accountsTypes, setAccountsTypes] = useState([])
@@ -24,7 +25,7 @@ export default function EditAccount () {
         account_type: 1,
         color: '#111827',
         icon: 'credit-card',
-        cutoff_day: null,
+        cutt_off_day: null,
         bank_name: null,
         is_primary_account: null,
         credit_limit: null,
@@ -41,7 +42,15 @@ export default function EditAccount () {
             const accountsTypesData = await getAccountsTypes()
             setAccountsTypes(accountsTypesData)
             const accountData = await getAccount(params.id)
-            setFormData(accountData)
+            console.log(accountData);
+            setFormData({ ...accountData,
+                cutt_off_day: accountData.cutt_off_day ? accountData.cutt_off_day.toString() : null,
+                initial_amount: accountData.initial_amount ? accountData.initial_amount.toString() : null,
+                credit_limit: accountData.credit_limit ? accountData.credit_limit.toString() : null,
+                estimated_return_rate: accountData.estimated_return_rate ? accountData.estimated_return_rate.toString() : null,
+                loan_amount: accountData.loan_amount ? accountData.loan_amount.toString() : null,
+                interest_rate: accountData.interest_rate ? accountData.interest_rate.toString() : null
+            })
         }
 
         fetchAccountsTypes()
@@ -182,8 +191,8 @@ export default function EditAccount () {
                             <Text style={styles.filterLabel}>Cuttoff Day</Text>
                             <TextInput
                                 placeholder='Cuttof Day'
-                                value={formData.cutoff_day}
-                                onChangeText={(text) => setFormData(prev => ({ ...prev, cutoff_day: text }))}
+                                value={formData.cutt_off_day}
+                                onChangeText={(text) => setFormData(prev => ({ ...prev, cutt_off_day: text }))}
                                 keyboardType='numeric'
                                 style={styles.textInput}
                                 placeholderTextColor={theme.subtext}
