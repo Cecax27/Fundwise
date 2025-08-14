@@ -1,12 +1,16 @@
 import { View, Text } from 'react-native'
-import React from 'react'
-import globalStyles from '../assets/uiStyles'
+import React, {useMemo} from 'react'
+import { makeStyles } from '../assets/uiStyles'
+import { useTheme } from '../theme/useTheme'
 
 export default function LabelWithText({ label, text }) {
+  const { theme } = useTheme()
+  const styles = useMemo(() => makeStyles(theme), [theme])
+
   return (
     <View>
-      <Text style={globalStyles.p}>{label}</Text>
-        <Text style={globalStyles.Label}>{text}</Text>
+      <Text style={styles.p}>{label}</Text>
+        <Text style={styles.label}>{text}</Text>
     </View>
   )
 }

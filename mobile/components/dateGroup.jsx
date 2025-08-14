@@ -1,10 +1,12 @@
 import { Text, View, StyleSheet, Image } from 'react-native';
+import { useTheme } from '../theme/useTheme';
 
 export default function DateGroup ({date, children}) {
+  const { theme } = useTheme();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.date}>
+      <Text style={[styles.date, { color: theme.subtext }]}>
         {date}
       </Text>
       <View style={styles.cards}>

@@ -1,16 +1,21 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import * as Font from 'expo-font';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import 'react-native-url-polyfill/auto'
 import { supabase } from './lib/supabase/client'
 import Auth from './components/auth'
-
+import { useTheme } from './theme/useTheme';
 const logo = require('./assets/icon.png')
 
 export default function App() {
+  const { theme, isDark, effectiveScheme } = useTheme();
+  
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+
   const [fontLoaded, setFontLoaded] = useState(false);
   const [session, setSession] = useState(null)
+
 
   useEffect(() => {
     async function loadFonts() {
@@ -51,6 +56,39 @@ export default function App() {
       <StatusBar style="auto" />
     </View>
   );
+}
+
+function makeStyles(theme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+      padding: 24,
+      gap: 16,
+      justifyContent: 'center',
+    },
+    title: {
+      color: theme.text,
+      fontSize: 24,
+      fontWeight: '700',
+    },
+    text: {
+      color: theme.subtext,
+      fontSize: 16,
+    },
+    cta: {
+      backgroundColor: theme.primary,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 12,
+      alignSelf: 'flex-start',
+    },
+    ctaText: {
+      color: theme.background,
+      fontSize: 16,
+      fontWeight: '600',
+    },
+  });
 }
 
 const styles = StyleSheet.create({

@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { View, Pressable, Alert, ScrollView, TextInput, Text, TouchableOpacity, Switch, KeyboardAvoidingView, Platform } from 'react-native'
-import styles from '../../../assets/uiStyles'
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Alert, ScrollView, TextInput, Text, TouchableOpacity, Switch, KeyboardAvoidingView, Platform } from 'react-native'
+import { makeStyles } from '../../../assets/uiStyles'
 import { Picker } from '@react-native-picker/picker'
 import { useRouter } from 'expo-router'
 import { getAccountsTypes, addAccount } from '../../../lib/supabase/transactions'
+import { useTheme } from '../../../theme/useTheme';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { ACCOUNT_COLORS } from '../../../constants/colors';
 import { ACCOUNT_ICONS } from '../../../constants/icons';
 
 export default function NewAccount () {
+    const { theme } = useTheme()
+    const styles = useMemo(() => makeStyles(theme), [theme])
+
     const router = useRouter()
     const [accountsTypes, setAccountsTypes] = useState([])
     const [succesful, setSuccesful] = useState(null)
@@ -67,7 +71,7 @@ export default function NewAccount () {
                 <View style={styles.modalHeader}>
                     <Text style={styles.modalTitle}>New Account</Text>
                     <TouchableOpacity onPress={onClose}>
-                        <Text style={styles.closeButton}>Go back</Text>
+                        <Text style={styles.closeButton}>X</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -83,6 +87,7 @@ export default function NewAccount () {
                                 value={formData.name}
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, name: text }))}
                                 style={styles.textInput}
+                                placeholderTextColor={theme.subtext}
                             />
                         </View>
                         
@@ -93,6 +98,7 @@ export default function NewAccount () {
                                 value={formData.bank_name}
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, bank_name: text }))}
                                 style={styles.textInput}
+                                placeholderTextColor={theme.subtext}
                             />
                         </View>
 
@@ -136,14 +142,14 @@ export default function NewAccount () {
                             <Text style={styles.filterLabel}>Primary Account</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Switch 
-                                    trackColor={{ false: '#ccc', true: '#81b0ff' }}
-                                    thumbColor={formData.is_primary_account ? '#003366' : '#f4f3f4'}
+                                    trackColor={{ false: theme.surface, true: theme.subtext }}
+                                    thumbColor={theme.primary}
                                     ios_backgroundColor="#ccc"
                                     onValueChange={(value) => setFormData(prev => ({ ...prev, is_primary_account: value }))}
                                     value={formData.is_primary_account}
                                     />
                                 {formData.is_primary_account && 
-                                <Text style={{ fontSize: 10, color: '#666', fontVariant: 'italic'}}>
+                                <Text style={{ fontSize: 10, color: theme.subtext, fontVariant: 'italic'}}>
                                     If you have another primary account, it will be replaced.
                                 </Text>}
                             </View>

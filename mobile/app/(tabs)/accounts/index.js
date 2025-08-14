@@ -1,11 +1,12 @@
 import { View, Text, Alert, FlatList, StyleSheet, Dimensions, TouchableOpacity } from 'react-native'
 import { debounce } from 'lodash'
-import styles from '../../../assets/uiStyles'
+import { makeStyles } from '../../../assets/uiStyles'
 import Resume from '../../../components/resume'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { getAccounts, getAccountsTypes, getCreditCardSpendings, deleteAccount } from '../../../lib/supabase/transactions'
 import { useRouter, Link } from 'expo-router'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { useTheme } from '../../../theme/useTheme'
 
 import {Account} from '../../../components/account'
 import {AddAccountCard} from '../../../components/addAccountCard'
@@ -17,6 +18,9 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const SIDE_PADDING = (SCREEN_WIDTH - ITEM_SIZE) / 2;
 
 export default function HomeScreen() {
+    const { theme } = useTheme()
+    const styles = useMemo(() => makeStyles(theme), [theme])
+
     const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [accounts, setAccounts] = useState([])
@@ -98,8 +102,8 @@ export default function HomeScreen() {
     }
 
     return (
-        <View style={accountsStyle.cardContainer}>
-            
+        <View style={[styles.container, accountsStyle.cardContainer]}>
+            <View>
             <FlatList
                 data={accountsWithAddCard}
                 renderItem={({ item }) => {
@@ -117,6 +121,7 @@ export default function HomeScreen() {
                 scrollEventThrottle={16}
                 onScroll={handleScroll}
                 />
+            </View>
             {!loading && !loadingTypes && accountsWithAddCard[selectedIndex] && !accountsWithAddCard[selectedIndex].isAddButton &&
             <View style={accountsStyle.infoContainer}>
                 <OptionsMenu>
@@ -126,19 +131,19 @@ export default function HomeScreen() {
                     <OptionsMenu.Item icon='delete' color="#e1523d" onPress={handleDeleteButton}/>
                 </OptionsMenu>
                 <View style={accountsStyle.propertyView}>
-                    <Text style={accountsStyle.label}>Account type</Text>
-                    <Text style={accountsStyle.data}>{accountTypes.find(type => type.id === accountsWithAddCard[selectedIndex].account_type).type.replace('_', ' ').replace(/\w/, c => c.toUpperCase())}</Text>
+                    <Text style={styles.p}>Account type</Text>
+                    <Text style={styles.label}>{accountTypes.find(type => type.id === accountsWithAddCard[selectedIndex].account_type).type.replace('_', ' ').replace(/\w/, c => c.toUpperCase())}</Text>
                 </View>
                 {2 === accountsWithAddCard[selectedIndex].account_type &&
                 <View style={accountsStyle.propertyView}>
-                    <Text style={accountsStyle.label}>Cuttof date</Text>
-                    <Text style={accountsStyle.data}>{accountsWithAddCard[selectedIndex].cutt_off_day??'N/A'}</Text>
+                    <Text style={styles.p}>Cuttof date</Text>
+                    <Text style={styles.label}>{accountsWithAddCard[selectedIndex].cutt_off_day??'N/A'}</Text>
                 </View>
                 }
                 {2 === accountsWithAddCard[selectedIndex].account_type &&
                 <View style={accountsStyle.propertyView}>
-                    <Text style={accountsStyle.label}>Minimum payment</Text>
-                    <Text style={accountsStyle.data}>{creditCardSpendings?formatMoney(creditCardSpendings??0):'Loading'}</Text>
+                    <Text style={styles.p}>Minimum payment</Text>
+                    <Text style={styles.label}>{creditCardSpendings?formatMoney(creditCardSpendings??0):'Loading'}</Text>
                 </View>
                 }
             </View>
@@ -151,18 +156,17 @@ const accountsStyle = StyleSheet.create({
     cardContainer: {
         paddingVertical: 8,
         gap:20,
-        backgroundColor: 'transparent',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        justifyContent: 'flex-start'
     },
     infoContainer: {
         padding: 17,
-        backgroundColor: '#fff',
         flexDirection: 'column',
-        gap: 20
+        gap: 20,
+        flex: 1
     },
     listContent: {
         gap: 20,
-        backgroundColor: 'transparent',
         paddingHorizontal: SIDE_PADDING,
     },
     propertyView: {

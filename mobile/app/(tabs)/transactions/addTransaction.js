@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { StyleSheet, View, Pressable, Alert, ScrollView, TextInput, Text, TouchableOpacity, Platform, Switch } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import styles from '../../../assets/uiStyles'
+import { makeStyles } from '../../../assets/uiStyles'
 import { getAccounts, getCategories, addTransaction, addIncome, addTransfer, addDeferred } from '../../../lib/supabase/transactions';
 import { Picker } from '@react-native-picker/picker'
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { useTheme } from '../../../theme/useTheme';
 
 import FButton from '../../../components/fbutton'
 
-export default function AddTransactionModal() {
+export default function AddTransaction() {
     const router = useRouter()
     
+    const { theme } = useTheme();
+    const styles = useMemo(() => makeStyles(theme), [theme]);
+
     const [type, setType] = useState('spending')
     const [dateVisible, setDateVisible] = useState(false)
     const [selectedDate, setSelectedDate] = useState(new Date())
@@ -92,7 +96,7 @@ export default function AddTransactionModal() {
             <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Add Transaction</Text>
                 <TouchableOpacity onPress={onClose}>
-                    <Icon name="arrow-back" size={20} color="#c2bb00" />
+                    <Icon name="arrow-back" size={20} color={theme.primary} />
                 </TouchableOpacity>
             </View>
 
@@ -122,8 +126,7 @@ export default function AddTransactionModal() {
                             <TextInput 
                                 placeholder='Select date'
                                 value={selectedDate.toLocaleDateString()}
-                                placeholderTextColor="#6b7280"
-                                style={[styles.dateInput, { color: '#111827' }]}
+                                style={[styles.dateInput, { color: theme.text }]}
                                 editable={false}
                             />  
                         </Pressable>
@@ -135,6 +138,7 @@ export default function AddTransactionModal() {
                     <TextInput
                         placeholder='A delicious meal'
                         value={formData.description}
+                        placeholderTextColor={theme.subtext}
                         onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
                         style={[styles.textInput]}
                     />
@@ -145,6 +149,7 @@ export default function AddTransactionModal() {
                     <TextInput
                         placeholder='123.45'
                         value={formData.amount}
+                        placeholderTextColor={theme.subtext}
                         onChangeText={(text) => setFormData(prev => ({ ...prev, amount: text }))}
                         keyboardType='numeric'
                         style={[styles.textInput]}
@@ -153,7 +158,7 @@ export default function AddTransactionModal() {
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
                     <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{type==='transfer'? 'From account': 'Account'}</Text>
-                    <View style={{ width: '100%' }}>
+                    <View>
                         <Picker
                             selectedValue={formData.account_id}
                             onValueChange={(itemValue) => setFormData(prev => ({ ...prev, account_id: itemValue }))}
@@ -204,6 +209,8 @@ export default function AddTransactionModal() {
                         <Switch 
                             value={type==='deferred'}
                             onValueChange={(value) => setType(value ? 'deferred' : 'spending')}
+                            trackColor={{ false: theme.surface, true: theme.subtext }}
+                            thumbColor={theme.primary}
                         />
                 </View>}
 
@@ -212,6 +219,7 @@ export default function AddTransactionModal() {
                         <TextInput
                         placeholder='12'
                         value={formData.months}
+                        placeholderTextColor={theme.subtext}
                         onChangeText={(text) => setFormData(prev => ({ ...prev, months: text }))}
                         keyboardType='numeric'
                         style={[styles.textInput]}

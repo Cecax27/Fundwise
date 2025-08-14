@@ -1,17 +1,21 @@
-import { View, Pressable, FlatList, Text, TouchableOpacity, ScrollView, TextInput, Modal } from 'react-native'
-import styles from '../../../assets/uiStyles'
+import { View, Pressable, FlatList } from 'react-native'
+import {makeStyles} from '../../../assets/uiStyles'
 import { MaterialIcons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
-import AddTransactionModal from './addTransaction'
+import { useMemo, useEffect, useState } from 'react';
 import FilterModal from '../../../components/filterModal'
-import { getSpendingsTable, getAccounts, getCategories, getBudgetGroups } from '../../../lib/supabase/transactions';
+import { getSpendingsTable } from '../../../lib/supabase/transactions';
 import { useRouter } from 'expo-router';
+import { useTheme } from '../../../theme/useTheme';
 
 import DateGroup from '../../../components/dateGroup';
 import Transaction from '../../../components/transaction'
 
 export default function Transactions() {
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+
   const router = useRouter()
+
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [filterModalVisible, setFilterModalVisible] = useState(false);
     const [data, setData] = useState([]);
@@ -67,7 +71,7 @@ export default function Transactions() {
             <MaterialIcons name="add" size={24} color={'#c2bb00'} />
           </Pressable>
           <Pressable onPress={() => setFilterModalVisible(true)}>
-            <MaterialIcons name="filter-alt" size={24} color={'#0c0c0c88'} />
+            <MaterialIcons name="filter-alt" size={24} color={theme.text} />
           </Pressable>
         </View>
 

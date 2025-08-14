@@ -1,12 +1,15 @@
 import { View, Text, Alert} from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../lib/supabase/client";
-import styles from "../assets/uiStyles"
 import { StyleSheet } from "react-native";
 import { getMonthlyBalance, getMonthlyIncomes, getMonthlySpendings } from '../lib/supabase/transactions'
+import { useTheme } from "../theme/useTheme";
 
 
 export default function Resume() {
+    const { theme } = useTheme();
+    const styles = useMemo(() => makeStyles(theme), [theme]); 
+
     const [session, setSession] = useState(null)
     const [monthBalance, setMonthBalance] = useState(0.0)
     const [incomes, setIncomes] = useState(0.0)
@@ -50,27 +53,27 @@ export default function Resume() {
     }, [incomes, spendings])
       
     return (
-        <View style={resumeStyles.resumeContainer}>
-            <Text style={resumeStyles.monthBalance}>
+        <View style={styles.resumeContainer}>
+            <Text style={styles.monthBalance}>
                 ${monthBalance?.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
             </Text>
-            <Text style={resumeStyles.percentage}>
+            <Text style={styles.percentage}>
                 {percentage.toFixed(1)}% left
             </Text>
-            <View style={resumeStyles.detailsContainer}>
-                <View style={resumeStyles.detailContainer}>
-                    <Text style={resumeStyles.label}>
+            <View style={styles.detailsContainer}>
+                <View style={styles.detailContainer}>
+                    <Text style={styles.label}>
                         Incomes
                     </Text>
-                    <Text style={resumeStyles.incomes}>
+                    <Text style={styles.incomes}>
                         ${incomes?.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                     </Text>
                 </View>
                 <View>
-                    <Text style={resumeStyles.label}>
+                    <Text style={styles.label}>
                         Spendings
                     </Text>
-                    <Text style={resumeStyles.spendings}>
+                    <Text style={styles.spendings}>
                         ${spendings?.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                     </Text>
                 </View>
@@ -79,26 +82,30 @@ export default function Resume() {
     )
 }
 
-const resumeStyles = StyleSheet.create({
+function makeStyles(theme){ 
+    return StyleSheet.create({
     resumeContainer:{
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'center'
     },
     monthBalance:{
         fontSize: 48,
-        fontFamily: 'Montserrat-SemiBold'
+        fontFamily: 'Montserrat-SemiBold',
+        color: theme.text,
     }, 
     percentage:{
         fontSize: 18,
-        color: "#c2bb00"
+        color: theme.primary
     },
     incomes:{
         fontSize: 24, 
-        fontFamily: 'Montserrat-SemiBold'
+        fontFamily: 'Montserrat-SemiBold',
+        color: theme.text,
     },
     spendings:{
         fontSize: 24,
-        fontFamily: 'Montserrat-SemiBold'
+        fontFamily: 'Montserrat-SemiBold',
+        color: theme.text,    
     },
     detailsContainer:{
         flexDirection: 'row',
@@ -110,7 +117,7 @@ const resumeStyles = StyleSheet.create({
     },
     label:{
         fontSize: 18,
-        color:"#003447",
+        color:theme.subtext,
         opacity:.4
     }
-})
+})}

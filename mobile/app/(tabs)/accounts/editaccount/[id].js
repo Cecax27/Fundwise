@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Alert, ScrollView, TextInput, Text, TouchableOpacity, Switch, KeyboardAvoidingView, Platform } from 'react-native'
-import styles from '../../../../assets/uiStyles'
+import { makeStyles } from '../../../../assets/uiStyles'
 import { Picker } from '@react-native-picker/picker'
 import { useRouter,useLocalSearchParams } from 'expo-router'
 import { getAccountsTypes, getAccount, updateAccount } from '../../../../lib/supabase/transactions'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { useTheme } from '../../../../theme/useTheme';
 
 import { ACCOUNT_COLORS } from '../../../../constants/colors';
 import { ACCOUNT_ICONS } from '../../../../constants/icons';
 
 export default function EditAccount () {
+    const { theme } = useTheme()
+    const styles = useMemo(() => makeStyles(theme), [theme])
+
     const params = useLocalSearchParams()
 
     const router = useRouter()
@@ -89,6 +93,7 @@ export default function EditAccount () {
                                 value={formData.name}
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, name: text }))}
                                 style={styles.textInput}
+                                placeholderTextColor={theme.subtext}
                             />
                         </View>
                         
@@ -99,6 +104,7 @@ export default function EditAccount () {
                                 value={formData.bank_name}
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, bank_name: text }))}
                                 style={styles.textInput}
+                                placeholderTextColor={theme.subtext}
                             />
                         </View>
 
@@ -142,14 +148,14 @@ export default function EditAccount () {
                             <Text style={styles.filterLabel}>Primary Account</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Switch 
-                                    trackColor={{ false: '#ccc', true: '#81b0ff' }}
-                                    thumbColor={formData.is_primary_account ? '#003366' : '#f4f3f4'}
+                                    trackColor={{ false: theme.surface, true: theme.subtext }}
+                                    thumbColor={theme.primary}
                                     ios_backgroundColor="#ccc"
                                     onValueChange={(value) => setFormData(prev => ({ ...prev, is_primary_account: value }))}
                                     value={formData.is_primary_account}
                                     />
                                 {formData.is_primary_account && 
-                                <Text style={{ fontSize: 10, color: '#666', fontVariant: 'italic'}}>
+                                <Text style={{ fontSize: 10, color: theme.subtext, fontVariant: 'italic'}}>
                                     If you have another primary account, it will be replaced.
                                 </Text>}
                             </View>
@@ -180,6 +186,7 @@ export default function EditAccount () {
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, cutoff_day: text }))}
                                 keyboardType='numeric'
                                 style={styles.textInput}
+                                placeholderTextColor={theme.subtext}
                             />
                         </View>)}
 
@@ -198,6 +205,7 @@ export default function EditAccount () {
                                     }}
                                     keyboardType='numeric'
                                     style={[styles.textInput, { flex: 1 }]}
+                                    placeholderTextColor={theme.subtext}
                                 />
                             </View>
                         </View>)}
@@ -211,6 +219,7 @@ export default function EditAccount () {
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, platform: text }))}
                                 keyboardType='text'
                                 style={styles.textInput}
+                                placeholderTextColor={theme.subtext}
                             />
                         </View>)}
                         
@@ -229,6 +238,7 @@ export default function EditAccount () {
                                     }}
                                     keyboardType='numeric'
                                     style={[styles.textInput, { flex: 1 }]}
+                                    placeholderTextColor={theme.subtext}
                                 />
                             </View>
                         </View>)}

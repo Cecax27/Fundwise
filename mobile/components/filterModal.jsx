@@ -1,13 +1,16 @@
-import { View, Pressable, FlatList, Text, TouchableOpacity, ScrollView, TextInput, Modal } from 'react-native'
+import { View, Pressable, Text, TouchableOpacity, ScrollView, TextInput, Modal } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import styles from '../assets/uiStyles'
-import { MaterialIcons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
-import { getSpendingsTable, getAccounts, getCategories, getBudgetGroups } from '../lib/supabase/transactions';
+import { makeStyles } from '../assets/uiStyles'
+import { useEffect, useMemo, useState } from 'react';
+import { getAccounts, getCategories, getBudgetGroups } from '../lib/supabase/transactions';
+import { useTheme } from '../theme/useTheme';
 
 import { Picker } from '@react-native-picker/picker';
 
 export default function FilterModal ({visible, onClose, filter, setFilter}) {
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+
     const [selectedStartDate, setSelectedStartDate] = useState(new Date());
     const [selectedEndDate, setSelectedEndDate] = useState(new Date());
     const [accounts, setAccounts] = useState([])
@@ -73,7 +76,7 @@ export default function FilterModal ({visible, onClose, filter, setFilter}) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Filter Transactions</Text>
               <TouchableOpacity onPress={onClose}>
-                <Text style={styles.closeButton}>Close</Text>
+                <Text style={styles.closeButton}>x</Text>
               </TouchableOpacity>
             </View>
             

@@ -2,23 +2,26 @@ import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { formatCurrency } from '../lib/utils';
 import { useRouter } from 'expo-router';
+import { useTheme } from '../theme/useTheme';
 
 export default function Transaction ({icon, description, account, amount, color, id, type, to_account=null}) {
   const router = useRouter();
 
+  const { theme } = useTheme();
+
   return (
     <TouchableOpacity onPress={() => {router.push({pathname: `/transactions/details/${id}`, params: {type}})}}>
     <View style={styles.container}>
-      <MaterialIcons name={ icon } style={[styles.icon, { borderColor: color }]} size={28} color={color}/>
+      <MaterialIcons name={ icon } style={[styles.icon, { borderColor: color, backgroundColor: theme.background }]} size={28} color={color}/>
       <View style={styles.info}>
-        <Text style={styles.description}>
+        <Text style={[styles.description, { color: theme.text }]}>
           {description}
         </Text>
-        <Text style={styles.account}>
+        <Text style={[styles.account, { color: theme.text }]}>
           {account}{to_account ? ` → ${to_account}` : ''}
         </Text>
       </View>
-      <Text style={[styles.amount, type==='income' ? styles.incomeText : styles.spendingText]}>
+      <Text style={[styles.amount, type==='income' ? {color:theme.income} : {color:theme.spending}]}>
         {(type==='income' ? '+ ' : '- ' )+ formatCurrency(amount)}
       </Text>
     </View> 
@@ -35,15 +38,13 @@ const styles = StyleSheet.create({
     marginBottom: 22,
   },
   description: {
-    fontFamily: 'Montserrat, Segoe-UI, Sans-Serif',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 14,
   },
   account: {
-    fontFamily:'Montserrat, Segoe-UI, Sans-Serif',
+    fontFamily:'Montserrat-Regular',
     fontSize: 12,
-    color:"#0c0c0c",
-    opacity:.4
+    opacity:.6
   },
   info: {
     justifyContent: 'center',
@@ -54,18 +55,10 @@ const styles = StyleSheet.create({
     height: 42,
     width: 42,
     resizeMode: 'center',
-    backgroundColor: "#fff",
     padding:6,
   },
   amount:{
-    fontSize:17,
-    fontFamily:'Montserrat-Bold, Segoe-UI, Sans-Serif',
-    fontWeight:900
-  },
-  incomeText: {
-    color: '#C2BB00'
-  },
-  spendingText: {
-    color: '#E1523D'
+    fontSize:14,
+    fontFamily:'Montserrat-Medium',
   }
 });

@@ -1,10 +1,10 @@
-import { Text, View, StyleSheet, ActivityIndicator, Alert } from "react-native"
-import { useState, useEffect } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { Text, View, ActivityIndicator, Alert } from "react-native"
+import { useState, useEffect, useMemo } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { deleteTransaction, getTransaction } from "../../../../lib/supabase/transactions";
-import { useRouter } from "expo-router";
+import { useTheme } from "../../../../theme/useTheme";
 
-import globalStyles from "../../../../assets/uiStyles";
+import { makeStyles } from "../../../../assets/uiStyles";
 import { APP_COLORS } from "../../../../constants/colors";
 
 import LabelWithText from "../../../../components/labelwithtext";
@@ -12,6 +12,9 @@ import { formatCurrency } from "../../../../lib/utils";
 import OptionsMenu from "../../../../components/optionsmenu";
 
 export default function TransactionDetails () {
+    const { theme } = useTheme()
+    const styles = useMemo(() => makeStyles(theme), [theme])
+
     const router = useRouter()
     // {"id": "192", "income": "false"}
     const params = useLocalSearchParams()
@@ -150,8 +153,11 @@ export default function TransactionDetails () {
     }
 
     return (
-        <View style={[globalStyles.container, styles.container]}>
-            <Text style={[globalStyles.title]}>{type}</Text>
+        <View style={[styles.container, {
+        flex: 1,
+        gap: 22
+    }]}>
+            <Text style={[styles.title]}>{type}</Text>
             {transactionData && <View style={styles.container}>
                 <OptionsMenu>
                     <OptionsMenu.Item icon="edit" color={APP_COLORS.GREEN} onPress={handleEditButton} />
@@ -171,10 +177,3 @@ export default function TransactionDetails () {
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        gap: 22
-    },
-})

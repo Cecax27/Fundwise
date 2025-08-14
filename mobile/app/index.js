@@ -2,13 +2,18 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import 'react-native-url-polyfill/auto'
 import Auth from '../components/auth'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../lib/supabase/client'
 import { Redirect } from 'expo-router'
+import { makeStyles } from '../assets/uiStyles'
+import { useTheme } from '../theme/useTheme'
 
 const logo = require('../assets/icon.png')
 
 export default function Index() {
+  const { theme } = useTheme()
+  const styles = useMemo(() => makeStyles(theme), [theme])
+
     const [session, setSession] = useState(null)
     
     useEffect(() => {
@@ -25,38 +30,12 @@ export default function Index() {
       }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, styles.centeredView]}>
       <Image source={logo} style={styles.logo}/>
       <Text style={styles.logoText}>Fundwise</Text>
       <Text style={styles.title}>Sign In</Text>
       <Auth />
-      <StatusBar style="auto" />
+      <StatusBar style='auto' />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'left',
-    paddingTop: 70,
-    padding: 20
-  },
-  logo: {
-    width: 72,
-    height: 72,
-    resizeMode: 'contain'
-  },
-  logoText: {
-    fontSize: 32, 
-    color: '#e1523d', 
-    fontFamily: 'Quicksand-Bold', 
-    marginBottom: 20
-  },
-  title: {
-    fontSize: 24, 
-    fontFamily: 'Quicksand-Bold', 
-    marginBottom: 30
-  }
-});

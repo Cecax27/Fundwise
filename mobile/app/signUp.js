@@ -1,13 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, Alert, Pressable, TextInput } from 'react-native';
+import { Text, View, Image, Alert, Pressable, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import 'react-native-url-polyfill/auto'
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { supabase } from '../lib/supabase/client'
 import { Link } from 'expo-router';
+import { makeStyles } from '../assets/uiStyles'
+import { useTheme } from '../theme/useTheme'
 
 const logo = require('../assets/icon.png')
 
 export default function SignUp() {
+  const { theme } = useTheme()
+  const styles = useMemo(() => makeStyles(theme), [theme])
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
@@ -28,34 +33,43 @@ export default function SignUp() {
     }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+              style={[styles.container, styles.centeredView]}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+              keyboardVerticalOffset={100}
+          >
+
       <Image source={logo} style={styles.logo}/>
       <Text style={styles.logoText}>Fundwise</Text>
       <Text style={styles.title}>Sign Up</Text>
       <View>
-            <View>
-              <Text style={styles.label}>
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={[styles.p, {marginTop: 22}]}>
                 Email
               </Text>
               <TextInput
                 onChangeText={(text) => setEmail(text)}
                 value={email}
-                placeholder="Email"
+                placeholder="LukeSkywalker@JediOrder.com"
                 autoCapitalize={'none'}
-                style={styles.input}
+                style={styles.textInput}
+                placeholderTextColor={theme.subtext}
+                textAlign="center"
               />
             </View>
-            <View>
-              <Text style={styles.label}>
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={styles.p}>
                 Password
               </Text>
               <TextInput
                 onChangeText={(text) => setPassword(text)}
                 value={password}
                 secureTextEntry={true}
-                placeholder="Password"
+                placeholder="*********"
                 autoCapitalize={'none'}
-                style={styles.input}
+                style={styles.textInput}
+                placeholderTextColor={theme.subtext}
+                textAlign="center"
               />
             </View>
             <View>
@@ -68,66 +82,11 @@ export default function SignUp() {
             </View>
             <View>
               <Link href="/">
-                <Text style={{ color: '#053547', fontFamily: 'Montserrat-SemiBold'}}>Have an account already? Sing in</Text>
+                <Text style={{ color: theme.primary, fontFamily: 'Montserrat-SemiBold'}}>Have an account already? Sing in</Text>
               </Link>
             </View>
           </View>
       <StatusBar style="auto" />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'left',
-    paddingTop: 70,
-    padding: 20
-  },
-  logo: {
-    width: 72,
-    height: 72,
-    resizeMode: 'contain'
-  },
-  logoText: {
-    fontSize: 32, 
-    color: '#e1523d', 
-    fontFamily: 'Quicksand-Bold', 
-    marginBottom: 20
-  },
-  title: {
-    fontSize: 24, 
-    fontFamily: 'Quicksand-Bold', 
-    marginBottom: 30
-  },
-  label: {
-    fontSize: 16, 
-    fontFamily: 'Montserrat-Medium',
-    marginBottom: 10
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#05354730',
-    borderRadius: 25,
-    padding: 10,
-    marginBottom: 10,
-    height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  button: {
-    backgroundColor: '#053547',
-    padding: 10,
-    borderRadius: 25,
-    marginTop: 10,
-    height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: '#fff', 
-    fontFamily: 'Montserrat-SemiBold'
-  }
-});

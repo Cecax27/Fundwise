@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { StyleSheet, View, Pressable, Alert, ScrollView, TextInput, Text, TouchableOpacity, Platform } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import styles from '../../../../assets/uiStyles'
+import { makeStyles } from '../../../../assets/uiStyles'
 import { getAccounts, getCategories, addTransaction, addIncome, updateTransaction } from '../../../../lib/supabase/transactions';
 import { Picker } from '@react-native-picker/picker'
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { useTheme } from '../../../../theme/useTheme';
 
 import FButton from '../../../../components/fbutton'
 
 export default function EditTransaction() {
+    const { theme } = useTheme()
+    const styles = useMemo(() => makeStyles(theme), [theme])
+
     const router = useRouter()
     
     const params = useLocalSearchParams()
@@ -122,8 +126,7 @@ export default function EditTransaction() {
                             <TextInput 
                                 placeholder='Select date'
                                 value={selectedDate.toLocaleDateString()}
-                                placeholderTextColor="#6b7280"
-                                style={[styles.dateInput, { color: '#111827' }]}
+                                style={[styles.dateInput]}
                                 editable={false}
                             />  
                         </Pressable>

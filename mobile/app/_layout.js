@@ -1,15 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import * as Font from 'expo-font';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import 'react-native-url-polyfill/auto'
 import { supabase } from '../lib/supabase/client'
-import Auth from '../components/auth'
 import { Slot } from 'expo-router';
+import ThemeProvider from '../theme/ThemeProvider';
 
 const logo = require('../assets/icon.png')
 
 export default function RootLayout() {
+
   const [fontLoaded, setFontLoaded] = useState(false);
   const [session, setSession] = useState(null)
 
@@ -43,13 +44,9 @@ export default function RootLayout() {
   }
 
   return (
+    <ThemeProvider>
       <Slot />
+      <StatusBar style="auto" />
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  }
-});
