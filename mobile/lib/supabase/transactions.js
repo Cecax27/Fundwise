@@ -357,3 +357,13 @@ export const getCreditCardSpendings = async (account_id, year, month) => {
     return data;
   }
 }
+
+export const getBalanceByAccount = async (account_id) => {
+  const { data, error } = await supabase.from('balance_by_account').select('*').eq('id', account_id);
+
+  if (error) {
+    return error;
+  } else {
+    return data[0];
+  }
+}

@@ -1,11 +1,8 @@
-import { View, Text, Alert, FlatList, StyleSheet, Dimensions, TouchableOpacity } from 'react-native'
-import { debounce } from 'lodash'
+import { View, Text, Alert, FlatList, StyleSheet, Dimensions, RefreshControl, ActivityIndicator} from 'react-native'
 import { makeStyles } from '../../../assets/uiStyles'
-import Resume from '../../../components/resume'
 import { useState, useEffect, useMemo } from 'react'
 import { getAccounts, getAccountsTypes, getCreditCardSpendings, deleteAccount } from '../../../lib/supabase/transactions'
 import { useRouter, Link } from 'expo-router'
-import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useTheme } from '../../../theme/useTheme'
 
 import {Account} from '../../../components/account'
@@ -22,26 +19,37 @@ export default function HomeScreen() {
     const styles = useMemo(() => makeStyles(theme), [theme])
 
     const router = useRouter()
-    const [loading, setLoading] = useState(true)
+    const [refreshing, setRefreshing] = useState(false);
+    const [loading, setLoading] = useState(false)
     const [accounts, setAccounts] = useState([])
     const [selectedIndex, setSelectedIndex] = useState(0)
     const [accountTypes, setAccountTypes] = useState([])
     const [loadingTypes, setLoadingTypes] = useState(true)
     const [creditCardSpendings, setCreditCardSpendings] = useState(null)
 
-    useEffect(() => {
-        // Fetch accounts
+    async function fetchAccounts() {
         getAccounts().then((data) => { 
             setAccounts(data) 
             setLoading(false)
         })
+    }
 
-        // Fetch account types
+    useEffect(() => {
+        setLoading(true)
+        fetchAccounts()
+
         getAccountsTypes().then(data => {
             setAccountTypes(data)
             setLoadingTypes(false)
         })
     }, [])
+
+    function onRefresh() {
+        setRefreshing(true);
+        setLoading(true)
+        setAccounts([])
+        fetchAccounts().then(() => setRefreshing(false));
+    }
 
     const handleScroll = (event) => {
         event.persist();
@@ -103,6 +111,7 @@ export default function HomeScreen() {
 
     return (
         <View style={[styles.container, accountsStyle.cardContainer]}>
+            {loading  && <ActivityIndicator size="large" color={theme.primary} style={{marginTop: 20}} />}
             <View>
             <FlatList
                 data={accountsWithAddCard}
@@ -120,6 +129,13 @@ export default function HomeScreen() {
                 decelerationRate="fast"
                 scrollEventThrottle={16}
                 onScroll={handleScroll}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={[theme.primary]}
+                    />
+                }
                 />
             </View>
             {!loading && !loadingTypes && accountsWithAddCard[selectedIndex] && !accountsWithAddCard[selectedIndex].isAddButton &&

@@ -7,16 +7,31 @@ import ChipSvg from './svg/chip';
 
 import styles from '../assets/uiStyles'
 
-import { getCreditCardSpendings } from '../lib/supabase/transactions';
+import { getBalanceByAccount, getCreditCardSpendings } from '../lib/supabase/transactions';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 
 export function Account ({account, isSelected}) {
     const [balance, setBalance] = useState(0)
 
     useEffect(() => {
-      getCreditCardSpendings(account.id, new Date().getFullYear(), new Date().getMonth()).then((data) => {
-        setBalance(data.reduce((acc, item) => acc - item.amount, 0))
-      })
+        if (account.account_type === 2) {
+            getCreditCardSpendings(account.id, new Date().getFullYear(), new Date().getMonth()).then((data) => {
+                setBalance(data.reduce((acc, item) => acc - item.amount, 0))
+            })
+            return
+        } else {
+            getBalanceByAccount(account.id).then((data) => {
+                if (data) {
+                    setBalance(data.balance)
+                } else {
+                    setBalance(0)
+                }
+            })
+        }
+        
+      
+
     }, [])
     
     
