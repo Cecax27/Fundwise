@@ -1,4 +1,4 @@
-import { View, Pressable, FlatList } from 'react-native'
+import { View, Pressable, FlatList, RefreshControl } from 'react-native'
 import {makeStyles} from '../../../assets/uiStyles'
 import { MaterialIcons } from '@expo/vector-icons';
 import { useMemo, useEffect, useState } from 'react';
@@ -16,53 +16,65 @@ export default function Transactions() {
 
   const router = useRouter()
 
+  const [refreshing, setRefreshing] = useState(false);
     const [addModalVisible, setAddModalVisible] = useState(false);
-    const [filterModalVisible, setFilterModalVisible] = useState(false);
-    const [data, setData] = useState([]);
-    const [filter, setFilter] = useState({
-      start_date: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-      end_date: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
-      account: null,
-      category: null,
-      budget_group: null
-    });
-    const [groupedData, setGroupedData] = useState([])
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [data, setData] = useState([]);
+  const [filter, setFilter] = useState({
+    start_date: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    end_date: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+    account: null,
+    category: null,
+    budget_group: null
+  });
+  const [groupedData, setGroupedData] = useState([])
 
-    useEffect(() => {
-      
-      getSpendingsTable(filter.start_date, filter.end_date, filter.account, filter.category, filter.budget_group).then((transactions) => {
-        const grouped = transactions.reduce((acc, transaction) => {
-          const date = transaction.date; // Keep the original ISO format date
-          if (!acc[date]) {
-            acc[date] = [];
-          }
-          acc[date].push(transaction);
-          return acc;
-        }, {});
+  const fetchTransactions = () => {
+    getSpendingsTable(filter.start_date, filter.end_date, filter.account, filter.category, filter.budget_group).then((transactions) => {
+      const grouped = transactions.reduce((acc, transaction) => {
+        const date = transaction.date;
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(transaction);
+        return acc;
+      }, {});
 
-        // Convert to array with original date for sorting
-        const groupedArray = Object.entries(grouped).map(([date, transactions]) => ({
-          date: new Date(date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            timeZone: 'UTC'
-          }), // Convert to locale string for display
-          originalDate: date, // Keep original ISO format for sorting
-          transactions
-        }));
+      const groupedArray = Object.entries(grouped).map(([date, transactions]) => ({
+        date: new Date(date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          timeZone: 'UTC'
+        }), 
+        originalDate: date, 
+        transactions
+      }));
 
-        const sortedArray = groupedArray.sort((a, b) => {
-          return new Date(b.originalDate) - new Date(a.originalDate);
-        });
-
-        sortedArray.forEach(group => {if(group.deferred_id) group.transaction_type = 'deferred'});
-
-        setGroupedData(sortedArray);
-
-        setData(transactions);
+      const sortedArray = groupedArray.sort((a, b) => {
+        return new Date(b.originalDate) - new Date(a.originalDate);
       });
-    }, [filter, addModalVisible, filterModalVisible]);
+
+      sortedArray.forEach(group => {if(group.deferred_id) group.transaction_type = 'deferred'});
+
+      setGroupedData(sortedArray);
+
+      setData(transactions);
+    });
+  }
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchTransactions();
+  }
+
+  useEffect(() => {
+    setRefreshing(false);
+  }, [data]);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [filter, addModalVisible, filterModalVisible]);
 
     return (
       <View style={styles.container}>
@@ -104,6 +116,8 @@ export default function Transactions() {
               </DateGroup>
           )}
           keyExtractor={(item, index) => index.toString()}
+          refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       </View>
     )
