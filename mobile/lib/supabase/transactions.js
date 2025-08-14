@@ -1,7 +1,7 @@
 import { supabase } from './client'
 
 export const addTransaction = async ({date, amount, description, category_id, account_id}) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('spendings')
     .insert([{
       date,
@@ -14,15 +14,13 @@ export const addTransaction = async ({date, amount, description, category_id, ac
 
   if (error) {
     console.error('Error adding transaction to supabase:', error);
-    throw error;
-  } else {
-    console.log('Exito')
-  }
-  return data[0];
+    return error
+  } 
+  return true
 };
 
 export const addIncome = async ({date, amount, description, account_id}) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('incomes')
     .insert([{
       date,
@@ -34,15 +32,13 @@ export const addIncome = async ({date, amount, description, account_id}) => {
 
     if (error) {
       console.error('Error adding income to supabase:', error);
-      throw error;
-    } else {
-      console.log('Exito')
+      return error;
     }
-    return data[0];
+    return true
   }
 
 export const addTransfer = async ({date, amount, description, from_account_id, to_account_id}) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('transfers')
     .insert([{
       date,
@@ -62,7 +58,7 @@ export const addTransfer = async ({date, amount, description, from_account_id, t
   }
 
 export const addDeferred = async ({date, amount, description, account_id, category_id, months}) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('deferred_spendings')
     .insert([{
       start_date: date,

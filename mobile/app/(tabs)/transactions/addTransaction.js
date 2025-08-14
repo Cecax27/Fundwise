@@ -7,6 +7,7 @@ import { Picker } from '@react-native-picker/picker'
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useTheme } from '../../../theme/useTheme';
+import Snackbar from '../../../components/Snackbar';
 
 import FButton from '../../../components/fbutton'
 
@@ -73,13 +74,12 @@ export default function AddTransaction() {
                 result = await addIncome({date: formattedDate, amount: parsedAmount, description, account_id})
             } else if (type === 'transfer') {
                 const { to_account_id, account_id} = formData
-                console.log(to_account_id, account_id)
                 result = await addTransfer({date: formattedDate, amount: parsedAmount, description, from_account_id: account_id, to_account_id})
             }
             if (result !== true) {
                 Alert.alert('Error', 'Something were wrong :( ('+result?.message??+')')
             }
-            Alert.alert('Success', 'Transaction added successfully!')
+            global.showSnackbar('Transaction added successfully')
             onClose()
         } catch (error) {
             Alert.alert('Error', 'Failed to add transaction')
@@ -235,6 +235,7 @@ export default function AddTransaction() {
                     <Text style={styles.textStyle}>Add {type}</Text>
                 </TouchableOpacity>
             </View>
+            <Snackbar />
         </View>
     )
 }
