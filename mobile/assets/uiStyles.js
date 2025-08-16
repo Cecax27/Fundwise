@@ -172,11 +172,54 @@ export function makeStyles(theme){
     paddingTop: 20,
     padding: 20
   },
+  dashboard: {
+    flex: 1,
+    marginTop: 20,
+  },
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
+  },
+  toolCard: {
+    backgroundColor: theme.surface,
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 1
+  },
+  toolCardContent: {
+    flexDirection: 'column',
+    alignItems: 'flex-start'
+  },
+  toolIcon: {
+    width:64, 
+    height:64, 
+    position:'absolute', 
+    top:5, 
+    right:5, 
+    opacity:0.5 },
+  toolType: {
+    fontSize: 10,
+    fontFamily: 'Montserrat-Regular',
+    color: theme.subtext,
+    marginBottom: 5
+  },
+  toolTitle: {
+    fontSize: 16,
+    fontFamily: 'Quicksand-Bold',
+    color: theme.mint,
+    marginBottom: 5
+  },
+  toolSubtitle: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: theme.text,
+    marginBottom: 5
   },
   modalView: {
     margin: 10,

@@ -1,10 +1,11 @@
 export const palette = {
   white: '#F6F6F6',
   black: '#1A1A1A',
-  gray100: '#F5F6F7',
+  gray100: '#EDEDED',
   gray200: '#E3E3E3',
   gray300: '#B8B8B8',
-  gray700: '#495057',
+  gray700: '#434343',
+  gray800: '#313131',
   gray900: '#242424',
   blue600: '#1E90FF',
   red600: '#E03131',
@@ -16,8 +17,9 @@ export const palette = {
 
 export const lightTheme = {
   name: 'light',
-  background: palette.white,
-  surface: palette.gray100,
+  ... palette,
+  background: palette.gray100,
+  surface: palette.white,
   text: palette.gray900,
   subtext: palette.gray700,
   primary: palette.mustard,
@@ -30,8 +32,9 @@ export const lightTheme = {
 
 export const darkTheme = {
   name: 'dark',
+  ... palette,
   background: palette.gray900,
-  surface: '#121212',
+  surface: palette.gray800,
   text: palette.white,
   subtext: palette.gray300,
   primary: palette.mustard,
