@@ -1,4 +1,4 @@
-import { View, Pressable, Alert, Text, Image } from 'react-native'
+import { View, Pressable, Alert, Text, Image, FlatList } from 'react-native'
 import { useBudget } from '../../hooks/useBudget'
 import { useTheme } from '../../theme/useTheme'
 import { makeStyles } from '../../assets/uiStyles'
@@ -18,20 +18,23 @@ export function BudgetPlans() {
 
     return (
         <>
-        {budgetPlans.map((plan) => (
-                    <Pressable
-                        key={plan.id}
-                        style={styles.toolCard}
-                        onPress={() => Alert.alert(`Budget Plan: ${plan.name}`)}
-                    >
-                        <View style={styles.toolCardContent}>
-                            <Image source={require("../../assets/icons/budget.png")} style={styles.toolIcon}/>
-                            <Text style={styles.toolTitle}>{plan.name}</Text>
-                            <Text style={styles.toolSubtitle}>{period_types[plan.period_type]}</Text>
-                            <Text style={[styles.cardSubtitle, { color: theme.text }]}></Text>
-                        </View>
-                    </Pressable>
-                ))}
+        <FlatList
+            data={budgetPlans}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+                <Pressable
+                    style={styles.toolCard}
+                    onPress={() => Alert.alert(`Budget Plan: ${item.name}`)}
+                >
+                    <View style={styles.toolCardContent}>
+                        <Image source={require("../../assets/icons/budget.png")} style={styles.toolIcon}/>
+                        <Text style={styles.toolTitle}>{item.name}</Text>
+                        <Text style={styles.toolSubtitle}>{period_types[item.period_type]}</Text>
+                        <Text style={[styles.cardSubtitle, { color: theme.text }]}></Text>
+                    </View>
+                </Pressable>
+            )}
+        />
         </>
     );
 }
