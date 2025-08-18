@@ -1,13 +1,14 @@
-import { View, Text, ActivityIndicator, FlatList, ScrollView, Image } from 'react-native'
+import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Alert } from 'react-native'
 import { Picker } from '@react-native-picker/picker'
+import { MaterialIcons } from '@expo/vector-icons'
 import { ProgressChart } from 'react-native-chart-kit'
 import React, { useMemo, useEffect, useState} from 'react'
 import { useGlobalSearchParams, Stack } from 'expo-router'
 import { useTheme } from '../../../../theme/useTheme'
 import { makeStyles } from '../../../../assets/uiStyles'
-import { useBudget } from '../../../../hooks/useBudget'
-import { getBudgetPlanDetails } from '../../../../lib/supabase/tools'
+import { getBudgetPlanDetails, deleteBudget } from '../../../../lib/supabase/tools'
 import { formatCurrency, hexToRgba } from '../../../../lib/utils'
+import { useRouter } from 'expo-router'
 
 const types = {
     month: 'Monthly',
@@ -33,14 +34,38 @@ export default function BudgetDetails() {
     const { theme } = useTheme()
     const styles = useMemo(() => makeStyles(theme), [theme]);
 
-    const params = useGlobalSearchParams()
+    const router = useRouter()
 
-    const { budgetGroups } = useBudget()
-    
+    const params = useGlobalSearchParams()
 
     const [budgetPlan, setBudgetPlan] = useState(null);
     const [month, setMonth] = useState(new Date().getMonth() + 1);
     const [year, setYear] = useState(new Date().getFullYear());
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleDelete = async () => {
+        try {
+            setIsDeleting(true);
+            await deleteBudget(params.id);
+            router.back();
+        } catch (error) {
+            console.error('Error deleting budget plan:', error);
+            Alert.alert('Error', 'Failed to delete budget plan');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const confirmDelete = () => {
+        Alert.alert(
+            'Delete Budget',
+            'Are you sure you want to delete this budget? This action cannot be undone.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Delete', onPress: handleDelete, style: 'destructive' }
+            ]
+        );
+    };
 
     useEffect(() => {
     const fetchBudgetPlan = async () => {
@@ -54,7 +79,24 @@ export default function BudgetDetails() {
 
   return (
         <>
-        <Stack.Screen options={{ title: 'Budget' }} />
+        <Stack.Screen 
+        options={{ 
+            title: 'Budget',
+            headerRight: () => (
+                <TouchableOpacity 
+                    onPress={confirmDelete}
+                    disabled={isDeleting}
+                    style={{ marginRight: 15 }}
+                >
+                    {isDeleting ? (
+                        <ActivityIndicator color={theme.text} />
+                    ) : (
+                        <MaterialIcons name="delete" size={24} color={theme.coral} />
+                    )}
+                </TouchableOpacity>
+            )
+        }} 
+    />
         <ScrollView style={{ flex: 1, backgroundColor: theme.background }}>
             <View style={[styles.container, { padding: 20 }]}>
                 {!budgetPlan && <ActivityIndicator color={theme.primary} size="large" />}

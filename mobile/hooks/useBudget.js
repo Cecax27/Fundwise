@@ -14,9 +14,7 @@ export function useBudget() {
     };
 
     const fetchBudgetPlans = async () => {
-        const data = await getBudgetPlans();
-        console.log(data);
-        
+        const data = await getBudgetPlans();        
         if (data) { setBudgetPlans(data); }
     };
 
