@@ -100,19 +100,28 @@ export const updateTransaction = async (transaction_id, type, params ) => {
 
 export const getTransaction = async (transaction_id, type) => {
   const table = type==='spending' ? 'spendings' : type==='income' ? 'incomes' : 'transfers';
-  const { data, error } = await supabase
-    .from(table)
-    .select('*, deferred_spendings(months, total_amount)')
-    .eq('id', transaction_id)
-    .single();
+  let data, error;
+  if (type === 'spending') {
+    ({ data, error } = await supabase
+      .from(table)
+      .select('*, deferred_spendings(months, total_amount)')
+      .eq('id', transaction_id)
+      .single());
+      data.months = data.deferred_spendings ? data.deferred_spendings.months : null;
+      if (data.deferred_spendings) data.amount = data.deferred_spendings.total_amount;
+      delete data.deferred_spendings;
+  } else {
+    ({ data, error } = await supabase
+      .from(table)
+      .select('*')
+      .eq('id', transaction_id)
+      .single());
+  }
 
   if (error) {
     console.error(`Error fetching ${type}:`, error);
     throw error;
   }
-  data.months = data.deferred_spendings ? data.deferred_spendings.months : null;
-  if (data.deferred_spendings) data.amount = data.deferred_spendings.total_amount;
-  delete data.deferred_spendings;
   return data;
 }
 

@@ -19,10 +19,9 @@ export default function TransactionDetails () {
     // {"id": "192", "income": "false"}
     const params = useLocalSearchParams()
 
-    
     const id = Number(params.id)
     
-    const [type, setType]  = useState('spending')
+    const [type, setType]  = useState(params.type)
     const [transactionData, setTransactionData] = useState(null)
 
     useEffect(() => {
@@ -42,7 +41,6 @@ export default function TransactionDetails () {
                     )
                     router.replace('/(tabs)/transactions')
                 }
-
                 setTransactionData({ ... data, 
                     date: new Date(data.date).toLocaleString("es-MX", {
                         year: "numeric",
@@ -62,7 +60,7 @@ export default function TransactionDetails () {
                     }) 
                 })
 
-                if (data.deferred_id) {
+                if (data.deferred_id??null) {
                     setType('deferred')
                 } else {
                     setType(params.type)
