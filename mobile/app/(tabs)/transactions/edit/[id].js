@@ -126,7 +126,8 @@ export default function EditTransaction() {
                             <TextInput 
                                 placeholder='Select date'
                                 value={selectedDate.toLocaleDateString()}
-                                style={[styles.dateInput]}
+                                placeholderTextColor="#6b7280"
+                                style={[styles.dateInput, { color: '#111827' }]}
                                 editable={false}
                             />  
                         </Pressable>
