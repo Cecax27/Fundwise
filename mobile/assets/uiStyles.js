@@ -106,7 +106,7 @@ export const styles = StyleSheet.create({
     marginTop: 20
   },
   label: {
-    fontSize: 16, 
+    fontSize: 12, 
     fontFamily: 'Montserrat-Medium',
     marginBottom: 10
   },
@@ -276,13 +276,13 @@ export function makeStyles(theme){
     fontFamily: 'Montserrat-Medium'
   },
   picker: {
-    height: 50,
     borderRadius: 100,
     marginBottom: 10,
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: 'Montserrat-Medium',
     color: theme.text,
+    flex:1,
   },
   modalFooter: {
     marginTop: 20,
@@ -312,11 +312,22 @@ export function makeStyles(theme){
     marginTop: 20,
     color: theme.text
   },
-  label: {
-    fontSize: 14, 
-    fontFamily: 'Montserrat-Medium',
-    marginBottom: 10,
+  h1: {
+    fontSize: 24, 
+    fontFamily: 'Quicksand-Bold', 
+    marginTop: 20,
     color: theme.text
+  },
+  h2: {
+    fontSize: 16, 
+    fontFamily: 'Montserrat-Bold', 
+    marginTop: 20,
+    color: theme.text
+  },
+  label: {
+    fontSize: 12, 
+    fontFamily: 'Montserrat-Regular',
+    color: theme.subtext
   },
   input: {
     borderWidth: 1,
@@ -367,6 +378,37 @@ export function makeStyles(theme){
   p:{
     fontFamily:'Montserrat-Regular',
     fontSize: 12,
-    color: theme.subtext
-  }
+    color: theme.text
+  },
+  resumeContainer:{
+    alignItems: 'center',
+    justifyContent: 'center'
+},
+monthBalance:{
+    fontSize: 48,
+    fontFamily: 'Montserrat-SemiBold',
+    color: theme.text,
+}, 
+percentage:{
+    fontSize: 18,
+    color: theme.primary
+},
+incomes:{
+    fontSize: 18, 
+    fontFamily: 'Montserrat-Medium',
+    color: theme.text,
+},
+spendings:{
+    fontSize: 18,
+    fontFamily: 'Montserrat-Medium',
+    color: theme.text,    
+},
+detailsContainer:{
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginBottom:20
+},
+detailContainer:{
+
+},
 })};

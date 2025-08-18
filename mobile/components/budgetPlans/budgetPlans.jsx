@@ -3,6 +3,7 @@ import { useBudget } from '../../hooks/useBudget'
 import { useTheme } from '../../theme/useTheme'
 import { makeStyles } from '../../assets/uiStyles'
 import { useMemo } from 'react'
+import { useRouter } from 'expo-router'
 
 const period_types = {
     month: 'Monthly',
@@ -14,7 +15,9 @@ const period_types = {
 export function BudgetPlans() {
     const { budgetPlans } = useBudget();
     const { theme } = useTheme();
-        const styles = useMemo(() => makeStyles(theme), [theme]);
+    const styles = useMemo(() => makeStyles(theme), [theme]);
+
+    const router = useRouter()
 
     return (
         <>
@@ -24,7 +27,7 @@ export function BudgetPlans() {
             renderItem={({ item }) => (
                 <Pressable
                     style={styles.toolCard}
-                    onPress={() => Alert.alert(`Budget Plan: ${item.name}`)}
+                    onPress={() => router.push(`/dashboard/budgetDetails/${item.id}`)}
                 >
                     <View style={styles.toolCardContent}>
                         <Image source={require("../../assets/icons/budget.png")} style={styles.toolIcon}/>
