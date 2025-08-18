@@ -15,6 +15,8 @@ export function useBudget() {
 
     const fetchBudgetPlans = async () => {
         const data = await getBudgetPlans();
+        console.log(data);
+        
         if (data) { setBudgetPlans(data); }
     };
 
@@ -25,6 +27,7 @@ export function useBudget() {
     return {
         budgetGroups,
         budgetPlans,
+        fetchBudgetPlans
     }
 
 }

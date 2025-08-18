@@ -162,6 +162,7 @@ export default function NewAccount () {
                                     selectedValue={formData.account_type}
                                     onValueChange={(itemValue) => setFormData(prev => ({ ...prev, account_type: itemValue }))}
                                     style={styles.picker}
+                                    dropdownIconColor={theme.text}
                                 >
                                     <Picker.Item label="Select account type" value={null} />
                                     {accountsTypes.map((accountType) => (

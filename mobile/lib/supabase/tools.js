@@ -1,17 +1,28 @@
 import { supabase } from "./client";
 
 export async function addBudget({ name, period_type, period_length_days = null, plan_groups }) {
-    let { error } = await supabase.rpc('create_budget_plan', {
+    const transformed_plan_groups = plan_groups
+    if (transformed_plan_groups.essentials?.limit_percentage>1){ 
+        transformed_plan_groups.essentials.limit_percentage = transformed_plan_groups.essentials.limit_percentage /100; 
+        transformed_plan_groups.essentials.alert_threshold = transformed_plan_groups.essentials.alert_threshold /100; }
+    if (transformed_plan_groups.discretionary?.limit_percentage>1){ 
+        transformed_plan_groups.discretionary.limit_percentage = transformed_plan_groups.discretionary.limit_percentage /100; 
+        transformed_plan_groups.discretionary.alert_threshold = transformed_plan_groups.discretionary.alert_threshold /100; }
+    if (transformed_plan_groups.savings?.limit_percentage>1){ 
+        transformed_plan_groups.savings.limit_percentage = transformed_plan_groups.savings.limit_percentage /100; 
+        transformed_plan_groups.savings.alert_threshold = transformed_plan_groups.savings.alert_threshold /100; }
+    
+    let { data, error } = await supabase.rpc('create_budget_plan', {
         p_name: name,
         p_period_type: period_type,
         p_period_length_days: period_length_days,
-        p_plan_groups: plan_groups
+        p_plan_groups: transformed_plan_groups
         });
 
     if (error) {
         return error;
     }
-    return true;
+    return data;
 }
 
 export async function updateBudget({ id, name, period_type, period_length_days = null, plan_groups }) {

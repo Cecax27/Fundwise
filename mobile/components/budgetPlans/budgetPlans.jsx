@@ -2,7 +2,7 @@ import { View, Pressable, Alert, Text, Image, FlatList } from 'react-native'
 import { useBudget } from '../../hooks/useBudget'
 import { useTheme } from '../../theme/useTheme'
 import { makeStyles } from '../../assets/uiStyles'
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 import { useRouter } from 'expo-router'
 
 const period_types = {
@@ -13,11 +13,13 @@ const period_types = {
 }
 
 export function BudgetPlans() {
-    const { budgetPlans } = useBudget();
+    const { budgetPlans, fetchBudgetPlans } = useBudget();
     const { theme } = useTheme();
     const styles = useMemo(() => makeStyles(theme), [theme]);
 
     const router = useRouter()
+
+    useEffect(() => { fetchBudgetPlans(); }, [fetchBudgetPlans])
 
     return (
         <>

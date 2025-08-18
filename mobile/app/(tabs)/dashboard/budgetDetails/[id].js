@@ -79,6 +79,7 @@ export default function BudgetDetails() {
                                     selectedValue={month}
                                     style={styles.picker}
                                     onValueChange={(value) => setMonth(value)}
+                                    dropdownIconColor={theme.text}
                                 >
                                     {months.map((m, index) => (
                                     <Picker.Item key={index} label={m} value={index + 1} />
@@ -89,6 +90,7 @@ export default function BudgetDetails() {
                                     selectedValue={year}
                                     style={ styles.picker }
                                     onValueChange={(value) => setYear(value)}
+                                    dropdownIconColor={theme.text}
                                 >
                                     {years.map((y, index) => (
                                     <Picker.Item key={index} label={y.toString()} value={y} />
