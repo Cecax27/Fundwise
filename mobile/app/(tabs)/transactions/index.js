@@ -17,7 +17,6 @@ export default function Transactions() {
   const router = useRouter()
 
   const [refreshing, setRefreshing] = useState(false);
-    const [addModalVisible, setAddModalVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState({
@@ -74,7 +73,7 @@ export default function Transactions() {
 
   useEffect(() => {
     fetchTransactions();
-  }, [filter, addModalVisible, filterModalVisible]);
+  }, [filter, filterModalVisible]);
 
     return (
       <View style={styles.container}>
@@ -109,6 +108,7 @@ export default function Transactions() {
                       color={transaction.account_color}
                       id={transaction.id}
                       type={transaction.transaction_type}
+                      to_account={transaction.to_account??null}
                     />
                   )}
                   keyExtractor={item => item.id}
