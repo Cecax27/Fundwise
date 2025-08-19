@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { hexToRgba } from "../lib/utils";
 
 
 export const styles = StyleSheet.create({
@@ -106,7 +107,7 @@ export const styles = StyleSheet.create({
     marginTop: 20
   },
   label: {
-    fontSize: 16, 
+    fontSize: 12, 
     fontFamily: 'Montserrat-Medium',
     marginBottom: 10
   },
@@ -172,11 +173,54 @@ export function makeStyles(theme){
     paddingTop: 20,
     padding: 20
   },
+  dashboard: {
+    flex: 1,
+    marginTop: 20,
+  },
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
+  },
+  toolCard: {
+    backgroundColor: theme.surface,
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 1
+  },
+  toolCardContent: {
+    flexDirection: 'column',
+    alignItems: 'flex-start'
+  },
+  toolIcon: {
+    width:64, 
+    height:64, 
+    position:'absolute', 
+    top:5, 
+    right:5, 
+    opacity:0.5 },
+  toolType: {
+    fontSize: 10,
+    fontFamily: 'Montserrat-Regular',
+    color: theme.subtext,
+    marginBottom: 5
+  },
+  toolTitle: {
+    fontSize: 16,
+    fontFamily: 'Quicksand-Bold',
+    color: theme.mint,
+    marginBottom: 5
+  },
+  toolSubtitle: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: theme.text,
+    marginBottom: 5
   },
   modalView: {
     margin: 10,
@@ -233,13 +277,13 @@ export function makeStyles(theme){
     fontFamily: 'Montserrat-Medium'
   },
   picker: {
-    height: 50,
     borderRadius: 100,
     marginBottom: 10,
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: 'Montserrat-Medium',
     color: theme.text,
+    flex:1,
   },
   modalFooter: {
     marginTop: 20,
@@ -269,11 +313,22 @@ export function makeStyles(theme){
     marginTop: 20,
     color: theme.text
   },
-  label: {
-    fontSize: 14, 
-    fontFamily: 'Montserrat-Medium',
-    marginBottom: 10,
+  h1: {
+    fontSize: 24, 
+    fontFamily: 'Quicksand-Bold', 
+    marginTop: 20,
     color: theme.text
+  },
+  h2: {
+    fontSize: 16, 
+    fontFamily: 'Montserrat-Bold', 
+    marginTop: 20,
+    color: theme.text
+  },
+  label: {
+    fontSize: 12, 
+    fontFamily: 'Montserrat-Regular',
+    color: theme.subtext
   },
   input: {
     borderWidth: 1,
@@ -324,6 +379,68 @@ export function makeStyles(theme){
   p:{
     fontFamily:'Montserrat-Regular',
     fontSize: 12,
-    color: theme.subtext
-  }
+    color: theme.text
+  },
+  resumeContainer:{
+    alignItems: 'center',
+    justifyContent: 'center'
+},
+monthBalance:{
+    fontSize: 48,
+    fontFamily: 'Montserrat-SemiBold',
+    color: theme.text,
+}, 
+percentage:{
+    fontSize: 18,
+    color: theme.primary
+},
+incomes:{
+    fontSize: 18, 
+    fontFamily: 'Montserrat-Medium',
+    color: theme.text,
+},
+spendings:{
+    fontSize: 18,
+    fontFamily: 'Montserrat-Medium',
+    color: theme.text,    
+},
+detailsContainer:{
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginBottom:20
+},
+detailContainer:{
+
+},
+modalOverlay: {
+  backgroundColor: hexToRgba(theme.background, 0.4),
+  flex:1
+},
+menuContainer: {
+  backgroundColor: theme.surface,
+  position:'absolute',
+  top:40,
+  right:40,
+  borderRadius: 15,
+  padding: 10,
+  width: 200,
+},
+menuItem: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingVertical: 12,
+  paddingHorizontal: 15,
+},
+menuIcon: {
+  marginRight: 15,
+},
+menuText: {
+  fontSize: 12,
+  fontFamily: 'Montserrat-Regular',
+},
+divider: {
+  height: 1,
+  backgroundColor: theme.border,
+  marginVertical: 4,
+}
 })};

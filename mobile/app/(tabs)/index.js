@@ -1,14 +1,5 @@
-import { View, Pressable, Alert } from 'react-native'
-import { styles } from '../../assets/uiStyles'
-import Resume from '../../components/resume'
-import { useTheme } from '../../theme/useTheme'
+import { Redirect } from "expo-router";
 
-export default function Dashboard() {
-    const { theme } = useTheme();
-
-    return (
-        <View style={[styles.container, { backgroundColor: theme.background, color: theme.text }]}> 
-            <Resume />
-        </View>
-    )   
+export default function Index() {
+  return <Redirect href="/dashboard" />;
 }

@@ -40,6 +40,7 @@ export default function TabsLayout() {
   return (
     <>
     <Tabs
+      initialRouteName='dashboard'
       screenOptions={{
         tabBarActiveTintColor: theme.primary,
         tabBarInactiveTintColor: theme.subtext,
@@ -52,13 +53,19 @@ export default function TabsLayout() {
         tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
       }}>
+        <Tabs.Screen
+        name="index"
+        options={{
+          href: null, 
+        }}
+      />
       <Tabs.Screen
-      name="index"
+      name="dashboard"
       options={{
         title: 'Dashboard',
         tabBarIcon: ({color}) => <MaterialIcons name={ "home" } size={32} color={color}/> ,
         headerTitle: 'Dashboard',
-        headerShown: true
+        headerShown: false
       }} />
       <Tabs.Screen
       name="transactions"

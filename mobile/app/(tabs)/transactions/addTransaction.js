@@ -163,6 +163,7 @@ export default function AddTransaction() {
                             selectedValue={formData.account_id}
                             onValueChange={(itemValue) => setFormData(prev => ({ ...prev, account_id: itemValue }))}
                             style={styles.picker}
+                            dropdownIconColor={theme.text}
                         >
                             <Picker.Item label="Select account" value={null} />
                             {accounts.map((account) => (
@@ -179,6 +180,7 @@ export default function AddTransaction() {
                             selectedValue={formData.to_account_id}
                             onValueChange={(itemValue) => setFormData(prev => ({ ...prev, to_account_id: itemValue }))}
                             style={styles.picker}
+                            dropdownIconColor={theme.text}
                         >
                             <Picker.Item label="Select account" value={null} />
                             {accounts.map((account) => (
@@ -195,6 +197,7 @@ export default function AddTransaction() {
                             selectedValue={formData.category_id}
                             onValueChange={(itemValue) => setFormData(prev => ({ ...prev, category_id: itemValue }))}
                             style={styles.picker}
+                            dropdownIconColor={theme.text}
                         >
                             <Picker.Item label="Select category" value={null} />
                             {categories.map((category) => (
