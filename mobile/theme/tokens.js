@@ -12,17 +12,21 @@ export const palette = {
   green600: '#2F9E44',
   mustard: '#FFD166',
   mint: '#A8E6CF',
-  coral: '#FF6F61'
+  coral: '#FF6F61',
+  mustardtdark: '#FFBA19',
+  mintdark: '#64D3AB'
 };
 
 export const lightTheme = {
   name: 'light',
   ... palette,
+  mint:palette.mintdark,
+  mustard:palette.mustardtdark,
   background: palette.gray100,
   surface: palette.white,
   text: palette.gray900,
   subtext: palette.gray700,
-  primary: palette.mustard,
+  primary: palette.mustardtdark,
   border: palette.gray200,
   success: palette.green600,
   error: palette.red600,

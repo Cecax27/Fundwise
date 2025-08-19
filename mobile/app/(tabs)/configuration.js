@@ -14,12 +14,13 @@ export default function Configuration() {
     const router = useRouter()
 
     async function signOut() {
-        const { error } = await supabase.auth.signOut()
+        await supabase.auth.signOut().then(({error}) => { 
         if (error) {
             Alert.alert(error.message)
         } else {
-            router.replace('/')
-        }
+            Alert.alert('Tanks for using Fundwise! See you soon 👋')
+            router.replace('/signUp')
+        }})
     }
 
     return (

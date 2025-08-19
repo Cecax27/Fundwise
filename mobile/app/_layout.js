@@ -1,15 +1,17 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StatusBar } from 'react-native'
 import * as Font from 'expo-font';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-url-polyfill/auto'
 import { supabase } from '../lib/supabase/client'
 import { Slot } from 'expo-router';
 import ThemeProvider from '../theme/ThemeProvider';
-
-const logo = require('../assets/icon.png')
+import { useTheme } from '../theme/useTheme';
+import * as Linking from 'expo-linking';
+import { useRouter } from 'expo-router';
 
 export default function RootLayout() {
+  const { theme, isDark } = useTheme();
+  const router = useRouter()
 
   const [fontLoaded, setFontLoaded] = useState(false);
   const [session, setSession] = useState(null)
@@ -37,6 +39,19 @@ export default function RootLayout() {
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
     })
+
+    const subscription = Linking.addEventListener('url', ({ url }) => {
+      if (url.includes('/auth/callback')) {
+        // Aquí manejas la sesión con Supabase
+        router.replace('/index'); 
+      }
+
+      return () => {
+        subscription.remove();
+      };
+    });
+
+
   }, []);
 
   if (!fontLoaded) {
@@ -46,7 +61,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <Slot />
-      <StatusBar style="auto" />
+      
     </ThemeProvider>
   );
 }

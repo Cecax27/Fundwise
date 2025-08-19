@@ -347,17 +347,18 @@ export function makeStyles(theme){
   },
   button: {
     backgroundColor: theme.primary,
-    padding: 10,
-    borderRadius: 25,
+    padding: 13,
+    paddingHorizontal:22,
+    borderRadius: 50,
     marginTop: 10,
-    height: 42,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
   },
   buttonText: {
     color: 'black', 
-    fontFamily: 'Montserrat-SemiBold'
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize:12
   },
   dateInput: {
     padding: 10,

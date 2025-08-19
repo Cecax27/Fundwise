@@ -9,6 +9,9 @@ import { useTheme } from '../../theme/useTheme';
 
 const logo = require('../../assets/icon.png')
 
+const home_active = require('../../assets/icons/home.png')
+const home_inactive = require('../../assets/icons/home_inactive.png')
+
 export default function TabsLayout() {
   const { theme, effectiveScheme } = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
@@ -63,7 +66,7 @@ export default function TabsLayout() {
       name="dashboard"
       options={{
         title: 'Dashboard',
-        tabBarIcon: ({color}) => <MaterialIcons name={ "home" } size={32} color={color}/> ,
+        tabBarIcon: ({focused}) => <Image source={focused ? home_active : home_inactive} style={{width:32, height:32}} />, 
         headerTitle: 'Dashboard',
         headerShown: false
       }} />

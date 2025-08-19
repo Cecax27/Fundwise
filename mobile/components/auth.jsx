@@ -1,13 +1,15 @@
 import React, { useState, useMemo } from 'react'
-import { Alert, View, Text, Pressable, TextInput, KeyboardAvoidingView, Platform } from 'react-native'
+import { Alert, View, Text, Pressable, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
 import { signIn } from '../lib/supabase/auth'
 import { Link, useRouter } from 'expo-router'
 import { makeStyles } from '../assets/uiStyles'
 import { useTheme } from '../theme/useTheme'
+import { checkWelcomeSeen } from '../lib/welcomeSeen'
 
 export default function Auth() {
 const {theme} = useTheme()
 const styles = useMemo(() => makeStyles(theme), [theme])
+const [seenWelcome, setSeenWelcome] = useState(false)
 
   const router = useRouter()
   const [email, setEmail] = useState('')
@@ -19,17 +21,27 @@ const styles = useMemo(() => makeStyles(theme), [theme])
     const { error } = await signIn(email, password)
 
     if (error) Alert.alert(error.message)
-    else router.replace('/(tabs)/')
+    else {
+      checkWelcomeSeen()
+      .then((result)=>setSeenWelcome(result))
+      .then(()=>{
+        if(seenWelcome) { router.replace('/(tabs)/')}
+        else { router.replace('/welcome')}
+      })
+      .catch((error)=>console.log(error))
+    }
     setLoading(false)
   
   }
 
   return (
-    <KeyboardAvoidingView 
+    <>
+    {loading && <ActivityIndicator size="large" color={theme.primary} style={{marginTop:40}}/>}
+    {!loading && <KeyboardAvoidingView 
           style={{justifyContent: 'center', alignItems: 'center'}}
           behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
           keyboardVerticalOffset={100}
-      >
+          >
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Text style={[styles.p, {marginTop: 22}]}>
           Email
@@ -37,7 +49,7 @@ const styles = useMemo(() => makeStyles(theme), [theme])
         <TextInput
           onChangeText={(text) => setEmail(text)}
           value={email}
-          placeholder="LukeSkywalker@JediOrder.com"
+          placeholder="luke@jedi.com"
           autoCapitalize={'none'}
           keyboardType="email-address"
           autoComplete="username"
@@ -45,9 +57,10 @@ const styles = useMemo(() => makeStyles(theme), [theme])
           style={styles.textInput}
           placeholderTextColor={theme.subtext}
           textAlign="center"
-        />
+          accessibilityLabel="Email input"
+          />
       </View>
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
         <Text style={styles.p}>
           Password
         </Text>
@@ -58,14 +71,15 @@ const styles = useMemo(() => makeStyles(theme), [theme])
           placeholder="*********"
           autoCapitalize={'none'}
           keyboardType="default"
-          autoComplete="new-password"
-          textContentType="newPassword"
+          autoComplete="password"
+          textContentType="password"
           style={styles.textInput}
           placeholderTextColor={theme.subtext}
           textAlign="center"
-        />
+          accessibilityLabel="Password input"
+          />
       </View>
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
         <Pressable 
         disabled={loading} 
         onPress={() => signInWithEmail()} 
@@ -73,11 +87,12 @@ const styles = useMemo(() => makeStyles(theme), [theme])
           <Text style={styles.buttonText}>Sign in</Text>
         </Pressable>
       </View>
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
         <Link href="/signUp">
           <Text style={{ color: theme.primary, fontFamily: 'Montserrat-SemiBold'}}>Don&apos;t have an account? Sign up</Text>
         </Link>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAvoidingView>}
+    </>
   )
 }
