@@ -1,11 +1,12 @@
 import { View, Pressable, FlatList, RefreshControl } from 'react-native'
 import {makeStyles} from '../../../assets/uiStyles'
 import { MaterialIcons } from '@expo/vector-icons';
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useContext } from 'react';
 import FilterModal from '../../../components/filterModal'
 import { getSpendingsTable } from '../../../lib/supabase/transactions';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../../theme/useTheme';
+import { TransactionsFiltersContext } from '../../../contexts/FiltersContext';
 
 import DateGroup from '../../../components/dateGroup';
 import Transaction from '../../../components/transaction'
@@ -19,13 +20,8 @@ export default function Transactions() {
   const [refreshing, setRefreshing] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [data, setData] = useState([]);
-  const [filter, setFilter] = useState({
-    start_date: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-    end_date: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
-    account: null,
-    category: null,
-    budget_group: null
-  });
+  const { filter, setFilter } = useContext(TransactionsFiltersContext)
+
   const [groupedData, setGroupedData] = useState([])
 
   const fetchTransactions = () => {
