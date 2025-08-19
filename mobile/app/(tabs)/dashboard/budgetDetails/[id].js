@@ -1,14 +1,13 @@
-import { View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity, Alert } from 'react-native'
-import { Picker } from '@react-native-picker/picker'
-import { MaterialIcons } from '@expo/vector-icons'
-import { ProgressChart } from 'react-native-chart-kit'
-import React, { useMemo, useEffect, useState} from 'react'
-import { useGlobalSearchParams, Stack } from 'expo-router'
-import { useTheme } from '../../../../theme/useTheme'
-import { makeStyles } from '../../../../assets/uiStyles'
-import { getBudgetPlanDetails, deleteBudget } from '../../../../lib/supabase/tools'
-import { formatCurrency, hexToRgba } from '../../../../lib/utils'
-import { useRouter } from 'expo-router'
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, Modal, Image, Alert } from 'react-native';
+import { Stack, useRouter, useGlobalSearchParams } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
+import { ProgressChart } from 'react-native-chart-kit';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useTheme } from '../../../../theme/useTheme';
+import { makeStyles } from '../../../../assets/uiStyles';
+import { getBudgetPlanDetails, deleteBudget } from '../../../../lib/supabase/tools';
+import { formatCurrency, hexToRgba } from '../../../../lib/utils';
 
 const types = {
     month: 'Monthly',
@@ -32,7 +31,7 @@ const groupNames = {
 
 export default function BudgetDetails() {
     const { theme } = useTheme()
-    const styles = useMemo(() => makeStyles(theme), [theme]);
+    const styles = useMemo(()=>makeStyles(theme), [theme])
 
     const router = useRouter()
 
@@ -41,7 +40,11 @@ export default function BudgetDetails() {
     const [budgetPlan, setBudgetPlan] = useState(null);
     const [month, setMonth] = useState(new Date().getMonth() + 1);
     const [year, setYear] = useState(new Date().getFullYear());
-    const [isDeleting, setIsDeleting] = useState(false);
+    const [menuVisible, setMenuVisible] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false); // Used in confirmDelete function
+
+    const openMenu = () => setMenuVisible(true);
+    const closeMenu = () => setMenuVisible(false);
 
     const handleDelete = async () => {
         try {
@@ -57,12 +60,25 @@ export default function BudgetDetails() {
     };
 
     const confirmDelete = () => {
+        if (isDeleting) return; // Prevent multiple delete attempts
+        
         Alert.alert(
             'Delete Budget',
             'Are you sure you want to delete this budget? This action cannot be undone.',
             [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'Delete', onPress: handleDelete, style: 'destructive' }
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                    onPress: () => setIsDeleting(false),
+                },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: () => {
+                        setIsDeleting(true);
+                        handleDelete();
+                    },
+                },
             ]
         );
     };
@@ -83,17 +99,53 @@ export default function BudgetDetails() {
         options={{ 
             title: 'Budget',
             headerRight: () => (
-                <TouchableOpacity 
-                    onPress={confirmDelete}
-                    disabled={isDeleting}
-                    style={{ marginRight: 15 }}
-                >
-                    {isDeleting ? (
-                        <ActivityIndicator color={theme.text} />
-                    ) : (
-                        <MaterialIcons name="delete" size={24} color={theme.coral} />
-                    )}
-                </TouchableOpacity>
+                <View>
+                    <TouchableOpacity
+                        onPress={openMenu}
+                        style={{ marginRight: 15 }}
+                    >
+                        <MaterialIcons name="more-vert" size={24} color={theme.text} />
+                    </TouchableOpacity>
+                    
+                    <Modal
+                        transparent={true}
+                        visible={menuVisible}
+                        onRequestClose={closeMenu}
+                        animationType="fade"
+                    >
+                        <TouchableOpacity 
+                            style={styles.modalOverlay} 
+                            activeOpacity={1} 
+                            onPress={closeMenu}
+                        >
+                            <View style={styles.menuContainer} onStartShouldSetResponder={() => true}>
+                                <TouchableOpacity 
+                                    style={styles.menuItem}
+                                    onPress={() => {
+                                        closeMenu();
+                                        router.push({pathname:"dashboard/editBudget", params:{ plan:JSON.stringify(budgetPlan) }});
+                                    }}
+                                >
+                                    <MaterialIcons name="edit" size={20} color={theme.text} style={styles.menuIcon} />
+                                    <Text style={[styles.menuText, { color: theme.text }]}>Modify</Text>
+                                </TouchableOpacity>
+                                
+                                <View style={styles.divider} />
+                                
+                                <TouchableOpacity 
+                                    style={styles.menuItem}
+                                    onPress={() => {
+                                        closeMenu();
+                                        confirmDelete();
+                                    }}
+                                >
+                                    <MaterialIcons name="delete" size={20} color={theme.coral} style={styles.menuIcon} />
+                                    <Text style={[styles.menuText, { color: theme.coral }]}>Delete</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableOpacity>
+                    </Modal>
+                </View>
             )
         }} 
     />

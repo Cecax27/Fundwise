@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { hexToRgba } from "../lib/utils";
 
 
 export const styles = StyleSheet.create({
@@ -411,4 +412,35 @@ detailsContainer:{
 detailContainer:{
 
 },
+modalOverlay: {
+  backgroundColor: hexToRgba(theme.background, 0.4),
+  flex:1
+},
+menuContainer: {
+  backgroundColor: theme.surface,
+  position:'absolute',
+  top:40,
+  right:40,
+  borderRadius: 15,
+  padding: 10,
+  width: 200,
+},
+menuItem: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingVertical: 12,
+  paddingHorizontal: 15,
+},
+menuIcon: {
+  marginRight: 15,
+},
+menuText: {
+  fontSize: 12,
+  fontFamily: 'Montserrat-Regular',
+},
+divider: {
+  height: 1,
+  backgroundColor: theme.border,
+  marginVertical: 4,
+}
 })};
