@@ -1,6 +1,7 @@
 import { Text, View, ActivityIndicator, Alert } from "react-native"
 import { useState, useEffect, useMemo } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useTranslation } from 'react-i18next';
 import { deleteTransaction, getTransaction } from "../../../../lib/supabase/transactions";
 import { useTheme } from "../../../../theme/useTheme";
 
@@ -16,12 +17,12 @@ export default function TransactionDetails () {
     const styles = useMemo(() => makeStyles(theme), [theme])
 
     const router = useRouter()
-    // {"id": "192", "income": "false"}
+    const { t } = useTranslation()
     const params = useLocalSearchParams()
 
     const id = Number(params.id)
     
-    const [type, setType]  = useState(params.type)
+    const [type, setType] = useState(params.type)
     const [transactionData, setTransactionData] = useState(null)
 
     useEffect(() => {
@@ -29,11 +30,11 @@ export default function TransactionDetails () {
             .then((data) => {
                 if (!data) {
                     Alert.alert(
-                        "Error",
-                        "Transaction not found",
+                        t('common.error'),
+                        t('transactions.details.error.notFound'),
                         [
                             {
-                                text: "OK",
+                                text: t('common.ok'),
                                 style: "cancel"
                             }
                         ],
@@ -69,11 +70,11 @@ export default function TransactionDetails () {
             .catch((error) => {
                 console.error("Error fetching transaction:", error);
                 Alert.alert(
-                    "Error",
-                    "Failed to fetch transaction details",
+                    t('common.error'),
+                    t('transactions.details.error.fetchFailed'),
                     [
                         {
-                            text: "OK",
+                            text: t('common.ok'),
                             style: "cancel"
                         }
                     ],
@@ -90,11 +91,11 @@ export default function TransactionDetails () {
         if (result !== true) {
             console.log(result)
             Alert.alert(
-                "Error",
-                result.message,
+                t('common.error'),
+                t('common.error.message', { message: result.message }),
                 [
                     {
-                        text: "OK",
+                        text: t('common.ok'),
                         style: "cancel"
                     }
                 ],
@@ -105,34 +106,41 @@ export default function TransactionDetails () {
 
     const handleDeleteButton = () => {
             Alert.alert(
-                "Delete transaction",
-                `Are you sure you want to delete this ${type}? This action cannot be undone.`,
+                t('transactions.details.delete.title'),
+                t('transactions.details.delete.message', { type: t(`transactions.types.${type}`) }),
                 [
                     {
-                        text: "Cancel",
+                        text: t('transactions.details.delete.cancel'),
                         style: "cancel"
                     },
                     {
-                        text: "Delete",
+                        text: t('transactions.details.delete.delete'),
                         onPress: async () => {
                             if (type==='deferred') {
-                                Alert.alert('Delete deferred spending',
-                                    'Delete this spending will delete all the deferred payments associated with it. Are you sure you want to continue?',
-                                    [{text: 'Cancel', style: 'cancel'},
+                                Alert.alert(
+                                    t('transactions.details.delete.deferredTitle'),
+                                    t('transactions.details.delete.deferredMessage'),
+                                    [
                                         {
-                                            text: 'Delete',
+                                            text: t('transactions.details.delete.cancel'),
+                                            style: 'cancel'
+                                        },
+                                        {
+                                            text: t('transactions.details.delete.delete'),
                                             onPress: async () => {
                                                 await deleteTransaction(transactionData.deferred_id, 'deferred').then((result) => {
-                                                handleReturn(result)})
-                                            }
+                                                    handleReturn(result)
+                                                })
+                                            },
+                                            style: 'destructive'
                                         }
                                     ]
                                 )
                             } else {
                                 await deleteTransaction(id, type).then((result) => {
-                                handleReturn(result)})
+                                    handleReturn(result)
+                                })
                             }
-                            
                         },
                         style: "destructive"
                     }
@@ -155,23 +163,70 @@ export default function TransactionDetails () {
         flex: 1,
         gap: 22
     }]}>
-            <Text style={[styles.title]}>{type}</Text>
+            <Text style={[styles.title]}>{t(`transactions.types.${type}`)}</Text>
             {transactionData && <View style={styles.container}>
                 <OptionsMenu>
-                    <OptionsMenu.Item icon="edit" color={APP_COLORS.GREEN} onPress={handleEditButton} />
-                    <OptionsMenu.Item icon="delete" color={APP_COLORS.RED} onPress={handleDeleteButton} />
+                    <OptionsMenu.Item 
+                        icon="edit" 
+                        color={APP_COLORS.GREEN} 
+                        onPress={handleEditButton} 
+                    />
+                    <OptionsMenu.Item 
+                        icon="delete" 
+                        color={APP_COLORS.RED} 
+                        onPress={handleDeleteButton} 
+                    />
                 </OptionsMenu>
-                <LabelWithText label='Created at' text={transactionData?.created_at??'Loading'}/>
-                <LabelWithText label='Date' text={transactionData?.date??'Loading'}/>
-                <LabelWithText label='Description' text={transactionData?.description??'Loading'}/>
-                <LabelWithText label='Amount' text={formatCurrency(transactionData?.amount??0)}/>
-                {type!=='transfer' && <LabelWithText label='Account' text={transactionData?.account_id??'Loading'}/>}
-                {type==='transfer' && <LabelWithText label='From account' text={transactionData?.from_account_id??'Loading'}/>}
-                {type==='transfer' && <LabelWithText label='To account' text={transactionData?.to_account_id??'Loading'}/>}
-                {(type==='spending' || type==='deferred') && <LabelWithText label='Category' text={transactionData?.category_id??'Empty'}/>}
-                {type==='deferred' && <LabelWithText label='Deferred' text={transactionData?.deferred_id??'Loading'}/>}
+                <LabelWithText 
+                    label={t('transactions.details.createdAt')} 
+                    text={transactionData?.created_at || t('transactions.details.loading')}
+                />
+                <LabelWithText 
+                    label={t('transactions.date')} 
+                    text={transactionData?.date || t('transactions.details.loading')}
+                />
+                <LabelWithText 
+                    label={t('transactions.description')} 
+                    text={transactionData?.description || t('transactions.details.loading')}
+                />
+                <LabelWithText 
+                    label={t('transactions.amount')} 
+                    text={formatCurrency(transactionData?.amount || 0)}
+                />
+                {type!=='transfer' && (
+                    <LabelWithText 
+                        label={t('transactions.details.account')} 
+                        text={transactionData?.account_id || t('transactions.details.loading')}
+                    />
+                )}
+                {type==='transfer' && (
+                    <LabelWithText 
+                        label={t('transactions.details.fromAccount')} 
+                        text={transactionData?.from_account_id || t('transactions.details.loading')}
+                    />
+                )}
+                {type==='transfer' && (
+                    <LabelWithText 
+                        label={t('transactions.details.toAccount')} 
+                        text={transactionData?.to_account_id || t('transactions.details.loading')}
+                    />
+                )}
+                {(type==='spending' || type==='deferred') && (
+                    <LabelWithText 
+                        label={t('transactions.details.category')} 
+                        text={transactionData?.category_id || t('common.empty')}
+                    />
+                )}
+                {type==='deferred' && (
+                    <LabelWithText 
+                        label={t('transactions.details.deferred')} 
+                        text={transactionData?.deferred_id || t('transactions.details.loading')}
+                    />
+                )}
             </View>}
-            {!transactionData && <ActivityIndicator size="large" color={APP_COLORS.PRIMARY} />}
+            {!transactionData && (
+                <ActivityIndicator size="large" color={APP_COLORS.PRIMARY} />
+            )}
         </View>
     )
 }

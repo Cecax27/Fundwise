@@ -6,6 +6,7 @@ import { useEffect, useState, useMemo } from 'react';
 import 'react-native-url-polyfill/auto'
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../theme/useTheme';
+import { useTranslation } from 'react-i18next';
 
 const logo = require('../../assets/icon.png')
 
@@ -14,6 +15,7 @@ const home_inactive = require('../../assets/icons/home_inactive.png')
 
 export default function TabsLayout() {
   const { theme, effectiveScheme } = useTheme();
+  const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   
   const [fontLoaded, setFontLoaded] = useState(false);
@@ -65,33 +67,33 @@ export default function TabsLayout() {
       <Tabs.Screen
       name="dashboard"
       options={{
-        title: 'Dashboard',
+        title: t('tabs.dashboard'),
         tabBarIcon: ({focused}) => <Image source={focused ? home_active : home_inactive} style={{width:32, height:32}} />, 
-        headerTitle: 'Dashboard',
+        headerTitle: t('tabs.dashboard'),
         headerShown: false
       }} />
       <Tabs.Screen
       name="transactions"
       options={{
-        title: 'Transactions',
+        title: t('tabs.transactions'),
         tabBarIcon: ({color}) => <MaterialIcons name={ "payments" } size={32} color={color}/> ,
-        headerTitle: 'Transactions',
+        headerTitle: t('tabs.transactions'),
         headerShown: true
       }} />
       <Tabs.Screen
       name="accounts"
       options={{
-        title: 'Accounts',
+        title: t('tabs.accounts'),
         tabBarIcon: ({color}) => <MaterialIcons name={ "wallet" } size={32} color={color}/> ,
-        headerTitle: 'Accounts',
+        headerTitle: t('tabs.accounts'),
         headerShown: true
       }} />
       <Tabs.Screen
       name="configuration"
       options={{
-        title: 'Settings',
+        title: t('tabs.settings'),
         tabBarIcon: ({color}) => <MaterialIcons name={ "settings" } size={32} color={color}/> ,
-        headerTitle: 'Settings',
+        headerTitle: t('tabs.settings'),
         headerShown: true
       }} />
     </Tabs>

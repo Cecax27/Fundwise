@@ -10,11 +10,12 @@ import { TransactionsFiltersContext } from '../../../contexts/FiltersContext';
 
 import DateGroup from '../../../components/dateGroup';
 import Transaction from '../../../components/transaction'
+import { useTranslation } from 'react-i18next';
 
 export default function Transactions() {
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-
+  const { i18n } = useTranslation();
   const router = useRouter()
 
   const [refreshing, setRefreshing] = useState(false);
@@ -36,7 +37,7 @@ export default function Transactions() {
       }, {});
 
       const groupedArray = Object.entries(grouped).map(([date, transactions]) => ({
-        date: new Date(date).toLocaleDateString('en-US', {
+        date: new Date(date).toLocaleDateString(i18n.language, {
           year: 'numeric',
           month: 'long',
           day: 'numeric',

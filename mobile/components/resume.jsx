@@ -1,7 +1,5 @@
-import { View, Text, Alert} from "react-native";
+import { View, Text, Alert, StyleSheet} from "react-native";
 import { useState, useEffect, useMemo } from "react";
-import { supabase } from "../lib/supabase/client";
-import { StyleSheet } from "react-native";
 import { getMonthlyBalance, getMonthlyIncomes, getMonthlySpendings } from '../lib/supabase/transactions'
 import { useTheme } from "../theme/useTheme";
 
@@ -10,19 +8,12 @@ export default function Resume() {
     const { theme } = useTheme();
     const styles = useMemo(() => makeStyles(theme), [theme]); 
 
-    const [session, setSession] = useState(null)
     const [monthBalance, setMonthBalance] = useState(0.0)
     const [incomes, setIncomes] = useState(0.0)
     const [spendings, setSpendings] = useState(0.0)
     const [percentage, setPercentage] = useState(0.0)
     
     useEffect(() => {
-            supabase.auth.getSession().then(({ data: { session } }) => {
-              setSession(session)
-            })
-            supabase.auth.onAuthStateChange((_event, session) => {
-              setSession(session)
-            })
             const getData = async () => {
                 
                 getMonthlyBalance().then(({ data, error }) => {

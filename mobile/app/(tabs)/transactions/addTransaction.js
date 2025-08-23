@@ -8,11 +8,12 @@ import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useTheme } from '../../../theme/useTheme';
 import Snackbar from '../../../components/Snackbar';
-
+import { useTranslation } from 'react-i18next';
 import FButton from '../../../components/fbutton'
 
 export default function AddTransaction() {
     const router = useRouter()
+    const { t } = useTranslation();
     
     const { theme } = useTheme();
     const styles = useMemo(() => makeStyles(theme), [theme]);
@@ -77,12 +78,12 @@ export default function AddTransaction() {
                 result = await addTransfer({date: formattedDate, amount: parsedAmount, description, from_account_id: account_id, to_account_id})
             }
             if (result !== true) {
-                Alert.alert('Error', 'Something were wrong :( ('+result?.message??+')')
+                Alert.alert(t('transactions.error.title'), t('transactions.error.message') + (result?.message ? ` (${result.message})` : ''))
             }
-            global.showSnackbar('Transaction added successfully')
+            global.showSnackbar(t('transactions.success'))
             onClose()
         } catch (error) {
-            Alert.alert('Error', 'Failed to add transaction')
+            Alert.alert(t('transactions.error.title'), t('transactions.error.addFailed'))
             console.error('Error adding transaction:', error)
         }
     }
@@ -94,7 +95,7 @@ export default function AddTransaction() {
     return (
         <View style={styles.container}>
             <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Add Transaction</Text>
+                <Text style={styles.modalTitle}>{t('transactions.addTransaction')}</Text>
                 <TouchableOpacity onPress={onClose}>
                     <Icon name="arrow-back" size={20} color={theme.primary} />
                 </TouchableOpacity>
@@ -102,13 +103,13 @@ export default function AddTransaction() {
 
             <ScrollView style={styles.modalContent}>
                 <View style={[styles.filterSection, transactionStyles.typeButtons]}>
-                    <FButton text='Spending' onPress={() => setType('spending')} active={(type==='spending' || type==='deferred') ? true : false}/>
-                    <FButton text='Income' onPress={() => setType('income')} active={type==='income' ? true : false}/>
-                    <FButton text='Transfer' onPress={() => setType('transfer')} active={type==='transfer' ? true : false}/>
+                    <FButton text={t('transactions.types.spending')} onPress={() => setType('spending')} active={(type==='spending' || type==='deferred') ? true : false}/>
+                    <FButton text={t('transactions.types.income')} onPress={() => setType('income')} active={type==='income' ? true : false}/>
+                    <FButton text={t('transactions.types.transfer')} onPress={() => setType('transfer')} active={type==='transfer' ? true : false}/>
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>Date</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.date')}</Text>
                     <View style={{ position: 'relative' }}>
                         {dateVisible && (
                             <DateTimePicker 
@@ -124,7 +125,7 @@ export default function AddTransaction() {
                             style={[styles.dateInputContainer]}
                         >
                             <TextInput 
-                                placeholder='Select date'
+                                placeholder={t('transactions.date')}
                                 value={selectedDate.toLocaleDateString()}
                                 style={[styles.dateInput, { color: theme.text }]}
                                 editable={false}
@@ -134,9 +135,9 @@ export default function AddTransaction() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>Description</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.description')}</Text>
                     <TextInput
-                        placeholder='A delicious meal'
+                        placeholder={t('transactions.descriptionPlaceholder')}
                         value={formData.description}
                         placeholderTextColor={theme.subtext}
                         onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
@@ -145,9 +146,9 @@ export default function AddTransaction() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>Amount</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.amount')}</Text>
                     <TextInput
-                        placeholder='123.45'
+                        placeholder={t('transactions.amountPlaceholder')}
                         value={formData.amount}
                         placeholderTextColor={theme.subtext}
                         onChangeText={(text) => setFormData(prev => ({ ...prev, amount: text }))}
@@ -157,7 +158,7 @@ export default function AddTransaction() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{type==='transfer'? 'From account': 'Account'}</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{type==='transfer' ? t('transactions.fromAccount') : t('transactions.account')}</Text>
                     <View>
                         <Picker
                             selectedValue={formData.account_id}
@@ -165,7 +166,7 @@ export default function AddTransaction() {
                             style={styles.picker}
                             dropdownIconColor={theme.text}
                         >
-                            <Picker.Item label="Select account" value={null} />
+                            <Picker.Item label={t('transactions.selectAccount')} value={null} />
                             {accounts.map((account) => (
                                 <Picker.Item key={account.id} label={account.name} value={account.id} />
                             ))}
@@ -174,7 +175,7 @@ export default function AddTransaction() {
                 </View>
 
                 {type==='transfer' && <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>To account</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.toAccount')}</Text>
                     <View style={{ width: '100%' }}>
                         <Picker
                             selectedValue={formData.to_account_id}
@@ -182,7 +183,7 @@ export default function AddTransaction() {
                             style={styles.picker}
                             dropdownIconColor={theme.text}
                         >
-                            <Picker.Item label="Select account" value={null} />
+                            <Picker.Item label={t('transactions.selectAccount')} value={null} />
                             {accounts.map((account) => (
                                 <Picker.Item key={account.id} label={account.name} value={account.id} />
                             ))}
@@ -191,7 +192,7 @@ export default function AddTransaction() {
                 </View>}
 
                 {(type==='spending' || type==='deferred') && <View style={styles.filterSection}>
-                    <Text style={styles.filterLabel}>Category</Text>
+                    <Text style={styles.filterLabel}>{t('transactions.category')}</Text>
                     <View style={{ width: '100%' }}>
                         <Picker
                             selectedValue={formData.category_id}
@@ -199,16 +200,16 @@ export default function AddTransaction() {
                             style={styles.picker}
                             dropdownIconColor={theme.text}
                         >
-                            <Picker.Item label="Select category" value={null} />
+                            <Picker.Item label={t('transactions.selectCategory')} value={null} />
                             {categories.map((category) => (
-                                <Picker.Item key={category.id} label={category.name.replace('_', ' ').replace(/\w/, c => c.toUpperCase())} value={category.id} />
+                                <Picker.Item key={category.id} label={t(`transactions.categories.${category.name}`)} value={category.id} />
                             ))}
                         </Picker>
                     </View>
                 </View>}
 
                 {(type==='spending' || type==='deferred') && <View style={styles.filterSection}>
-                    <Text style={styles.filterLabel}>Deferred spending</Text>
+                    <Text style={styles.filterLabel}>{t('transactions.deferredSpending')}</Text>
                         <Switch 
                             value={type==='deferred'}
                             onValueChange={(value) => setType(value ? 'deferred' : 'spending')}
@@ -218,9 +219,9 @@ export default function AddTransaction() {
                 </View>}
 
                 {type==='deferred' && <View style={styles.filterSection}>
-                    <Text style={styles.filterLabel}>Months</Text>
+                    <Text style={styles.filterLabel}>{t('transactions.months')}</Text>
                         <TextInput
-                        placeholder='12'
+                        placeholder="12"
                         value={formData.months}
                         placeholderTextColor={theme.subtext}
                         onChangeText={(text) => setFormData(prev => ({ ...prev, months: text }))}
@@ -235,7 +236,7 @@ export default function AddTransaction() {
                     style={[styles.button, styles.buttonClose]}
                     onPress={handleSubmit}
                 >
-                    <Text style={styles.textStyle}>Add {type}</Text>
+                    <Text style={styles.textStyle}>{t('transactions.add')} {t(`transactions.types.${type}`)}</Text>
                 </TouchableOpacity>
             </View>
             <Snackbar />

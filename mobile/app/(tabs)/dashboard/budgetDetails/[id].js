@@ -8,30 +8,19 @@ import { useTheme } from '../../../../theme/useTheme';
 import { makeStyles } from '../../../../assets/uiStyles';
 import { getBudgetPlanDetails, deleteBudget } from '../../../../lib/supabase/tools';
 import { formatCurrency, hexToRgba } from '../../../../lib/utils';
-
-const types = {
-    month: 'Monthly',
-    week: 'Weekly',
-    year: 'Yearly',
-    custom: 'Custom'
-}
+import { useTranslation } from 'react-i18next';
 
 const months = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December"
-  ];
+    "january", "february", "march", "april", "may", "june",
+    "july", "august", "september", "october", "november", "december"
+];
 
 const years = Array.from({ length: 20 }, (_, i) => 2015 + i);
 
-const groupNames = {
-    essentials: 'Essentials',
-    savings: 'Savings',
-    discretionary: 'Discretionary'
-}
-
 export default function BudgetDetails() {
-    const { theme } = useTheme()
-    const styles = useMemo(()=>makeStyles(theme), [theme])
+    const { t } = useTranslation();
+    const { theme } = useTheme();
+    const styles = useMemo(() => makeStyles(theme), [theme]);
 
     const router = useRouter()
 
@@ -53,7 +42,10 @@ export default function BudgetDetails() {
             router.back();
         } catch (error) {
             console.error('Error deleting budget plan:', error);
-            Alert.alert('Error', 'Failed to delete budget plan');
+            Alert.alert(
+                t('common.error'),
+                t('budget.alerts.error.message')
+            );
         } finally {
             setIsDeleting(false);
         }
@@ -63,16 +55,16 @@ export default function BudgetDetails() {
         if (isDeleting) return; // Prevent multiple delete attempts
         
         Alert.alert(
-            'Delete Budget',
-            'Are you sure you want to delete this budget? This action cannot be undone.',
+            t('budget.delete.title'),
+            t('budget.delete.message', { budgetName: budgetPlan?.name || t('budget.title') }),
             [
                 {
-                    text: 'Cancel',
+                    text: t('common.cancel'),
                     style: 'cancel',
                     onPress: () => setIsDeleting(false),
                 },
                 {
-                    text: 'Delete',
+                    text: t('budget.delete.delete'),
                     style: 'destructive',
                     onPress: () => {
                         setIsDeleting(true);
@@ -97,7 +89,7 @@ export default function BudgetDetails() {
         <>
         <Stack.Screen 
         options={{ 
-            title: 'Budget',
+            title: t('budget.title'),
             headerRight: () => (
                 <View>
                     <TouchableOpacity
@@ -127,7 +119,7 @@ export default function BudgetDetails() {
                                     }}
                                 >
                                     <MaterialIcons name="edit" size={20} color={theme.text} style={styles.menuIcon} />
-                                    <Text style={[styles.menuText, { color: theme.text }]}>Modify</Text>
+                                    <Text style={[styles.menuText, { color: theme.text }]}>{t('budget.modify')}</Text>
                                 </TouchableOpacity>
                                 
                                 <View style={styles.divider} />
@@ -140,7 +132,7 @@ export default function BudgetDetails() {
                                     }}
                                 >
                                     <MaterialIcons name="delete" size={20} color={theme.coral} style={styles.menuIcon} />
-                                    <Text style={[styles.menuText, { color: theme.coral }]}>Delete</Text>
+                                    <Text style={[styles.menuText, { color: theme.coral }]}>{t('budget.delete.delete')}</Text>
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -163,7 +155,7 @@ export default function BudgetDetails() {
                                     {budgetPlan?.name}
                                 </Text>
                                 <Text style={{ fontFamily: 'Montserrat-Regular', fontSize:12, color: theme.text, marginTop: 30 }}>
-                                    {types[budgetPlan?.period_type]}
+                                    {t(`budget.types.${budgetPlan?.period_type}`)}
                                 </Text>
                             </View>
                         </View>
@@ -176,7 +168,7 @@ export default function BudgetDetails() {
                                     dropdownIconColor={theme.text}
                                 >
                                     {months.map((m, index) => (
-                                    <Picker.Item key={index} label={m} value={index + 1} />
+                                    <Picker.Item key={index} label={t(`common.months.${m}`)} value={index + 1} />
                                     ))}
                                 </Picker>
 
@@ -197,7 +189,7 @@ export default function BudgetDetails() {
                                 <Image source={require('../../../../assets/icons/incomes.png')} style={{width:30, height:30}} />
                                 <View style={styles.detailContainer}>
                                     <Text style={styles.label}>
-                                        Incomes
+                                        {t('common.terms.incomes')}
                                     </Text>
                                     <Text style={styles.incomes}>
                                     {formatCurrency(budgetPlan?.total_incomes)}
@@ -209,7 +201,7 @@ export default function BudgetDetails() {
                                 <Image source={require('../../../../assets/icons/expenses.png')} style={{width:30, height:30}} />
                                 <View style={styles.detailContainer}>
                                     <Text style={styles.label}>
-                                        Spendings
+                                        {t('common.terms.spendings')}
                                     </Text>
                                     <Text style={styles.spendings}>
                                     {formatCurrency(budgetPlan?.groups?.reduce((a, b) => a + b.real_amount, 0))}
@@ -254,7 +246,7 @@ export default function BudgetDetails() {
                                         />
                                         <View style={{}}>
                                             <Text style={styles.label}>
-                                                {groupNames[item.name]}
+                                                {t(`budget.categories.${item.name}`)}
                                             </Text>
                                             <View style={{ flexDirection: 'row', alignItems: 'baseline', marginBottom: 4 }}>
                                                 <Text style={{

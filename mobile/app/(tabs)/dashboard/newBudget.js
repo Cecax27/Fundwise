@@ -2,23 +2,25 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useTheme } from '../../../theme/useTheme';
+import { useTranslation } from 'react-i18next';
 import { makeStyles } from '../../../assets/uiStyles';
 import { Picker } from '@react-native-picker/picker';
 import { Slider } from '@react-native-assets/slider';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { addBudget } from '../../../lib/supabase/tools';
 
-const BUDGET_TYPES = [
-  { id: 'month', name: 'Monthly' },
-  { id: 'week', name: 'Weekly' },
-  { id: 'year', name: 'Yearly' },
-  { id: 'custom', name: 'Custom' },
-];
-
 export default function NewBudget() {
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
+
+  const BUDGET_TYPES = useMemo(() => [
+    { id: 'month', name: t('budget.types.month') },
+    { id: 'week', name: t('budget.types.week') },
+    { id: 'year', name: t('budget.types.year') },
+    { id: 'custom', name: t('budget.types.custom') },
+  ], [t]);
 
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [formData, setFormData] = useState({
@@ -33,39 +35,46 @@ export default function NewBudget() {
   });
 
   const handleSubmit = async () => {
-    if(formData.categories.essentials.limit_percentage 
-      + formData.categories.discretionary.limit_percentage 
-      + formData.categories.savings.limit_percentage > 100){
-        Alert.alert('Ups', 'You cant allocate more than 100%',
-          [{
-            text:'Let me try again'
-          }]
-        )
-        return
-    } else if (formData.type === 'custom' && formData.customDays<=0){
-      Alert.alert('Ups', 'You need put a valid period length.',
-        [{
-          text:'Let me try again'
-        }]
-      )
-      return
+    if (formData.categories.essentials.limit_percentage + 
+        formData.categories.discretionary.limit_percentage + 
+        formData.categories.savings.limit_percentage > 100) {
+      Alert.alert(
+        t('budget.alerts.overallocation.title'), 
+        t('budget.alerts.overallocation.message'),
+        [{ text: t('budget.alerts.button') }]
+      );
+      return;
+    } else if (formData.type === 'custom' && formData.customDays <= 0) {
+      Alert.alert(
+        t('budget.alerts.invalidPeriod.title'), 
+        t('budget.alerts.invalidPeriod.message'),
+        [{ text: t('budget.alerts.button') }]
+      );
+      return;
     } else if (formData.name.trim() === '') {
-      Alert.alert('Ups', 'Did you forget to name your budget?',
-        [{
-          text:'Let me try again'
-        }]
-      )
-      return
-    } else{
-      const result = await addBudget({
-        name: formData.name,
-        period_type: formData.type,
-        period_length_days: formData.type === 'custom' ? formData.customDays : null,
-        plan_groups: formData.categories
-      })     
-      Alert.alert('Success', 'Budget created successfully!');
-      router.back();
-      router.push(`dashboard/budgetDetails/${result}`);
+      Alert.alert(
+        t('budget.alerts.missingName.title'), 
+        t('budget.alerts.missingName.message'),
+        [{ text: t('budget.alerts.button') }]
+      );
+      return;
+    } else {
+      try {
+        const result = await addBudget({
+          name: formData.name,
+          period_type: formData.type,
+          period_length_days: formData.type === 'custom' ? formData.customDays : null,
+          plan_groups: formData.categories
+        })     
+        router.back();
+        router.push(`dashboard/budgetDetails/${result}`);
+      } catch (error) {
+        console.error('Error creating budget:', error);
+        Alert.alert(
+          t('budget.alerts.error.title'), 
+          t('budget.alerts.error.createMessage')
+        );
+      }
     }
   };
 
@@ -99,7 +108,7 @@ export default function NewBudget() {
     <View style={styles.filterSection}>
       <View style={{flexDirection:'row', justifyContent:'space-between'}}>
         <Text style={styles.filterLabel}>
-          {label}
+          {t(`budget.categories.${category}`)}
         </Text>
         <Text style={[styles.spendings, {fontSize:14}]}>
           {formData.categories[category].limit_percentage}%
@@ -122,7 +131,7 @@ export default function NewBudget() {
       
       <View style={{ marginTop: 10 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text style={[styles.filterLabel, { marginBottom: 5 }]}>Alert Threshold</Text>
+          <Text style={[styles.filterLabel, { marginBottom: 5 }]}>{t('budget.categories.alertThreshold')}</Text>
           <Text style={{ color: theme.subtext, fontSize: 12 }}>{formData.categories[category].alert_threshold}%</Text>
         </View>
         <Slider
@@ -149,7 +158,7 @@ export default function NewBudget() {
     >
       <Stack.Screen
         options={{
-          title: 'New Budget',
+          title: t('budget.title'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 15 }}>
               <Icon name="close" size={24} color={theme.text} />
@@ -169,9 +178,9 @@ export default function NewBudget() {
         scrollEnabled={scrollEnabled}
       >
         <View style={styles.filterSection}>
-          <Text style={styles.filterLabel}>Budget Name</Text>
+          <Text style={styles.sectionTitle}>{t('budget.name')}</Text>
           <TextInput
-            placeholder='Operation Survive'
+            placeholder={t('budget.namePlaceholder')}
             value={formData.name}
             onChangeText={(text) => setFormData(prev => ({ ...prev, name: text }))}
             style={styles.textInput}
@@ -180,7 +189,7 @@ export default function NewBudget() {
         </View>
 
         <View style={styles.filterSection}>
-          <Text style={styles.filterLabel}>Budget Type</Text>
+          <Text style={styles.filterLabel}>{t('budget.type')}</Text>
           <View style={{ width: '100%' }}>
             <Picker
               selectedValue={formData.type}
@@ -201,7 +210,7 @@ export default function NewBudget() {
 
         {formData.type === 'custom' && (
           <View style={styles.filterSection}>
-            <Text style={styles.filterLabel}>Period Length (days)</Text>
+            <Text style={styles.sectionTitle}>{t('budget.customDays')}</Text>
             <TextInput
               placeholder='30'
               value={formData.customDays.toString()}
@@ -216,13 +225,11 @@ export default function NewBudget() {
         )}
 
         <View style={{ marginTop: 20 }}>
-          <Text style={[styles.sectionTitle, { color: theme.text, marginBottom: 15 }]}>
-            Budget Allocation
-          </Text>
+          <Text style={[styles.sectionTitle, { color: theme.text, marginBottom: 15 }]}>{t('budget.allocation')}</Text>
           
           <View style={{ marginBottom: 20, padding: 15, backgroundColor: theme.surface, borderRadius: 10 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
-              <Text style={{ color:theme.text }}>Total Allocated</Text>
+              <Text style={{ color: theme.text }}>{t('budget.totalAllocated')}</Text>
               <Text style={{ 
                 color: (formData.categories.essentials.limit_percentage + 
                   formData.categories.discretionary.limit_percentage + 
@@ -233,11 +240,11 @@ export default function NewBudget() {
               </Text>
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ color: theme.subtext, fontSize: 12 }}>Remaining</Text>
+              <Text style={{ color: theme.subtext, fontSize: 12 }}>{t('budget.remaining')}</Text>
               <Text style={{ color: theme.subtext, fontSize: 12 }}>
                 {100 - (formData.categories.essentials.limit_percentage + 
                        formData.categories.discretionary.limit_percentage + 
-                       formData.categories.savings.limit_percentage)}% available
+                       formData.categories.savings.limit_percentage)}% {t('budget.available')}
               </Text>
             </View>
           </View>

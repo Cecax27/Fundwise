@@ -8,7 +8,6 @@ import ChipSvg from './svg/chip';
 import styles from '../assets/uiStyles'
 
 import { getBalanceByAccount, getCreditCardSpendings } from '../lib/supabase/transactions';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 
 export function Account ({account, isSelected}) {

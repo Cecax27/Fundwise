@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { View, Alert, ScrollView, TextInput, Text, TouchableOpacity, Switch, KeyboardAvoidingView, Platform } from 'react-native'
 import { makeStyles } from '../../../assets/uiStyles'
 import { Picker } from '@react-native-picker/picker'
 import { useRouter } from 'expo-router'
 import { getAccountsTypes, addAccount } from '../../../lib/supabase/transactions'
 import { useTheme } from '../../../theme/useTheme';
+import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { ACCOUNT_COLORS } from '../../../constants/colors';
@@ -12,6 +13,7 @@ import { ACCOUNT_ICONS } from '../../../constants/icons';
 
 export default function NewAccount () {
     const { theme } = useTheme()
+    const { t } = useTranslation()
     const styles = useMemo(() => makeStyles(theme), [theme])
 
     const router = useRouter()
@@ -42,20 +44,20 @@ export default function NewAccount () {
         fetchAccountsTypes()
     }, [])
 
-    const onClose = () => {
+    const onClose = useCallback(() => {
         router.replace('/(tabs)/accounts')
-    }
+    }, [router])
 
     useEffect(() => {
         if (succesful !== null) {
             if (succesful) {
-                Alert.alert('Success', 'Account added successfully!')
+                Alert.alert(t('newAccount.success.title'), t('newAccount.success.message'))
                 onClose()
             } else {
-                Alert.alert('Error', 'A error occured trying add an account. Try it again.')
+                Alert.alert(t('newAccount.error.title'), t('newAccount.error.message'))
             }
         }
-    }, [succesful])
+    }, [succesful, onClose, t])
     
     const handleSubmit = async () => {
         const response = await addAccount(formData)
@@ -69,7 +71,7 @@ export default function NewAccount () {
                 keyboardVerticalOffset={100}
             >
                 <View style={styles.modalHeader}>
-                    <Text style={styles.modalTitle}>New Account</Text>
+                    <Text style={styles.modalTitle}>{t('newAccount.title')}</Text>
                     <TouchableOpacity onPress={onClose}>
                         <Text style={styles.closeButton}>X</Text>
                     </TouchableOpacity>
@@ -81,9 +83,9 @@ export default function NewAccount () {
                 >
 
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Account Name</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.accountName')}</Text>
                             <TextInput
-                                placeholder='My super account'
+                                placeholder={t('newAccount.accountNamePlaceholder')}
                                 value={formData.name}
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, name: text }))}
                                 style={styles.textInput}
@@ -92,9 +94,9 @@ export default function NewAccount () {
                         </View>
                         
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Bank Name</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.bankName')}</Text>
                             <TextInput
-                                placeholder='Leave blank if you want'
+                                placeholder={t('newAccount.bankNamePlaceholder')}
                                 value={formData.bank_name}
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, bank_name: text }))}
                                 style={styles.textInput}
@@ -103,7 +105,7 @@ export default function NewAccount () {
                         </View>
 
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Color</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.color')}</Text>
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
 
                             {ACCOUNT_COLORS.map(color => (
@@ -117,7 +119,7 @@ export default function NewAccount () {
                         </View>
 
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Icon</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.icon')}</Text>
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 25 }}>
                                 {ACCOUNT_ICONS.map(icon => (
                                     <TouchableOpacity
@@ -139,7 +141,7 @@ export default function NewAccount () {
                         </View>
 
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Primary Account</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.primaryAccount')}</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Switch 
                                     trackColor={{ false: theme.surface, true: theme.subtext }}
@@ -150,13 +152,13 @@ export default function NewAccount () {
                                     />
                                 {formData.is_primary_account && 
                                 <Text style={{ fontSize: 10, color: theme.subtext, fontVariant: 'italic'}}>
-                                    If you have another primary account, it will be replaced.
+                                    {t('newAccount.primaryAccountWarning')}
                                 </Text>}
                             </View>
                         </View>
 
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Account Type</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.accountType')}</Text>
                             <View style={{ width: '100%' }}>
                                 <Picker
                                     selectedValue={formData.account_type}
@@ -164,9 +166,9 @@ export default function NewAccount () {
                                     style={styles.picker}
                                     dropdownIconColor={theme.text}
                                 >
-                                    <Picker.Item label="Select account type" value={null} />
+                                    <Picker.Item label={t('newAccount.selectAccountType')} value={null} />
                                     {accountsTypes.map((accountType) => (
-                                        <Picker.Item key={accountType.id} label={accountType.type.replace('_', ' ').replace(/\w/, c => c.toUpperCase())} value={accountType.id} />
+                                        <Picker.Item key={accountType.id} label={t(`accounts.types.${accountType.type}`)} value={accountType.id} />
                                     ))}
                                 </Picker>
                             </View>
@@ -174,9 +176,9 @@ export default function NewAccount () {
 
                         {formData.account_type === 2 && (
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Cuttoff Day</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.cutoffDay')}</Text>
                             <TextInput
-                                placeholder='Cuttof Day'
+                                placeholder={t('newAccount.cutoffDayPlaceholder')}
                                 value={formData.cutoff_day}
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, cutoff_day: text }))}
                                 keyboardType='numeric'
@@ -186,7 +188,7 @@ export default function NewAccount () {
 
                         {formData.account_type === 2 && (
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Credit Limit</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.creditLimit')}</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                             <Icon name="attach-money" size={20} color="#666" />
                                 <TextInput
@@ -205,9 +207,9 @@ export default function NewAccount () {
 
                         {formData.account_type === 4 && (
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Platform</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.platform')}</Text>
                             <TextInput
-                                placeholder='Where are you saving you money'
+                                placeholder={t('newAccount.platformPlaceholder')}
                                 value={formData.platform}
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, platform: text }))}
                                 keyboardType='text'
@@ -217,7 +219,7 @@ export default function NewAccount () {
                         
                         {formData.account_type === 4 && (
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Initial Amount</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.initialAmount')}</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                                 <Icon name="attach-money" size={20} color="#666" />
                                 <TextInput
@@ -236,9 +238,9 @@ export default function NewAccount () {
 
                         {formData.account_type === 4 && (
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Estimated Return Date</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.estimatedReturnRate')}</Text>
                             <TextInput
-                                placeholder='Percentage per year'
+                                placeholder={t('newAccount.returnRatePlaceholder')}
                                 value={formData.estimated_return_rate}
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, estimated_return_rate: text }))}
                                 keyboardType='decimal-pad'
@@ -248,7 +250,7 @@ export default function NewAccount () {
 
                         {formData.account_type === 5 && (
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Loan Amount</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.loanAmount')}</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                                 <Icon name="attach-money" size={20} color="#666" />
                                 <TextInput
@@ -267,9 +269,9 @@ export default function NewAccount () {
 
                         {formData.account_type === 5 && (
                         <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>Loan Interest Rate</Text>
+                            <Text style={styles.filterLabel}>{t('newAccount.loanInterestRate')}</Text>
                             <TextInput
-                                placeholder='Percentage per year'
+                                placeholder={t('newAccount.returnRatePlaceholder')}
                                 value={formData.interest_rate}
                                 onChangeText={(text) => setFormData(prev => ({ ...prev, interest_rate: text }))}
                                 keyboardType='decimal-pad'
@@ -284,7 +286,7 @@ export default function NewAccount () {
                             style={[styles.button, styles.buttonClose]}
                             onPress={handleSubmit}
                         >
-                            <Text style={styles.textStyle}>Add Account</Text>
+                            <Text style={styles.textStyle}>{t('newAccount.addAccountButton')}</Text>
                         </TouchableOpacity>
                     </View>
             </KeyboardAvoidingView>

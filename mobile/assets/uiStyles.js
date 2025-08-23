@@ -173,6 +173,10 @@ export function makeStyles(theme){
     paddingTop: 20,
     padding: 20
   },
+  fullContainer:{
+    flex:1,
+    backgroundColor:theme.background
+  },
   dashboard: {
     flex: 1,
     marginTop: 20,
@@ -441,7 +445,72 @@ menuText: {
 },
 divider: {
   height: 1,
-  backgroundColor: theme.border,
+  backgroundColor: theme.background,
   marginVertical: 4,
-}
+},
+profileSection: {
+  alignItems: 'center',
+  padding: 24,
+  backgroundColor: theme.surface,
+},
+avatarContainer: {
+  marginBottom: 16,
+},
+avatar: {
+  width: 80,
+  height: 80,
+  borderRadius: 40,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+avatarText: {
+  color: '#fff',
+  fontSize: 32,
+  fontWeight: 'bold',
+},
+userName: {
+  fontSize: 20,
+  fontWeight: '600',
+  color: theme.text,
+  marginBottom: 4,
+},
+userEmail: {
+  fontSize: 14,
+  color: theme.subtext,
+},
+section: {
+  marginTop: 16,
+  backgroundColor: theme.surface,
+  borderRadius: 12,
+  marginHorizontal: 16,
+  overflow: 'hidden',
+},
+sectionTitle: {
+  fontSize: 14,
+  fontWeight: '600',
+  color: theme.subtext,
+  padding: 16,
+  paddingBottom: 8,
+},
+sectionContent: {
+  backgroundColor: theme.surface,
+  borderRadius: 12,
+  overflow: 'hidden',
+},
+settingIcon: {
+  width: 24,
+  height: 24,
+  marginRight: 16,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+settingText: {
+  fontSize: 16,
+  color: theme.text,
+},
+languageText: {
+  fontSize: 14,
+  color: theme.subtext,
+  marginRight: 8,
+},
 })};

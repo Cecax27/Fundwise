@@ -8,9 +8,9 @@ export default function LabelWithText({ label, text }) {
   const styles = useMemo(() => makeStyles(theme), [theme])
 
   return (
-    <View>
-      <Text style={styles.p}>{label}</Text>
-        <Text style={styles.label}>{text}</Text>
+    <View style={{marginBottom:12, gap:4}}>
+      <Text style={styles.label}>{label}</Text>
+        <Text style={styles.p}>{text}</Text>
     </View>
   )
 }

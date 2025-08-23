@@ -2,16 +2,16 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { StyleSheet, View, Pressable, Alert, ScrollView, TextInput, Text, TouchableOpacity, Platform } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { makeStyles } from '../../../../assets/uiStyles'
-import { getAccounts, getCategories, addTransaction, addIncome, updateTransaction } from '../../../../lib/supabase/transactions';
+import { getAccounts, getCategories, updateTransaction } from '../../../../lib/supabase/transactions';
 import { Picker } from '@react-native-picker/picker'
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useTheme } from '../../../../theme/useTheme';
-
-import FButton from '../../../../components/fbutton'
+import { useTranslation } from 'react-i18next';
 
 export default function EditTransaction() {
     const { theme } = useTheme()
+    const { t } = useTranslation()
     const styles = useMemo(() => makeStyles(theme), [theme])
 
     const router = useRouter()
@@ -81,13 +81,13 @@ export default function EditTransaction() {
 
             const result = await updateTransaction(id, type, params)
             if (result === true) {
-                Alert.alert('Success', 'Transaction updated successfully!')
+                Alert.alert(t('common.success'), t('transactions.updateSuccess'))
             } else {
-                Alert.alert('Error', 'Failed to update transaction: ' + result.message)
+                Alert.alert(t('common.error'), t('transactions.updateError') + (result?.message || ''))
             }
             onClose()
         } catch (error) {
-            Alert.alert('Error', 'Failed to add transaction')
+            Alert.alert(t('common.error'), t('transactions.addError'))
             console.error('Error adding transaction:', error)
         }
     }
@@ -99,7 +99,7 @@ export default function EditTransaction() {
     return (
         <View style={styles.container}>
             <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Edit {type}</Text>
+                <Text style={styles.modalTitle}>{t('common.edit')} {t(`transactions.types.${type}`)}</Text>
                 <TouchableOpacity onPress={onClose}>
                     <Icon name="arrow-back" size={20} color="#c2bb00" />
                 </TouchableOpacity>
@@ -108,7 +108,7 @@ export default function EditTransaction() {
             <ScrollView style={styles.modalContent}>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>Date</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.date')}</Text>
                     <View style={{ position: 'relative' }}>
                         {dateVisible && (
                             <DateTimePicker 
@@ -124,10 +124,10 @@ export default function EditTransaction() {
                             style={[styles.dateInputContainer]}
                         >
                             <TextInput 
-                                placeholder='Select date'
+                                placeholder={t('transactions.selectDate')}
                                 value={selectedDate.toLocaleDateString()}
-                                placeholderTextColor="#6b7280"
-                                style={[styles.dateInput, { color: '#111827' }]}
+                                placeholderTextColor={theme.text}
+                                style={[styles.dateInput, { color: theme.text }]}
                                 editable={false}
                             />  
                         </Pressable>
@@ -135,9 +135,9 @@ export default function EditTransaction() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>Description</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.description')}</Text>
                     <TextInput
-                        placeholder='Enter description'
+                        placeholder={t('transactions.descriptionPlaceholder')}
                         value={formData.description}
                         onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
                         style={[styles.textInput]}
@@ -145,9 +145,9 @@ export default function EditTransaction() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>Amount</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.amount')}</Text>
                     <TextInput
-                        placeholder='Enter amount'
+                        placeholder={t('transactions.amountPlaceholder')}
                         value={formData.amount}
                         onChangeText={(text) => setFormData(prev => ({ ...prev, amount: text }))}
                         keyboardType='numeric'
@@ -156,14 +156,14 @@ export default function EditTransaction() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{type==='transfer'? 'From account': 'Account'}</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{type==='transfer' ? t('transactions.fromAccount') : t('transactions.account')}</Text>
                     <View style={{ width: '100%' }}>
                         <Picker
                             selectedValue={formData.account_id}
                             onValueChange={(itemValue) => setFormData(prev => ({ ...prev, account_id: itemValue }))}
                             style={styles.picker}
                         >
-                            <Picker.Item label="Select account" value={null} />
+                            <Picker.Item label={t('transactions.selectAccount')} value={null} />
                             {accounts.map((account) => (
                                 <Picker.Item key={account.id} label={account.name} value={account.id} />
                             ))}
@@ -171,14 +171,14 @@ export default function EditTransaction() {
                     </View>
                 </View>
                 {type==='transfer' && <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>To account</Text>
+                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.toAccount')}</Text>
                     <View style={{ width: '100%' }}>
                         <Picker
                             selectedValue={formData.to_account_id}
                             onValueChange={(itemValue) => setFormData(prev => ({ ...prev, to_account_id: itemValue }))}
                             style={styles.picker}
                         >
-                            <Picker.Item label="Select account" value={null} />
+                            <Picker.Item label={t('transactions.selectAccount')} value={null} />
                             {accounts.map((account) => (
                                 <Picker.Item key={account.id} label={account.name} value={account.id} />
                             ))}
@@ -187,16 +187,16 @@ export default function EditTransaction() {
                 </View>}
 
                 {(type==='spending' || type==='deferred') && <View style={styles.filterSection}>
-                    <Text style={styles.filterLabel}>Category</Text>
+                    <Text style={styles.filterLabel}>{t('transactions.category')}</Text>
                     <View style={{ width: '100%' }}>
                         <Picker
                             selectedValue={formData.category_id}
                             onValueChange={(itemValue) => setFormData(prev => ({ ...prev, category_id: itemValue }))}
                             style={styles.picker}
                         >
-                            <Picker.Item label="Select category" value={null} />
+                            <Picker.Item label={t('transactions.selectCategory')} value={null} />
                             {categories.map((category) => (
-                                <Picker.Item key={category.id} label={category.name.replace('_', ' ').replace(/\w/, c => c.toUpperCase())} value={category.id} />
+                                <Picker.Item key={category.id} label={t(`transactions.categories.${category.name}`)} value={category.id} />
                             ))}
                         </Picker>
                     </View>

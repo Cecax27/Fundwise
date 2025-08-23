@@ -1,20 +1,14 @@
-import { StatusBar } from 'react-native'
 import * as Font from 'expo-font';
 import { useEffect, useState } from 'react';
 import 'react-native-url-polyfill/auto'
-import { supabase } from '../lib/supabase/client'
-import { Slot } from 'expo-router';
+import { Slot, useRouter } from 'expo-router';
 import ThemeProvider from '../theme/ThemeProvider';
-import { useTheme } from '../theme/useTheme';
 import * as Linking from 'expo-linking';
-import { useRouter } from 'expo-router';
 
 export default function RootLayout() {
-  const { theme, isDark } = useTheme();
   const router = useRouter()
 
   const [fontLoaded, setFontLoaded] = useState(false);
-  const [session, setSession] = useState(null)
 
   useEffect(() => {
     async function loadFonts() {
@@ -32,13 +26,6 @@ export default function RootLayout() {
       setFontLoaded(true);
     }
     loadFonts();
-    
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
 
     const subscription = Linking.addEventListener('url', ({ url }) => {
       if (url.includes('/auth/callback')) {
@@ -50,7 +37,6 @@ export default function RootLayout() {
         subscription.remove();
       };
     });
-
 
   }, []);
 

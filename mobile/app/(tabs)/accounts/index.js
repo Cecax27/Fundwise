@@ -1,9 +1,10 @@
-import { View, Text, Alert, FlatList, StyleSheet, Dimensions, RefreshControl, ActivityIndicator} from 'react-native'
+import { View, Text, Alert, FlatList, StyleSheet, Dimensions, RefreshControl, ActivityIndicator } from 'react-native'
 import { makeStyles } from '../../../assets/uiStyles'
 import { useState, useEffect, useMemo } from 'react'
 import { getAccounts, getAccountsTypes, getCreditCardSpendings, deleteAccount } from '../../../lib/supabase/transactions'
 import { useRouter, Link } from 'expo-router'
 import { useTheme } from '../../../theme/useTheme'
+import { useTranslation } from 'react-i18next'
 
 import {Account} from '../../../components/account'
 import {AddAccountCard} from '../../../components/addAccountCard'
@@ -17,7 +18,7 @@ const SIDE_PADDING = (SCREEN_WIDTH - ITEM_SIZE) / 2;
 export default function HomeScreen() {
     const { theme } = useTheme()
     const styles = useMemo(() => makeStyles(theme), [theme])
-
+    const { t } = useTranslation()
     const router = useRouter()
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false)
@@ -68,20 +69,20 @@ export default function HomeScreen() {
 
     const accountsWithAddCard = [
         ...accounts,
-        { id: 'add', name: 'Agregar Cuenta', isAddButton: true },
+        { id: 'add', name: t('accounts.addAccount'), isAddButton: true },
     ]
 
     const handleDeleteButton = () => {
         Alert.alert(
-            "Delete account",
-            "Are you sure you want to delete the account " + accountsWithAddCard[selectedIndex].name + "? All the account transactions will be delete too.",
+            t('accounts.deleteAccount.title'),
+            t('accounts.deleteAccount.message', { accountName: accountsWithAddCard[selectedIndex].name }),
             [
                 {
-                    text: "Cancel",
+                    text: t('accounts.deleteAccount.cancel'),
                     style: "cancel"
                 },
                 {
-                    text: "Delete",
+                    text: t('accounts.deleteAccount.delete'),
                     onPress: async () => {
                         const result = await deleteAccount(accountsWithAddCard[selectedIndex].id)
                         if (result === true) {
@@ -90,11 +91,11 @@ export default function HomeScreen() {
                         if (result !== true) {
                             console.log(result)
                             Alert.alert(
-                                "Error",
-                                result.message,
+                                t('shared.error'),
+                                t('accounts.errors.deleteFailed'),
                                 [
                                     {
-                                        text: "OK",
+                                        text: t('shared.ok'),
                                         style: "cancel"
                                     }
                                 ],
@@ -147,18 +148,18 @@ export default function HomeScreen() {
                     <OptionsMenu.Item icon='delete' color="#e1523d" onPress={handleDeleteButton}/>
                 </OptionsMenu>
                 <View style={accountsStyle.propertyView}>
-                    <Text style={styles.p}>Account type</Text>
-                    <Text style={styles.label}>{accountTypes.find(type => type.id === accountsWithAddCard[selectedIndex].account_type).type.replace('_', ' ').replace(/\w/, c => c.toUpperCase())}</Text>
+                    <Text style={styles.p}>{t('accounts.accountType')}</Text>
+                    <Text style={styles.label}>{t(`accounts.types.${accountTypes.find(type => type.id === accountsWithAddCard[selectedIndex].account_type).type}`)}</Text>
                 </View>
                 {2 === accountsWithAddCard[selectedIndex].account_type &&
                 <View style={accountsStyle.propertyView}>
-                    <Text style={styles.p}>Cuttof date</Text>
+                    <Text style={styles.p}>{t('accounts.cutoffDate')}</Text>
                     <Text style={styles.label}>{accountsWithAddCard[selectedIndex].cutt_off_day??'N/A'}</Text>
                 </View>
                 }
                 {2 === accountsWithAddCard[selectedIndex].account_type &&
                 <View style={accountsStyle.propertyView}>
-                    <Text style={styles.p}>Minimum payment</Text>
+                    <Text style={styles.p}>{t('accounts.minimumPayment')}</Text>
                     <Text style={styles.label}>{creditCardSpendings?formatMoney(creditCardSpendings??0):'Loading'}</Text>
                 </View>
                 }

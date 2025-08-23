@@ -5,11 +5,13 @@ import { Link, useRouter } from 'expo-router'
 import { makeStyles } from '../assets/uiStyles'
 import { useTheme } from '../theme/useTheme'
 import { checkWelcomeSeen } from '../lib/welcomeSeen'
+import { useTranslation } from 'react-i18next';
 
 export default function Auth() {
 const {theme} = useTheme()
 const styles = useMemo(() => makeStyles(theme), [theme])
 const [seenWelcome, setSeenWelcome] = useState(false)
+const { t } = useTranslation();
 
   const router = useRouter()
   const [email, setEmail] = useState('')
@@ -44,7 +46,7 @@ const [seenWelcome, setSeenWelcome] = useState(false)
           >
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Text style={[styles.p, {marginTop: 22}]}>
-          Email
+          {t('shared.email')}
         </Text>
         <TextInput
           onChangeText={(text) => setEmail(text)}
@@ -62,7 +64,7 @@ const [seenWelcome, setSeenWelcome] = useState(false)
       </View>
       <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
         <Text style={styles.p}>
-          Password
+          {t('shared.password')}
         </Text>
         <TextInput
           onChangeText={(text) => setPassword(text)}
@@ -84,12 +86,12 @@ const [seenWelcome, setSeenWelcome] = useState(false)
         disabled={loading} 
         onPress={() => signInWithEmail()} 
         style={styles.button}>
-          <Text style={styles.buttonText}>Sign in</Text>
+          <Text style={styles.buttonText}>{t('login.button')}</Text>
         </Pressable>
       </View>
       <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
         <Link href="/signUp">
-          <Text style={{ color: theme.primary, fontFamily: 'Montserrat-SemiBold'}}>Don&apos;t have an account? Sign up</Text>
+          <Text style={{ color: theme.primary, fontFamily: 'Montserrat-SemiBold'}}>{t('login.create-account')}</Text>
         </Link>
       </View>
     </KeyboardAvoidingView>}

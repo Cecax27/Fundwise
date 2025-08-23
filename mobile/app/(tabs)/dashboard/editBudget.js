@@ -2,26 +2,28 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '../../../theme/useTheme';
+import { useTranslation } from 'react-i18next';
 import { makeStyles } from '../../../assets/uiStyles';
 import { Picker } from '@react-native-picker/picker';
 import { Slider } from '@react-native-assets/slider';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { updateBudget } from '../../../lib/supabase/tools';
 
-const BUDGET_TYPES = [
-  { id: 'month', name: 'Monthly' },
-  { id: 'week', name: 'Weekly' },
-  { id: 'year', name: 'Yearly' },
-  { id: 'custom', name: 'Custom' },
-];
-
 export default function EditBudget() {
   const { plan } = useLocalSearchParams();
   const parsedPlan = plan ? JSON.parse(plan) : null;
   
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
+
+  const BUDGET_TYPES = useMemo(() => [
+    { id: 'month', name: t('budget.types.month') },
+    { id: 'week', name: t('budget.types.week') },
+    { id: 'year', name: t('budget.types.year') },
+    { id: 'custom', name: t('budget.types.custom') },
+  ], [t]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [scrollEnabled, setScrollEnabled] = useState(true);
@@ -60,18 +62,24 @@ export default function EditBudget() {
     if (formData.categories.essentials.limit_percentage + 
         formData.categories.discretionary.limit_percentage + 
         formData.categories.savings.limit_percentage > 100) {
-      Alert.alert('Ups', 'You cant allocate more than 100%',
-        [{ text: 'Let me try again' }]
+      Alert.alert(
+        t('budget.alerts.overallocation.title'), 
+        t('budget.alerts.overallocation.message'),
+        [{ text: t('budget.alerts.button') }]
       );
       return;
     } else if (formData.type === 'custom' && formData.customDays <= 0) {
-      Alert.alert('Ups', 'You need to put a valid period length.',
-        [{ text: 'Let me try again' }]
+      Alert.alert(
+        t('budget.alerts.invalidPeriod.title'), 
+        t('budget.alerts.invalidPeriod.message'),
+        [{ text: t('budget.alerts.button') }]
       );
       return;
     } else if (formData.name.trim() === '') {
-      Alert.alert('Ups', 'Did you forget to name your budget?',
-        [{ text: 'Let me try again' }]
+      Alert.alert(
+        t('budget.alerts.missingName.title'), 
+        t('budget.alerts.missingName.message'),
+        [{ text: t('budget.alerts.button') }]
       );
       return;
     }
@@ -85,11 +93,17 @@ export default function EditBudget() {
         plan_groups: formData.categories
       });
       
-      Alert.alert('Success', 'Budget updated successfully!');
+      Alert.alert(
+        t('budget.alerts.success.title'), 
+        t('budget.alerts.success.message')
+      );
       router.back();
     } catch (error) {
       console.error('Error updating budget:', error);
-      Alert.alert('Error', 'Failed to update budget');
+      Alert.alert(
+        t('budget.alerts.error.title'), 
+        t('budget.alerts.error.message')
+      );
     }
   };
 
@@ -146,7 +160,7 @@ export default function EditBudget() {
       
       <View style={{ marginTop: 10 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text style={[styles.filterLabel, { marginBottom: 5 }]}>Alert Threshold</Text>
+          <Text style={[styles.filterLabel, { marginBottom: 5 }]}>{t('budget.categories.alertThreshold')}</Text>
           <Text style={{ color: theme.subtext, fontSize: 12 }}>{formData.categories[category].alert_threshold}%</Text>
         </View>
         <Slider
@@ -168,7 +182,7 @@ export default function EditBudget() {
   if (isLoading) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={{ color: theme.text }}>Loading budget...</Text>
+        <Text style={{ color: theme.text }}>{t('budget.loading')}</Text>
       </View>
     );
   }
@@ -181,7 +195,7 @@ export default function EditBudget() {
     >
       <Stack.Screen
         options={{
-          title: 'Edit Budget',
+          title: t('budget.title'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 15 }}>
               <Icon name="close" size={24} color={theme.text} />
@@ -201,24 +215,23 @@ export default function EditBudget() {
         scrollEnabled={scrollEnabled}
       >
         <View style={styles.filterSection}>
-          <Text style={styles.filterLabel}>Budget Name</Text>
+          <Text style={styles.filterLabel}>{t('budget.name')}</Text>
           <TextInput
-            placeholder='Operation Survive'
+            style={styles.textInput}
+            placeholder={t('budget.namePlaceholder')}
             value={formData.name}
             onChangeText={(text) => setFormData(prev => ({ ...prev, name: text }))}
-            style={styles.textInput}
             placeholderTextColor={theme.subtext}
           />
         </View>
 
         <View style={styles.filterSection}>
-          <Text style={styles.filterLabel}>Budget Type</Text>
-          <View style={{ width: '100%' }}>
+          <Text style={styles.sectionTitle}>{t('budget.type')}</Text>
+          <View style={styles.pickerContainer}>
             <Picker
               selectedValue={formData.type}
               onValueChange={(itemValue) => setFormData(prev => ({ ...prev, type: itemValue }))}
-              style={[styles.picker, { color: theme.text }]}
-              dropdownIconColor={theme.text}
+              style={{ color: theme.text }}
             >
               {BUDGET_TYPES.map((type) => (
                 <Picker.Item 
@@ -232,29 +245,27 @@ export default function EditBudget() {
         </View>
 
         {formData.type === 'custom' && (
-          <View style={styles.filterSection}>
-            <Text style={styles.filterLabel}>Period Length (days)</Text>
+          <>
+            <Text style={styles.sectionTitle}>{t('budget.customDays')}</Text>
             <TextInput
-              placeholder='30'
+              style={styles.input}
+              keyboardType="numeric"
               value={formData.customDays.toString()}
               onChangeText={(text) => {
-                const days = parseInt(text) || 1;
-                setFormData(prev => ({ ...prev, customDays: Math.max(1, days) }));
+                const num = parseInt(text) || 0;
+                setFormData(prev => ({ ...prev, customDays: num }));
               }}
-              keyboardType='numeric'
-              style={styles.textInput}
+              placeholderTextColor={theme.subtext}
             />
-          </View>
+          </>
         )}
 
         <View style={{ marginTop: 20 }}>
-          <Text style={[styles.sectionTitle, { color: theme.text, marginBottom: 15 }]}>
-            Budget Allocation
-          </Text>
+          <Text style={styles.sectionTitle}>{t('budget.allocation')}</Text>
           
           <View style={{ marginBottom: 20, padding: 15, backgroundColor: theme.surface, borderRadius: 10 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
-              <Text style={{ color: theme.text }}>Total Allocated</Text>
+              <Text style={{ color: theme.text }}>{t('budget.totalAllocated')}</Text>
               <Text style={{ 
                 color: (formData.categories.essentials.limit_percentage + 
                   formData.categories.discretionary.limit_percentage + 
@@ -267,18 +278,18 @@ export default function EditBudget() {
               </Text>
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ color: theme.subtext, fontSize: 12 }}>Remaining</Text>
+              <Text style={{ color: theme.subtext, fontSize: 12 }}>{t('budget.remaining')}</Text>
               <Text style={{ color: theme.subtext, fontSize: 12 }}>
                 {100 - (formData.categories.essentials.limit_percentage + 
                        formData.categories.discretionary.limit_percentage + 
-                       formData.categories.savings.limit_percentage)}% available
+                       formData.categories.savings.limit_percentage)}% {t('budget.available')}
               </Text>
             </View>
           </View>
 
-          {renderPercentageSlider('essentials', 'Essentials')}
-          {renderPercentageSlider('discretionary', 'Discretionary')}
-          {renderPercentageSlider('savings', 'Savings')}
+          {renderPercentageSlider('essentials', t('budget.categories.essentials'))}
+          {renderPercentageSlider('discretionary', t('budget.categories.discretionary'))}
+          {renderPercentageSlider('savings', t('budget.categories.savings'))}
           
         </View>
       </ScrollView>
