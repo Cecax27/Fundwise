@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import { hexToRgba } from "../lib/utils";
 
 
-export const styles = StyleSheet.create({
+export const styles_toremove = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -282,12 +282,16 @@ export function makeStyles(theme){
   },
   picker: {
     borderRadius: 100,
-    marginBottom: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    fontSize:14,
     fontFamily: 'Montserrat-Medium',
     color: theme.text,
     flex:1,
+    borderWidth:1,
+    borderColor:theme.border,
+    padding:10,
+    marginVertical:10,
   },
   modalFooter: {
     marginTop: 20,
@@ -348,6 +352,13 @@ export function makeStyles(theme){
     fontSize: 14,
     color: theme.text,
     fontFamily: 'Montserrat-Medium',
+    borderWidth:1,
+    borderColor:theme.border,
+    borderRadius:25,
+    padding:10,
+    marginVertical:10,
+    alignItems:'center',
+    justifyContent:'center'
   },
   button: {
     backgroundColor: theme.primary,

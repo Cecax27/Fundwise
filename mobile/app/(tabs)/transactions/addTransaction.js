@@ -109,7 +109,7 @@ export default function AddTransaction() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.date')}</Text>
+                    <Text style={styles.filterLabel}>{t('transactions.date')}</Text>
                     <View style={{ position: 'relative' }}>
                         {dateVisible && (
                             <DateTimePicker 
@@ -135,7 +135,7 @@ export default function AddTransaction() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.description')}</Text>
+                    <Text style={styles.filterLabel}>{t('transactions.description')}</Text>
                     <TextInput
                         placeholder={t('transactions.descriptionPlaceholder')}
                         value={formData.description}
@@ -146,7 +146,7 @@ export default function AddTransaction() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.amount')}</Text>
+                    <Text style={styles.filterLabel}>{t('transactions.amount')}</Text>
                     <TextInput
                         placeholder={t('transactions.amountPlaceholder')}
                         value={formData.amount}
@@ -158,7 +158,7 @@ export default function AddTransaction() {
                 </View>
 
                 <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{type==='transfer' ? t('transactions.fromAccount') : t('transactions.account')}</Text>
+                    <Text style={styles.filterLabel}>{type==='transfer' ? t('transactions.fromAccount') : t('transactions.account')}</Text>
                     <View>
                         <Picker
                             selectedValue={formData.account_id}
@@ -175,8 +175,8 @@ export default function AddTransaction() {
                 </View>
 
                 {type==='transfer' && <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={[styles.filterLabel, { marginBottom: 8 }]}>{t('transactions.toAccount')}</Text>
-                    <View style={{ width: '100%' }}>
+                    <Text style={styles.filterLabel}>{t('transactions.toAccount')}</Text>
+                    <View style={{ width: '100%'}}>
                         <Picker
                             selectedValue={formData.to_account_id}
                             onValueChange={(itemValue) => setFormData(prev => ({ ...prev, to_account_id: itemValue }))}

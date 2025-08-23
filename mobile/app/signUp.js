@@ -63,7 +63,7 @@ export default function SignUp() {
                 value={email}
                 placeholder="luke@jedi.com"
                 autoCapitalize={'none'}
-                style={styles.textInput}
+                style={[styles.textInput, {width:250}]}
                 placeholderTextColor={theme.subtext}
                 textAlign="center"
                 keyboardType='email-address'
@@ -79,7 +79,7 @@ export default function SignUp() {
               secureTextEntry={true}
               placeholder={t('signup.password-holder')}
               autoCapitalize={'none'}
-              style={styles.textInput}
+              style={[styles.textInput, {width:250}]}
               placeholderTextColor={theme.subtext}
               textAlign="center"
               textContentType='password'
@@ -96,7 +96,7 @@ export default function SignUp() {
               secureTextEntry={true}
               placeholder={t('signup.confirm-password-holder')}
               autoCapitalize={'none'}
-              style={styles.textInput}
+              style={[styles.textInput, {width:250}]}
               placeholderTextColor={theme.subtext}
               textAlign="center"
               textContentType='password'

@@ -42,7 +42,7 @@ export const darkTheme = {
   text: palette.white,
   subtext: palette.gray300,
   primary: palette.mustard,
-  border: '#2A2A2A',
+  border: palette.gray700,
   success: palette.green600,
   error: palette.red600,
   income: palette.mint,
