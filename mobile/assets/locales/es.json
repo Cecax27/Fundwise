@@ -3,6 +3,7 @@
         "edit": "Editar",
         "success": "Éxito",
         "error": "Error",
+        "delete":"Eliminar",
         "language":{
             "es":"Español",
             "en":"Inglés"

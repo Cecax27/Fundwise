@@ -1,10 +1,11 @@
-import { Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { Text, TouchableOpacity } from 'react-native'
 import React, { useMemo } from 'react'
 import { useTheme } from '../theme/useTheme'
+import { makeStyles } from '../assets/uiStyles'
 
 export default function FButton({ text, onPress, active = true }) {
     const { theme } = useTheme()
-    const styles = useMemo(() => makeStyle(theme), [theme])
+    const styles = useMemo(() => makeStyles(theme), [theme])
   return (
     <TouchableOpacity 
         style={[styles.base, active ? styles.active : styles.disable]}
@@ -14,26 +15,3 @@ export default function FButton({ text, onPress, active = true }) {
     </TouchableOpacity>
     )
 }
-
-function makeStyle(theme){
-    return StyleSheet.create({
-    base: {
-        flexGrow: 1,
-        padding: 10,
-        borderRadius: 25,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    active: {
-        backgroundColor: theme.primary,
-    },
-    disable: {
-        backgroundColor: theme.surface,
-    },
-    activeText: {
-        color: theme.black,
-    },
-    disableText: {
-        color: theme.subtext,
-    }
-})}

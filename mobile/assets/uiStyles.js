@@ -363,12 +363,14 @@ export function makeStyles(theme){
   button: {
     backgroundColor: theme.primary,
     padding: 13,
-    paddingHorizontal:22,
+    paddingHorizontal:20,
     borderRadius: 50,
     marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
+    flexDirection:'row',
+    gap:3
   },
   buttonText: {
     color: 'black', 
@@ -524,4 +526,155 @@ languageText: {
   color: theme.subtext,
   marginRight: 8,
 },
+header: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 24,
+},
+backButton: {
+  marginRight: 16,
+  padding: 8,
+},
+card: {
+  backgroundColor: theme.surface,
+  borderRadius: 16,
+  padding: 20,
+  marginBottom: 16,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 8,
+  elevation: 3,
+},
+amountContainer: {
+  alignItems: 'center',
+  marginBottom: 22,
+  paddingVertical: 12,
+},
+amountLabel: {
+  fontSize: 12,
+  fontFamily: 'Montserrat-Medium',
+  color: theme.subtext,
+  marginBottom: 8,
+},
+amount: {
+  fontSize: 24,
+  fontFamily: 'Montserrat-SemiBold',
+},
+amountIncome: {
+  color: '#10B981', // Green for income
+},
+amountExpense: {
+  color: '#EF4444', // Red for expense
+},
+detailRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  paddingVertical: 12,
+  borderBottomWidth: 1,
+  borderBottomColor: theme.border,
+},
+detailLabel: {
+  fontSize: 12,
+  fontFamily: 'Montserrat-Regular',
+  color: theme.subtext,
+  flex: 1,
+},
+detailValue: {
+  fontSize: 14,
+  fontFamily: 'Montserrat-Regular',
+  color: theme.text,
+  textAlign: 'right',
+  flex: 1,
+},
+actionButtons: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginTop: 24,
+},
+editButton: {
+  backgroundColor: theme.primary,
+  marginRight: 12,
+},
+deleteButton: {
+  backgroundColor: '#FEE2E2',
+},
+editButtonText: {
+  color: '#FFFFFF',
+},
+deleteButtonText: {
+  color: '#DC2626',
+},
+icon: {
+  marginRight: 8,
+},
+loadingContainer: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+errorContainer: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: 20,
+},
+errorText: {
+  color: theme.error,
+  textAlign: 'center',
+  marginBottom: 20,
+},
+retryButton: {
+  backgroundColor: theme.primary,
+  paddingHorizontal: 20,
+  paddingVertical: 10,
+  borderRadius: 8,
+},
+retryButtonText: {
+  color: '#FFFFFF',
+  fontFamily: 'Montserrat-SemiBold',
+},
+transactionTypeIcon: {
+  width: 24,
+  height: 24,
+  borderRadius: 12,
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: 12,
+},
+transactionTypeIconIncome: {
+  backgroundColor: '#D1FAE5',
+},
+transactionTypeIconExpense: {
+  backgroundColor: '#FEE2E2',
+},
+transactionTypeIconTransfer: {
+  backgroundColor: '#E0F2FE',
+},
+headerContent: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent:'center',
+  flex: 1,
+},
+base: {
+  flexGrow: 1,
+  padding: 10,
+  borderRadius: 25,
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+active: {
+  backgroundColor: theme.primary,
+},
+disable: {
+  backgroundColor: theme.surface,
+},
+activeText: {
+  color: theme.black,
+},
+disableText: {
+  color: theme.subtext,
+}
 })};
