@@ -19,7 +19,6 @@ export default function NewBudget() {
     { id: 'month', name: t('budget.types.month') },
     { id: 'week', name: t('budget.types.week') },
     { id: 'year', name: t('budget.types.year') },
-    { id: 'custom', name: t('budget.types.custom') },
   ], [t]);
 
   const [scrollEnabled, setScrollEnabled] = useState(true);

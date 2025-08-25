@@ -22,7 +22,6 @@ export default function EditBudget() {
     { id: 'month', name: t('budget.types.month') },
     { id: 'week', name: t('budget.types.week') },
     { id: 'year', name: t('budget.types.year') },
-    { id: 'custom', name: t('budget.types.custom') },
   ], [t]);
 
   const [isLoading, setIsLoading] = useState(true);
