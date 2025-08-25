@@ -33,6 +33,7 @@
     "react-native-chart-kit": "^6.12.0",
     "react-native-color-picker": "^0.6.0",
     "react-native-date-picker": "^5.0.13",
+    "react-native-device-info": "^14.0.4",
     "react-native-gifted-charts": "^1.4.63",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-safe-area-context": "5.4.0",
@@ -53,6 +54,6 @@
   },
   "private": true,
   "eslintConfig": {
-    "extends":"./node_modules/standard/eslintrc.json"
+    "extends": "./node_modules/standard/eslintrc.json"
   }
 }

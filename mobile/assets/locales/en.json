@@ -26,7 +26,8 @@
         "terms":{
             "incomes": "Incomes",
             "spendings": "Spendings"
-        }
+        },
+        "thanks":"Thank you"
     },
     "welcome": {
         "title": "Welcome to Fundwise!",
@@ -285,6 +286,12 @@
         "editProfile": "Edit profile",
         "notifications": "Notifications",
         "help": "Help",
+        "bugreport": {
+            "title": "Report a bug",
+            "messageLabel" : "What is the problem?",
+            "messagePlaceholder" : "Please, give us details",
+            "confirmation" : "We apologize for the inconvenience.\n\nOur app is still in development, so we appreciate your feedback.\n\nWe will work to resolve it as soon as possible."
+        },
         "signOutConfirm":{
             "title":"Sign Out",
             "message":"Are you sure you wanto to sign out?"

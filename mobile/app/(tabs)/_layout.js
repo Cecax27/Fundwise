@@ -94,7 +94,7 @@ export default function TabsLayout() {
         title: t('tabs.settings'),
         tabBarIcon: ({color}) => <MaterialIcons name={ "settings" } size={32} color={color}/> ,
         headerTitle: t('tabs.settings'),
-        headerShown: true
+        headerShown: false
       }} />
     </Tabs>
     <StatusBar style={effectiveScheme} />

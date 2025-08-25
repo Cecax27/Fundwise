@@ -321,7 +321,8 @@ export function makeStyles(theme){
     fontSize: 24, 
     fontFamily: 'Quicksand-Bold', 
     marginTop: 20,
-    color: theme.text
+    color: theme.text,
+    marginBottom:22
   },
   h2: {
     fontSize: 16, 
