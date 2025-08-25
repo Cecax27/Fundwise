@@ -1,8 +1,8 @@
 import { View, Text, Pressable, Alert, ScrollView, Image } from 'react-native'
-import { makeStyles } from '../../assets/uiStyles'
-import { supabase } from '../../lib/supabase/client'
-import { useRouter } from 'expo-router'
-import { useTheme } from '../../theme/useTheme'
+import { makeStyles } from '../../../assets/uiStyles'
+import { supabase } from '../../../lib/supabase/client'
+import { useRouter, Stack } from 'expo-router'
+import { useTheme } from '../../../theme/useTheme'
 import { useMemo, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Ionicons } from '@expo/vector-icons'
@@ -84,14 +84,20 @@ export default function Configuration() {
 
 
   return (
+    <>
+    <Stack.Screen 
+    options={{
+        title: t('configuration.title'),
+    }}
+    />
     <ScrollView style={styles.fullContainer}>
       {/* Profile Section */}
       <View style={styles.profileSection}>
         <View style={styles.avatarContainer}>
           {user?.user_metadata?.avatar_url ? (
             <Image 
-              source={{ uri: user.user_metadata.avatar_url }} 
-              style={styles.avatar}
+            source={{ uri: user.user_metadata.avatar_url }} 
+            style={styles.avatar}
             />
           ) : (
             <View style={[styles.avatar, { backgroundColor: theme.primary }]}>
@@ -117,13 +123,13 @@ export default function Configuration() {
             onPress={handleThemeToggle}
             rightComponent={
               <Ionicons 
-                name={isDarkMode ? 'bulb' : 'bulb-outline'} 
-                size={24} 
-                color={theme.subtext} 
+              name={isDarkMode ? 'bulb' : 'bulb-outline'} 
+              size={24} 
+              color={theme.subtext} 
               />
             }
             hideArrow
-          />
+            />
           <View style={styles.divider} />
           <SettingItem
             icon={<Ionicons name="language" size={24} color={theme.subtext} />}
@@ -134,7 +140,7 @@ export default function Configuration() {
                 {t(`common.language.${i18n.language}`)}
               </Text>
             }
-          />
+            />
         </View>
       </View>
 
@@ -143,22 +149,27 @@ export default function Configuration() {
         <Text style={styles.sectionTitle}>{t('configuration.account')}</Text>
         <View style={styles.sectionContent}>
           <SettingItem
-            icon={<Ionicons name="person-outline" size={24} color={theme.text} />}
+            icon={<Ionicons name="person" size={24} color={theme.subtext} />}
             title={t('configuration.editProfile')}
             onPress={() => {}}
-          />
+            />
           <View style={styles.divider} />
           <SettingItem
-            icon={<Ionicons name="notifications-outline" size={24} color={theme.text} />}
+            icon={<Ionicons name="notifications" size={24} color={theme.subtext} />}
             title={t('configuration.notifications')}
             onPress={() => {}}
-          />
+            />
           <View style={styles.divider} />
           <SettingItem
-            icon={<Ionicons name="help-circle-outline" size={24} color={theme.text} />}
+            icon={<Ionicons name="help-circle" size={24} color={theme.subtext} />}
             title={t('configuration.help')}
             onPress={() => {}}
-          />
+            />
+          <SettingItem
+            icon={<Ionicons name="bug" size={24} color={theme.subtext} />}
+            title={t('configuration.bugreport.title')}
+            onPress={() => {router.push('/configuration/bugreport')}}
+            />
         </View>
       </View>
 
@@ -166,13 +177,14 @@ export default function Configuration() {
       <View style={[styles.section, { marginBottom: 30 }]}>
         <View style={styles.sectionContent}>
           <SettingItem
-            icon={<Ionicons name="log-out-outline" size={24} color={theme.error} />}
+            icon={<Ionicons name="log-out" size={24} color={theme.subtext} />}
             title={t('configuration.signOut')}
             titleStyle={{ color: theme.error }}
             onPress={signOut}
-          />
+            />
         </View>
       </View>
     </ScrollView>
+    </>
   );
 }
