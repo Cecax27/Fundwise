@@ -1,12 +1,13 @@
-import { View, Text, KeyboardAvoidingView, Platform, TextInput, Pressable } from 'react-native'
+import { View, Text, KeyboardAvoidingView, Platform, TextInput, Pressable, ActivityIndicator } from 'react-native'
 import { Stack, useRouter } from 'expo-router'
 import { makeStyles } from '../../../assets/uiStyles'
 import { useTheme } from '../../../theme/useTheme'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Ionicons } from '@expo/vector-icons'
-import { supabase } from '../../../lib/supabase/client'
-import DeviceInfo from 'react-native-device-info';
+import { insertReport } from '../../../lib/supabase/reports'
+import * as Device from 'expo-device'
+import * as Application from 'expo-application'
 
 export default function BugReport(){
     const { theme } = useTheme();
@@ -15,29 +16,24 @@ export default function BugReport(){
     const { t } = useTranslation();
 
     const [formData, setFormData]   = useState({})
+    const [loading, setLoading] = useState(false)
 
-    const handleSubmit = () =>{
+    const handleSubmit = async () =>{
+        setLoading(true);
         try {
             const deviceInfoJSON = {
-                os:  DeviceInfo.getSystemName(),
-                os_version: DeviceInfo.getSystemVersion(),
-                brand: DeviceInfo.getBrand(),
-                model: DeviceInfo.getModel(),
-                build_number: DeviceInfo.getBuildNumber(),
+                os:  Device.osName,
+                os_version: Device.osVersion,
+                brand: Device.brand,
+                model: Device.modelName,
             }
-            supabase
-                .from('reports')
-                .insert([{
-                    device_info:JSON.stringify(deviceInfoJSON),
-                    app_version:DeviceInfo.getVersion(),
-                    message:formData.message
-                }])
-                .select();
+            await insertReport({deviceInfoJSON, app_version:Application.nativeApplicationVersion, message:formData.message})
         } catch (error) {
             console.log(error);
         } finally {
             router.back();
             router.push('/configuration/bugreportconfirmation');
+            setLoading(false);
         }
     }
 
@@ -47,7 +43,7 @@ export default function BugReport(){
         options={{
             title: t('configuration.bugreport.title'),
             headerRight:()=>(
-                <Pressable onPress={handleSubmit}>
+                loading ? <ActivityIndicator size="small" color={theme.text} /> : <Pressable onPress={handleSubmit}>
                         <Ionicons name="send" size={24} color={theme.text}/>
                 </Pressable>
             )
