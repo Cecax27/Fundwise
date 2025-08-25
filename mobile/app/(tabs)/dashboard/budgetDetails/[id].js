@@ -7,7 +7,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useTheme } from '../../../../theme/useTheme';
 import { makeStyles } from '../../../../assets/uiStyles';
 import { getBudgetPlanDetails, deleteBudget } from '../../../../lib/supabase/tools';
-import { formatCurrency, hexToRgba } from '../../../../lib/utils';
+import { formatCurrency, hexToRgba, formatDateToISO } from '../../../../lib/utils';
 import { useTranslation } from 'react-i18next';
 
 const months = [
@@ -16,6 +16,7 @@ const months = [
 ];
 
 const years = Array.from({ length: 20 }, (_, i) => 2015 + i);
+  
 
 export default function BudgetDetails() {
     const { t } = useTranslation();
@@ -31,6 +32,8 @@ export default function BudgetDetails() {
     const [year, setYear] = useState(new Date().getFullYear());
     const [menuVisible, setMenuVisible] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false); // Used in confirmDelete function
+    const [weeks, setWeeks] = useState([])
+    const [week, setWeek] = useState(0)
 
     const openMenu = () => setMenuVisible(true);
     const closeMenu = () => setMenuVisible(false);
@@ -75,15 +78,61 @@ export default function BudgetDetails() {
         );
     };
 
-    useEffect(() => {
-    const fetchBudgetPlan = async () => {
-        const reference_date = `${year}-${String(month).padStart(2, "0")}-01`;
-        const data = await getBudgetPlanDetails(params.id, reference_date);
-        setBudgetPlan(data);  
-    };
+    useEffect(()=>{        
+        function formatWeekLabel(startDate, endDate) {
+            const startMonth = months[startDate.getMonth() ];
+            const endMonth = months[endDate.getMonth() ];
+          
+            return `${t(`common.months.${startMonth}`).substring(0, 3)} ${startDate.getDate()} - ${t(`common.months.${endMonth}`).substring(0, 3)} ${endDate.getDate()}`;
+        }
+        function getWeeksOfMonth(year, month) {
+            const weeks = [];
+            
+            const firstDay = new Date(year, month -1, 1);
+            const lastDay = new Date(year, month, 0);
+        
+            let firstMonday = new Date(firstDay);
+            while (firstMonday.getDay() !== 1) {
+              firstMonday.setDate(firstMonday.getDate() + 1);
+            }
+          
+            let currentMonday = new Date(firstMonday);
+            while (currentMonday <= lastDay) {
+              let currentSunday = new Date(currentMonday);
+              currentSunday.setDate(currentSunday.getDate() + 6);
+          
+              if (currentSunday > lastDay) {
+                currentSunday = lastDay;
+              }
+          
+              weeks.push({
+                startDate: formatDateToISO(currentMonday),
+                label: formatWeekLabel(currentMonday, currentSunday)
+              });
+          
+              currentMonday.setDate(currentMonday.getDate() + 7);
+            }
+          
+            return weeks;
+        }
+        setWeeks(getWeeksOfMonth(year, month))
+    }, [month, year, t])
 
-    fetchBudgetPlan();
-    }, [params.id, year, month]);
+    useEffect(() => {
+        const fetchBudgetPlan = async () => {          
+            let reference_date = ""
+            if (budgetPlan?.period_type === 'week'){
+                reference_date = weeks[week-1].startDate;
+            } else {
+                reference_date = `${year}-${String(month).padStart(2, "0")}-01`;
+            }
+            
+            const data = await getBudgetPlanDetails(params.id, reference_date);
+            setBudgetPlan(data);  
+        };
+
+        fetchBudgetPlan();
+    }, [params.id, year, month, week, weeks]);
 
   return (
         <>
@@ -161,7 +210,7 @@ export default function BudgetDetails() {
                         </View>
                         <View>
                             <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                <Picker
+                                {budgetPlan?.period_type !== 'year' && <Picker
                                     selectedValue={month}
                                     style={styles.picker}
                                     onValueChange={(value) => setMonth(value)}
@@ -170,7 +219,7 @@ export default function BudgetDetails() {
                                     {months.map((m, index) => (
                                     <Picker.Item key={index} label={t(`common.months.${m}`)} value={index + 1} />
                                     ))}
-                                </Picker>
+                                </Picker>}
 
                                 <Picker
                                     selectedValue={year}
@@ -182,6 +231,18 @@ export default function BudgetDetails() {
                                     <Picker.Item key={index} label={y.toString()} value={y} />
                                     ))}
                                 </Picker>
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent:'center' }}>
+                                {budgetPlan?.period_type === 'week' && <Picker
+                                    selectedValue={week}
+                                    style={styles.picker}
+                                    onValueChange={(value) => setWeek(value)}
+                                    dropdownIconColor={theme.text}
+                                >
+                                    {weeks.map((m, index) => (
+                                    <Picker.Item key={index} label={m.label} value={index + 1} />
+                                    ))}
+                                </Picker>}
                             </View>
                         </View>
                         <View style={styles.detailsContainer}>

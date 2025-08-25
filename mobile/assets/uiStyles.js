@@ -291,7 +291,7 @@ export function makeStyles(theme){
     borderWidth:1,
     borderColor:theme.border,
     padding:10,
-    marginVertical:10,
+    marginBottom:10,
   },
   modalFooter: {
     marginTop: 20,

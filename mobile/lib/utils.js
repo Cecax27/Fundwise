@@ -26,3 +26,7 @@ export const hexToRgba = (hex, opacity = 1) => {
   const b = bigint & 255;
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 };
+
+export function formatDateToISO(date) {
+  return date.toISOString().split("T")[0]; // yyyy-mm-dd
+}
