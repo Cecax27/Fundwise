@@ -293,13 +293,12 @@ export const updateAccount = async (params) => {
     console.error('Error al actualizar cuenta:', error);
     return false
   } else {
-    console.log('Cuenta actualizada exitosamente:', data);
     return true
   }
 }
 
-export const getAccounts = async () => {
-  const { data, error } = await supabase.from('accounts').select('*');
+export const getAccounts = async () => { 
+  const { data, error } = await supabase.from('accounts_with_balance').select('*');
   if (error) {
     console.error('Error al obtener cuentas:', error);
   } else {

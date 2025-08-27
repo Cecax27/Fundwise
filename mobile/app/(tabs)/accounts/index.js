@@ -1,11 +1,11 @@
 import { View, Text, Alert, FlatList, StyleSheet, Dimensions, RefreshControl, ActivityIndicator } from 'react-native'
 import { makeStyles } from '../../../assets/uiStyles'
 import { useState, useEffect, useMemo } from 'react'
-import { getAccounts, getAccountsTypes, getCreditCardSpendings, deleteAccount } from '../../../lib/supabase/transactions'
+import { getAccounts, getCreditCardSpendings, deleteAccount } from '../../../lib/supabase/transactions'
 import { useRouter, Link } from 'expo-router'
 import { useTheme } from '../../../theme/useTheme'
 import { useTranslation } from 'react-i18next'
-
+import { ACCOUNT_TYPES } from '../../../constants/appConstans'
 import {Account} from '../../../components/account'
 import {AddAccountCard} from '../../../components/addAccountCard'
 import { formatMoney } from '../../../lib/utils/formatMoney'
@@ -24,8 +24,6 @@ export default function HomeScreen() {
     const [loading, setLoading] = useState(false)
     const [accounts, setAccounts] = useState([])
     const [selectedIndex, setSelectedIndex] = useState(0)
-    const [accountTypes, setAccountTypes] = useState([])
-    const [loadingTypes, setLoadingTypes] = useState(true)
     const [creditCardSpendings, setCreditCardSpendings] = useState(null)
 
     async function fetchAccounts() {
@@ -38,11 +36,6 @@ export default function HomeScreen() {
     useEffect(() => {
         setLoading(true)
         fetchAccounts()
-
-        getAccountsTypes().then(data => {
-            setAccountTypes(data)
-            setLoadingTypes(false)
-        })
     }, [])
 
     function onRefresh() {
@@ -139,7 +132,7 @@ export default function HomeScreen() {
                 }
                 />
             </View>
-            {!loading && !loadingTypes && accountsWithAddCard[selectedIndex] && !accountsWithAddCard[selectedIndex].isAddButton &&
+            {!loading && accountsWithAddCard[selectedIndex] && !accountsWithAddCard[selectedIndex].isAddButton &&
             <View style={accountsStyle.infoContainer}>
                 <OptionsMenu>
                     <Link href={'/accounts/editaccount/' + accountsWithAddCard[selectedIndex].id} asChild>
@@ -149,7 +142,7 @@ export default function HomeScreen() {
                 </OptionsMenu>
                 <View style={accountsStyle.propertyView}>
                     <Text style={styles.p}>{t('accounts.accountType')}</Text>
-                    <Text style={styles.label}>{t(`accounts.types.${accountTypes.find(type => type.id === accountsWithAddCard[selectedIndex].account_type).type}`)}</Text>
+                    <Text style={styles.label}>{t(`accounts.types.${ACCOUNT_TYPES.find(type => type.id === accountsWithAddCard[selectedIndex].account_type).type}`)}</Text>
                 </View>
                 {2 === accountsWithAddCard[selectedIndex].account_type &&
                 <View style={accountsStyle.propertyView}>
