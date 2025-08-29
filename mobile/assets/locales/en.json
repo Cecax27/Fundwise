@@ -305,7 +305,11 @@
         "confirm-password-holder": "One more time",
         "button": "Create",
         "have-account": "Already have an account? Sign in",
-        "password-no-match": "The password doesn't match, try again."
+        "password-no-match": "The password doesn't match, try again.",  
+        "errors":{
+            "accountExists": "Oops! Looks like this email is already in use. Try logging in or use a different one",
+            "password-empty": "Oops! Did you forget write a password?"
+        }
     },
     "check-email": {
         "title": "Check your inbox",

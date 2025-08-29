@@ -305,7 +305,11 @@
         "confirm-password-holder": "Una vez más",
         "button": "Crear",
         "have-account": "¿Ya tienes cuenta? Inicia sesión",
-        "password-no-match": "La contraseña no coincide, intenta de nuevo."
+        "password-no-match": "La contraseña no coincide, intenta de nuevo.",  
+        "errors":{
+            "accountExists": "¡Ups! Parece que este correo ya está en uso. Inicia sesión o prueba con otro correo.",
+            "password-empty": "¡Ups! ¿Olvidaste escribir una contraseña?"
+        }
     },
     "check-email": {
         "title": "Revisa tu bandeja",

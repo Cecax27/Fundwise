@@ -24,23 +24,31 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false)
 
   async function signUpWithEmail() {
-  setLoading(true)
-  if (password !== passwordConfirmation){
-    Alert.alert('Oh no', t('signup.password-no-match'))
-    setLoading(false)
-    return
-  }
-  const {
-      data: { session },
-      error,
-  } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-  })
+    setLoading(true);
+    if (password !== passwordConfirmation){
+      Alert.alert('Oh no', t('signup.password-no-match'));
+      setLoading(false);
+      return;
+    }
+    
+    if (password === ""){
+      Alert.alert(t('signup.errors.password-empty'));
+      setLoading(false);
+      return;  
+    }
 
-  if (error) Alert.alert(error.message)
-  if (!session) router.replace('checkEmail')
-  setLoading(false)
+    const { data: { session }, error } = await supabase.auth.signUp({
+        email,
+        password,
+    })
+    
+    if (error) {
+      Alert.alert(error.message);
+      setLoading(false);
+      return;
+    };
+    if (!session) router.replace('checkEmail');
+    setLoading(false);
   }
 
   return (
