@@ -12,8 +12,8 @@ export default function Welcome() {
     const { t } = useTranslation();
     const router = useRouter();
 
-    const handleGetStarted = () => {
-        setWelcomeSeen()
+    const handleGetStarted = async () => {
+        await setWelcomeSeen()
         router.replace('/(tabs)/accounts/')
     }
 

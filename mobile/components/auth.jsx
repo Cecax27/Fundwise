@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 export default function Auth() {
 const {theme} = useTheme()
 const styles = useMemo(() => makeStyles(theme), [theme])
-const [seenWelcome, setSeenWelcome] = useState(false)
 const { t } = useTranslation();
 
   const router = useRouter()
@@ -25,9 +24,8 @@ const { t } = useTranslation();
     if (error) Alert.alert(error.message)
     else {
       checkWelcomeSeen()
-      .then((result)=>setSeenWelcome(result))
-      .then(()=>{
-        if(seenWelcome) { router.replace('/(tabs)/')}
+      .then((welcomeSeen)=>{
+        if(welcomeSeen) { router.replace('/(tabs)/')}
         else { router.replace('/welcome')}
       })
       .catch((error)=>console.log(error))

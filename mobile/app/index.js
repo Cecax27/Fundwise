@@ -21,7 +21,6 @@ export default function Index() {
 
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [seenWelcome, setSeenWelcome] = useState(false)
     
     useEffect(() => {
       setLoading(true);
@@ -34,9 +33,8 @@ export default function Index() {
       setLoading(false);
       if (session) {
         checkWelcomeSeen()
-        .then((result)=>setSeenWelcome(result))
-        .then(()=>{
-          if(seenWelcome) { router.replace('/(tabs)/')}
+        .then((welcomeSeen)=>{         
+          if(welcomeSeen) { router.replace('/(tabs)/')}
           else { router.replace('/welcome')}
         })
         .catch((error)=>console.log(error))
