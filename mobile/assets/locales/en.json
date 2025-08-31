@@ -246,7 +246,9 @@
         "error": {
             "title": "Error",
             "message": "Something went wrong",
-            "addFailed": "Failed to add transaction"
+            "addFailed": "Failed to add transaction",
+            "notAccounts":"You need to add a bank account before creating a transaction.",
+            "notAccountSelected":"You need to select an account before creating a transaction."
         },
         "categories":{
             "rent":"Rent",

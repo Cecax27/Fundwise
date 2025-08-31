@@ -246,7 +246,9 @@
         "error": {
             "title": "Error",
             "message": "Algo salió mal",
-            "addFailed": "Error al agregar la transacción"
+            "addFailed": "Error al agregar la transacción",
+            "noAccounts": "Debes agregar una cuenta bancaria antes de crear una transacción.",
+            "noAccountSelected": "Selecciona una cuenta antes de agregar la transacción."
         },
         "categories":{
             "rent":"Renta",

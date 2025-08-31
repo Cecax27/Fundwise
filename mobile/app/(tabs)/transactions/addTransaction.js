@@ -39,6 +39,10 @@ export default function AddTransaction() {
 
     const fetchOptions = async () => {
        getAccounts().then((accounts) => {
+            if (accounts.length === 0) {
+                Alert.alert(t('common.error'), t('transactions.error.noAccounts'))
+                router.replace('/(tabs)/accounts/newaccount')
+            }
             setAccounts(accounts)
         })
         getCategories().then((categories) => {
@@ -66,6 +70,11 @@ export default function AddTransaction() {
             const formattedDate = date.toISOString().slice(0, 10)
             const parsedAmount = parseFloat(amount)
             let result = {}
+
+            if (!account_id){
+                Alert.alert(t('common.error'), t('transactions.error.noAccountSelected'))
+                return
+            }
 
             if (type === 'spending') {
                 result = await addTransaction({date: formattedDate, amount: parsedAmount, description, category_id, account_id})
