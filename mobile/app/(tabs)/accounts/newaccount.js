@@ -7,9 +7,8 @@ import { getAccountsTypes, addAccount } from '../../../lib/supabase/transactions
 import { useTheme } from '../../../theme/useTheme';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-
-import { ACCOUNT_COLORS } from '../../../constants/colors';
-import { ACCOUNT_ICONS } from '../../../constants/icons';
+import ColorPicker from '../../../components/colorPicker';
+import IconPicker from '../../../components/iconPicker';
 
 export default function NewAccount () {
     const { theme } = useTheme()
@@ -104,41 +103,10 @@ export default function NewAccount () {
                             />
                         </View>
 
-                        <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>{t('newAccount.color')}</Text>
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                        <ColorPicker value={formData.color} onPress={(color) => setFormData(prev => ({ ...prev, color }))} />
 
-                            {ACCOUNT_COLORS.map(color => (
-                                <TouchableOpacity
-                                key={color}
-                                onPress={() => setFormData(prev => ({ ...prev, color }))}
-                                style={{ backgroundColor: color, width: 30, height: 30, margin: 5, borderRadius: 20 }}
-                                />
-                            ))}
-                            </View>
-                        </View>
+                        <IconPicker value={formData.icon} onPress={(icon)=>setFormData(prev => ({ ...prev, icon }))} activeColor={formData.color} />
 
-                        <View style={styles.filterSection}>
-                            <Text style={styles.filterLabel}>{t('newAccount.icon')}</Text>
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 25 }}>
-                                {ACCOUNT_ICONS.map(icon => (
-                                    <TouchableOpacity
-                                        key={icon.name}
-                                        onPress={() => setFormData(prev => ({ ...prev, icon: icon.name }))}
-                                        style={{ 
-                                            width: 40, 
-                                            height: 40,
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            borderRadius: 30,
-                                            backgroundColor: formData.icon === icon.name ? '#e3e3e3' : '#f5f5f5'
-                                        }}
-                                    >
-                                        <Icon name={icon.name} size={24} color={formData.color} />
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        </View>
 
                         <View style={styles.filterSection}>
                             <Text style={styles.filterLabel}>{t('newAccount.primaryAccount')}</Text>
