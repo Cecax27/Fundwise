@@ -1,14 +1,14 @@
 import { Stack } from 'expo-router';
-import { TransactionsFiltersProvider} from '../../../contexts/FiltersContext'
+import { TransactionsProvider} from '../../../contexts/TransactionsContext'
 
 export default function TransactionsLayout() {
   return (
-  <TransactionsFiltersProvider>
+  <TransactionsProvider>
     <Stack 
       screenOptions={{
           headerShown: false
       }}
     />
-  </TransactionsFiltersProvider>
+  </TransactionsProvider>
     );
 }
