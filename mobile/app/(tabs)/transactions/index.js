@@ -1,4 +1,4 @@
-import { View, Pressable, FlatList, RefreshControl } from 'react-native'
+import { View, Pressable, FlatList, RefreshControl, Text } from 'react-native'
 import {makeStyles} from '../../../assets/uiStyles'
 import { MaterialIcons } from '@expo/vector-icons';
 import { useMemo, useEffect, useState, useContext } from 'react';
@@ -7,17 +7,16 @@ import { getSpendingsTable } from '../../../lib/supabase/transactions';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../../theme/useTheme';
 import { TransactionsFiltersContext } from '../../../contexts/FiltersContext';
-
+import { useTranslation } from 'react-i18next';
 import DateGroup from '../../../components/dateGroup';
 import Transaction from '../../../components/transaction'
-import { useTranslation } from 'react-i18next';
 
 export default function Transactions() {
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { i18n } = useTranslation();
   const router = useRouter()
-
+  const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [data, setData] = useState([]);
@@ -89,8 +88,15 @@ export default function Transactions() {
           filter={filter}
           setFilter={setFilter}
         />
+
+        {data.length === 0 && <View style={[styles.container, {alignItems:'center', gap:20}]}>
+            <MaterialIcons name="search-off" size={64} color={theme.subtext}/>
+            <Text style={[styles.p, {textAlign:'center', color:theme.subtext}]}>
+              {t('transactions.noTransactions')}
+            </Text>
+          </View>}
         
-        <FlatList
+        {data.length !== 0 && <FlatList
           data={groupedData}
           renderItem={({item}) => (
               <DateGroup date={item.date} >
@@ -115,7 +121,7 @@ export default function Transactions() {
           keyExtractor={(item, index) => index.toString()}
           refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-        />
+        />}
       </View>
     )
 }

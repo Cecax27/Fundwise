@@ -194,6 +194,7 @@
         }
     },
     "transactions": {
+        "noTransactions": "No transactions found. Looks like your wallet is taking a nap.",
         "addTransaction": "Add Transaction",
         "updateSuccess": "Transaction updated successfully!",
         "updateError": "Failed to update transaction: ",

@@ -194,6 +194,7 @@
         }
     },
     "transactions": {
+        "noTransactions": "No se encontraron transacciones. Parece que tu billetera está echándose una siesta.",
         "addTransaction": "Agregar Transacción",
         "updateSuccess": "¡Transacción actualizada correctamente!",
         "updateError": "Error al actualizar la transacción: ",
