@@ -1,4 +1,5 @@
 import { supabase } from './client'
+import { DatabaseError } from '../errors';
 
 export const addTransaction = async ({date, amount, description, category_id, account_id}) => {
   const { error } = await supabase
@@ -316,12 +317,12 @@ export const getAccount = async (account_id) => {
 }
 
 export const deleteAccount = async (account_id) => {
-  const { data, error } = await supabase.from('accounts').delete().eq('id', account_id);
-  if (error) {
-    console.log(error)
-    return error
-  } else {
+  try {
+    const { error } = await supabase.from('accounts').delete().eq('id', account_id);
+    if (error) throw new Error(error.message);
     return true
+  } catch (error) {
+    throw new DatabaseError(error.message);
   }
 }
 

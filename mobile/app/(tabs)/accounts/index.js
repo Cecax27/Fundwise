@@ -10,6 +10,7 @@ import {Account} from '../../../components/account'
 import {AddAccountCard} from '../../../components/addAccountCard'
 import { formatMoney } from '../../../lib/utils/formatMoney'
 import OptionsMenu from '../../../components/optionsmenu'
+import { DatabaseError } from '../../../lib/errors'
 
 const ITEM_SIZE = 193;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -77,24 +78,21 @@ export default function HomeScreen() {
                 {
                     text: t('accounts.deleteAccount.delete'),
                     onPress: async () => {
-                        const result = await deleteAccount(accountsWithAddCard[selectedIndex].id)
-                        if (result === true) {
-                            router.reload()
-                        }
-                        if (result !== true) {
-                            console.log(result)
+                        try {
+                            await deleteAccount(accountsWithAddCard[selectedIndex].id)
+                            setAccounts(accounts.filter((value)=>value.id !== accountsWithAddCard[selectedIndex].id))
+                        } catch (error) {
                             Alert.alert(
                                 t('shared.error'),
-                                t('accounts.errors.deleteFailed'),
-                                [
-                                    {
-                                        text: t('shared.ok'),
-                                        style: "cancel"
-                                    }
-                                ],
+                                error instanceof DatabaseError ? t('accounts.errors.databaseError') : t('accounts.errors.deleteFailed'),
+                                [{
+                                    text: t('shared.ok'),
+                                    style: "cancel"
+                                }],
                                 { cancelable: true }
                             )
                         }
+
                     },
                     style: "destructive"
                 }

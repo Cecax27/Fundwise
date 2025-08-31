@@ -182,7 +182,8 @@
             "delete": "Eliminar"
         },
         "errors": {
-            "deleteFailed": "Error al eliminar la cuenta. Por favor, inténtalo de nuevo."
+            "deleteFailed": "Error al eliminar la cuenta. Por favor, inténtalo de nuevo.",
+            "databaseError": "No pudimos completar tu solicitud debido a un problema de conexión. Por favor, verifica tu conexión a internet y vuelve a intentarlo."
         },
         "types":{
             "cash": "Efectivo",
