@@ -311,8 +311,11 @@
         "have-account": "Already have an account? Sign in",
         "password-no-match": "The password doesn't match, try again.",  
         "errors":{
+            "short-password": "Oops! Password must be at least 8 characters long.",
+            "email-wrong":"Your email is not valid, please check it.",
             "accountExists": "Oops! Looks like this email is already in use. Try logging in or use a different one",
-            "password-empty": "Oops! Did you forget write a password?"
+            "password-empty": "Oops! Did you forget write a password?",
+            "email-empty": "Oops! Did you forget write an email?"
         }
     },
     "check-email": {

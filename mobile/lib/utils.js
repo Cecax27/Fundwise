@@ -30,3 +30,8 @@ export const hexToRgba = (hex, opacity = 1) => {
 export function formatDateToISO(date) {
   return date.toISOString().split("T")[0]; // yyyy-mm-dd
 }
+
+export function validateEmail(email){
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}

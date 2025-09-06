@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, Image, Alert, Pressable, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { Text, View, Image, Alert, Pressable, Keyboard, Vibration, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import 'react-native-url-polyfill/auto'
 import React, { useState, useMemo } from 'react'
 import { supabase } from '../lib/supabase/client'
@@ -8,6 +8,9 @@ import { makeStyles } from '../assets/uiStyles'
 import { useTheme } from '../theme/useTheme'
 import LanguageSelector from '../components/languageSelector';
 import { useTranslation } from 'react-i18next';
+import { validateEmail } from '../lib/utils';
+import Input from '../components/input';
+import Snackbar from '../components/Snackbar';
 
 const logo = require('../assets/icon.png')
 
@@ -24,18 +27,25 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false)
 
   async function signUpWithEmail() {
+
+    function failIf(condition, message) {
+      if (condition) {
+        global.showSnackbar(message, 3000, theme.coral);
+        Vibration.vibrate()
+        setLoading(false);
+        return true;
+      }
+      return false;
+    }
+
     setLoading(true);
-    if (password !== passwordConfirmation){
-      Alert.alert('Oh no', t('signup.password-no-match'));
-      setLoading(false);
-      return;
-    }
+    Keyboard.dismiss();
+    if (failIf(email === "", t("signup.errors.email-empty"))) return;
+    if (failIf(!validateEmail(email), t("signup.errors.email-wrong"))) return;
+    if (failIf(password === "", t("signup.errors.password-empty"))) return;
+    if (failIf(password.length < 8, t("signup.errors.short-password"))) return;
+    if (failIf(password !== passwordConfirmation, t("signup.errors.password-no-match"))) return;
     
-    if (password === ""){
-      Alert.alert(t('signup.errors.password-empty'));
-      setLoading(false);
-      return;  
-    }
 
     const { data: { session }, error } = await supabase.auth.signUp({
         email,
@@ -43,11 +53,18 @@ export default function SignUp() {
     })
     
     if (error) {
-      Alert.alert(error.message);
+      
+      if (error.code === "email_address_invalid"){
+        Alert.alert(t('signup.errors.email-wrong'));
+      } else {
+        Alert.alert(error.message);
+      }
+
       setLoading(false);
       return;
     };
     if (!session) router.replace('checkEmail');
+    Vibration.vibrate([0, 400, 300, 8000])
     setLoading(false);
   }
 
@@ -57,60 +74,43 @@ export default function SignUp() {
               behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
               keyboardVerticalOffset={100}
           >
-
+      <Snackbar />
       <Image source={logo} style={styles.logo}/>
       <Text style={styles.title}>{t('signup.title')}</Text>
       {loading && <ActivityIndicator size="large" color={theme.primary} style={{marginTop:40}}/>}
-      {!loading && <View style={{justifyContent: 'center', alignItems: 'center'}}>
-         <View style={{alignItems: 'center'}}>
-            <Text style={[styles.p, {marginTop: 22}]}>
-                {t('shared.email')}
-            </Text>
-            <TextInput
-                onChangeText={(text) => setEmail(text)}
-                value={email}
-                placeholder="luke@jedi.com"
-                autoCapitalize={'none'}
-                style={[styles.textInput, {width:250}]}
-                placeholderTextColor={theme.subtext}
-                textAlign="center"
-                keyboardType='email-address'
+      {!loading && <View style={{justifyContent: 'center', alignItems: 'center', marginTop:22}}>
+          <Input 
+            label={t('shared.email')}
+            placeholder="luke@jedi.com"
+            value={email}
+            onChange={(text) => setEmail(text)}
+            autoCapitalize='none'
+            keyboardType='email-address'
+            email
+            icon='email'
             />
-          </View> 
-          <View style={{alignItems: 'center', marginTop: 15}}>
-            <Text style={styles.p}>
-              {t('shared.password')}
-            </Text>
-            <TextInput
-              onChangeText={(text) => setPassword(text)}
-              value={password}
-              secureTextEntry={true}
-              placeholder={t('signup.password-holder')}
-              autoCapitalize={'none'}
-              style={[styles.textInput, {width:250}]}
-              placeholderTextColor={theme.subtext}
-              textAlign="center"
-              textContentType='password'
-              autoComplete='password-new'
+          <Input 
+            label={t('shared.password')}
+            placeholder={t('signup.password-holder')}
+            value={password}
+            onChange={(text) => setPassword(text)}
+            autoCapitalize='none'
+            secureTextEntry={true}
+            textContentType='password'
+            autoComplete='password-new'
+            icon='lock'
             />
-          </View>
-          <View style={{alignItems: 'center', marginTop: 15}}>
-            <Text style={styles.p}>
-              {t('signup.confirm-password')}
-            </Text>
-            <TextInput
-              onChangeText={(text) => setPasswordConfirmation(text)}
-              value={passwordConfirmation}
-              secureTextEntry={true}
-              placeholder={t('signup.confirm-password-holder')}
-              autoCapitalize={'none'}
-              style={[styles.textInput, {width:250}]}
-              placeholderTextColor={theme.subtext}
-              textAlign="center"
-              textContentType='password'
-              autoComplete='password-new'
+          <Input 
+            label={t('signup.confirm-password')}
+            placeholder={t('signup.confirm-password-holder')}
+            value={passwordConfirmation}
+            onChange={(text) => setPasswordConfirmation(text)}
+            autoCapitalize='none'
+            secureTextEntry={true}
+            textContentType='password'
+            autoComplete='password-new'
+            icon='lock-reset'
             />
-          </View>
             <View style={{marginTop:20}}>
               <Pressable 
               disabled={loading} 
@@ -126,6 +126,7 @@ export default function SignUp() {
             </View>
           </View>}
         <LanguageSelector />
+        
       <StatusBar style="auto" />
     </KeyboardAvoidingView>
   );
