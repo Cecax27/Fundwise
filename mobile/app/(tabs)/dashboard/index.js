@@ -1,6 +1,5 @@
 import { View, Text, Image } from 'react-native'
 import { makeStyles } from '../../../assets/uiStyles'
-import Resume from '../../../components/resume'
 import { useTheme } from '../../../theme/useTheme'
 import { useMemo } from 'react'
 import { BudgetPlans } from '../../../components/budgetPlans/budgetPlans'

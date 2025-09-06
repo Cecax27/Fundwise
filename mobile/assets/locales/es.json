@@ -60,7 +60,8 @@
     },
     "dashboard": {
         "title": "Panel de Control",
-        "newBudget": "Presupuesto"
+        "newBudget": "Presupuesto",
+        "noBudgetPlans": "Tus planes de presupuesto siguen siendo un lienzo en blanco. ¡Pintemos el primero!"
     },
     "budget": {
         "title": "Presupuesto",

@@ -5,6 +5,7 @@ import { makeStyles } from '../../assets/uiStyles'
 import { useMemo, useEffect } from 'react'
 import { useRouter } from 'expo-router'
 import { t } from 'i18next'
+import { MaterialIcons } from '@expo/vector-icons';
 
 export function BudgetPlans() {
     const { budgetPlans, fetchBudgetPlans } = useBudget();
@@ -17,6 +18,12 @@ export function BudgetPlans() {
 
     return (
         <>
+        {budgetPlans.length === 0 && <View style={[styles.container, {alignItems:'center', gap:20}]}>
+            <MaterialIcons name="search-off" size={64} color={theme.subtext}/>
+            <Text style={[styles.p, {textAlign:'center', color:theme.subtext}]}>
+              {t('dashboard.noBudgetPlans')}
+            </Text>
+          </View>}
         <FlatList
             data={budgetPlans}
             keyExtractor={(item) => item.id.toString()}

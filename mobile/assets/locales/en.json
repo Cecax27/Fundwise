@@ -60,7 +60,8 @@
     },
     "dashboard": {
         "title": "Dashboard",
-        "newBudget": "Budget plan"
+        "newBudget": "Budget plan",
+        "noBudgetPlans": "Your budget plans are still a blank canvas. Let’s paint the first one!"
     },
     "budget": {
         "title": "Budget",
@@ -152,7 +153,7 @@
         "returnRatePlaceholder": "Percentage per year",
         "loanAmount": "Loan Amount",
         "loanAmountPlaceholder": "Enter loan amount",
-        "loanInterestRate": "Loan Interest Rate",
+        "loanInterestRate": "Loan Interest Rate",       
         "addAccountButton": "Add Account",
         "success": {
             "title": "Success",
