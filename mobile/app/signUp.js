@@ -64,7 +64,7 @@ export default function SignUp() {
       return;
     };
     if (!session) router.replace('checkEmail');
-    Vibration.vibrate([0, 400, 300, 8000])
+    Vibration.vibrate([0, 400, 300, 800])
     setLoading(false);
   }
 

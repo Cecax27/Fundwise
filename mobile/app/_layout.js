@@ -30,7 +30,7 @@ export default function RootLayout() {
     const subscription = Linking.addEventListener('url', ({ url }) => {
       if (url.includes('/auth/callback')) {
         // Aquí manejas la sesión con Supabase
-        router.replace('/index'); 
+        router.replace('/'); 
       }
 
       return () => {
