@@ -1,3 +1,5 @@
+import { Vibration } from "react-native";
+
     
 export const getContrastTextColor = (bgColor) => {
         // Convert hex to RGB
@@ -35,3 +37,14 @@ export function validateEmail(email){
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
 }
+
+export function failIf(condition, message, theme, action) {
+  console.log('Trying');
+      if (condition) {
+        global.showSnackbar(message, 3000, theme.coral);
+        Vibration.vibrate()
+        action()
+        return true;
+      }
+      return false;
+    }

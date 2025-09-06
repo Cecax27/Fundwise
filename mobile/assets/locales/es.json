@@ -160,7 +160,9 @@
         },
         "error": {
             "title": "Error",
-            "message": "Ocurrió un error al agregar la cuenta. Por favor, inténtalo de nuevo."
+            "message": "Ocurrió un error al agregar la cuenta. Por favor, inténtalo de nuevo.",
+            "name-empty": "Dale un nombre a tu cuenta.",
+            "invalid-cutoff": "Ingresa un día de corte válido (1-31)"
         }
     },
     "tabs": {

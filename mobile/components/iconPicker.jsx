@@ -26,10 +26,10 @@ export default function IconPicker({value, onPress, activeColor}) {
                             justifyContent: 'center',
                             alignItems: 'center',
                             borderRadius: 30,
-                            backgroundColor: theme.surface
+                            backgroundColor: value === icon.name ? (activeColor??theme.text) : theme.surface
                         }}
                     >
-                        <Icon name={icon.name} size={24} color={value === icon.name ? (activeColor??theme.text) : theme.subtext} />
+                        <Icon name={icon.name} size={24} color={theme.text} />
                     </TouchableOpacity>
                 ))}
             </View>

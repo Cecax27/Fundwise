@@ -1,14 +1,18 @@
 import { View, TextInput, Text, TouchableOpacity } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import { useTheme } from "../theme/useTheme";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
+import { makeStyles } from "../assets/uiStyles";
+import { useTranslation } from "react-i18next";
 
-export default function Input({
+export default function InputPicker({
   label,
   placeholder,
   value,
   onChange,
   focusColor,
+  options,
   icon = null,
   numeric = false,
   email = false,
@@ -19,10 +23,13 @@ export default function Input({
   textContentType = "none",
   autoComplete = "off",
   labelInline = true,
-  optional = false
+  prompt = null,
 }) {
   const { theme } = useTheme();
   const borderColor = focusColor || theme.border;
+  const styles = useMemo(()=>makeStyles(theme), [theme]);
+  const { t }= useTranslation();
+
 
   const [focus, setFocus] = useState(false);
 
@@ -38,7 +45,7 @@ export default function Input({
             fontFamily: focus ? "Montserrat-SemiBold" : "Montserrat-Regular",
           }}
         >
-         {label} 
+         {label}
         </Text>
       )}
       <View
@@ -65,7 +72,7 @@ export default function Input({
               fontFamily: focus ? "Montserrat-SemiBold" : "Montserrat-Regular",
             }}
           >
-            {label} 
+            {label}
           </Text>
         )}
         <View
@@ -92,34 +99,30 @@ export default function Input({
                 style={{ marginRight: 4 }}
               />
             )}
-            <TextInput
+            <Picker
+              selectedValue={value}
+              onValueChange={(itemValue) =>
+                onChange(itemValue)
+              }
               style={{
-                outlineWidth: 0,
+                fontSize:14,
+                fontFamily: 'Montserrat-Medium',
                 color: theme.text,
-                fontFamily: "Montserrat-Medium",
-                fontSize: 14,
-                width: 250,
+                flex:1
               }}
-              placeholder={placeholder}
-              placeholderTextColor={theme.border}
-              inputMode={numeric ? "numeric" : email ? "email" : "text"}
-              onFocus={() => setFocus(true)}
-              onBlur={() => setFocus(false)}
-              selectionColor={theme.primary}
-              value={value}
-              onChangeText={(text) => onChange(text)}
-              autoCapitalize={autoCapitalize}
-              keyboardType={numeric ? "numeric" : email ? "email" : text?"text":keyboardType}
-              secureTextEntry={secureTextEntry}
-              scrollEnabled
-            />
+              dropdownIconColor={theme.border}
+              prompt={prompt}
+            >
+              
+              {options.map((accountType) => (
+                <Picker.Item
+                  key={accountType.id}
+                  label={t(`accounts.types.${accountType.type}`)}
+                  value={accountType.id}
+                />
+              ))}
+            </Picker>
           </View>
-          <TouchableOpacity
-            onPress={() => onChange("")}
-            style={{ marginRight: 6 }}
-          >
-            <MaterialIcons name="clear" color={theme.border} size={18} />
-          </TouchableOpacity>
         </View>
       </View>
     </View>

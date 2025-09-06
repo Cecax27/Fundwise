@@ -160,7 +160,9 @@
         },
         "error": {
             "title": "Error",
-            "message": "An error occurred while adding the account. Please try again."
+            "message": "An error occurred while adding the account. Please try again.",
+            "name-empty": "Write a name for your account.",
+            "invalid-cutoff": "Please enter a valid cutoff day (1-31)"
         }
     },
     "tabs": {

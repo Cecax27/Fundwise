@@ -86,7 +86,7 @@ export default function TabsLayout() {
         title: t('tabs.accounts'),
         tabBarIcon: ({color}) => <MaterialIcons name={ "wallet" } size={32} color={color}/> ,
         headerTitle: t('tabs.accounts'),
-        headerShown: true
+        headerShown: false
       }} />
       <Tabs.Screen
       name="configuration"

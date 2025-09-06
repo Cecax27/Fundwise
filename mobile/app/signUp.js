@@ -8,7 +8,7 @@ import { makeStyles } from '../assets/uiStyles'
 import { useTheme } from '../theme/useTheme'
 import LanguageSelector from '../components/languageSelector';
 import { useTranslation } from 'react-i18next';
-import { validateEmail } from '../lib/utils';
+import { failIf, validateEmail } from '../lib/utils';
 import Input from '../components/input';
 import Snackbar from '../components/Snackbar';
 
@@ -28,23 +28,13 @@ export default function SignUp() {
 
   async function signUpWithEmail() {
 
-    function failIf(condition, message) {
-      if (condition) {
-        global.showSnackbar(message, 3000, theme.coral);
-        Vibration.vibrate()
-        setLoading(false);
-        return true;
-      }
-      return false;
-    }
-
     setLoading(true);
     Keyboard.dismiss();
-    if (failIf(email === "", t("signup.errors.email-empty"))) return;
-    if (failIf(!validateEmail(email), t("signup.errors.email-wrong"))) return;
-    if (failIf(password === "", t("signup.errors.password-empty"))) return;
-    if (failIf(password.length < 8, t("signup.errors.short-password"))) return;
-    if (failIf(password !== passwordConfirmation, t("signup.errors.password-no-match"))) return;
+    if (failIf(email === "", t("signup.errors.email-empty"), theme, () => setLoading(false))) return;
+    if (failIf(!validateEmail(email), t("signup.errors.email-wrong"), theme, () => setLoading(false))) return;
+    if (failIf(password === "", t("signup.errors.password-empty"), theme, () => setLoading(false))) return;
+    if (failIf(password.length < 8, t("signup.errors.short-password"), theme, () => setLoading(false))) return;
+    if (failIf(password !== passwordConfirmation, t("signup.errors.password-no-match"), theme, () => setLoading(false))) return;
     
 
     const { data: { session }, error } = await supabase.auth.signUp({
