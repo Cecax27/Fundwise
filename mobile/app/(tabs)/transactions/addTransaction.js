@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import { makeStyles } from '../../../assets/uiStyles'
 import { getAccounts, getCategories, addTransaction, addIncome, addTransfer, addDeferred } from '../../../lib/supabase/transactions';
 import { Picker } from '@react-native-picker/picker'
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useTheme } from '../../../theme/useTheme';
 import Snackbar from '../../../components/Snackbar';
@@ -14,11 +14,12 @@ import FButton from '../../../components/fbutton'
 export default function AddTransaction() {
     const router = useRouter()
     const { t } = useTranslation();
+    const { type:typeParam } = useLocalSearchParams()
     
     const { theme } = useTheme();
     const styles = useMemo(() => makeStyles(theme), [theme]);
 
-    const [type, setType] = useState('spending')
+    const [type, setType] = useState(typeParam || 'spending')
     const [dateVisible, setDateVisible] = useState(false)
     const [selectedDate, setSelectedDate] = useState(new Date())
     const [accounts, setAccounts] = useState([])

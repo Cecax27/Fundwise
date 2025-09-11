@@ -78,8 +78,7 @@ export function TransactionsProvider({ children }){
     }, [data, filter])
 
     const fetchTransactions = () => {
-        console.log("fetching");
-        
+       
         let start_date = new Date(new Date().getFullYear(), new Date().getMonth()-1, 1);
         start_date = start_date < filter.start_date ? start_date : filter.start_date;
 

@@ -15,7 +15,7 @@ export default function FloatActionButton({ children, content }) {
         { children }
         </View>
         <TouchableOpacity 
-        style={{backgroundColor:theme.mint, padding: 15, borderRadius: 100, alignItems: 'center', marginTop: 15, elevation: 2}}
+        style={{backgroundColor:theme.mint, padding: 15, borderRadius: 100, alignItems: 'center', marginTop: 15, elevation:10}}
         onPress={() => setOpen(!open)}>
             { content }
         </TouchableOpacity>
@@ -29,7 +29,7 @@ function Item({ content, onPress }) {
 
     return (
     <TouchableOpacity 
-    style={{backgroundColor:theme.mint, padding: 15, borderRadius: 100, alignItems: 'center', elevation: 1}}
+    style={{backgroundColor:theme.mint, padding: 15, borderRadius: 100, alignItems: 'center', elevation: 10}}
     onPress={ onPress }>
         { content }
     </TouchableOpacity>)

@@ -1,4 +1,4 @@
-import { View, Pressable, FlatList, RefreshControl, Text } from 'react-native'
+import { View, Pressable, FlatList, RefreshControl, Text, Image } from 'react-native'
 import {makeStyles} from '../../../assets/uiStyles'
 import { MaterialIcons } from '@expo/vector-icons';
 import { useMemo, useEffect, useState, useContext } from 'react';
@@ -9,6 +9,8 @@ import { TransactionsContext } from '../../../contexts/TransactionsContext';
 import { useTranslation } from 'react-i18next';
 import DateGroup from '../../../components/dateGroup';
 import Transaction from '../../../components/transaction'
+import FloatActionButton from '../../../components/floatActionButton';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function Transactions() {
   const { theme } = useTheme();
@@ -35,9 +37,6 @@ export default function Transactions() {
     return (
       <View style={styles.container}>
         <View style={styles.headerActions}>
-          <Pressable onPress={() => router.push('/(tabs)/transactions/addTransaction')}>
-            <MaterialIcons name="add" size={24} color={'#c2bb00'} />
-          </Pressable>
           <Pressable onPress={() => setFilterModalVisible(true)}>
             <MaterialIcons name="filter-alt" size={24} color={theme.text} />
           </Pressable>
@@ -83,6 +82,33 @@ export default function Transactions() {
           refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         />}
+        <FloatActionButton 
+          content={<MaterialCommunityIcons name="plus-thick" size={20} color={theme.background}/>}>
+              <FloatActionButton.Item 
+                content={
+                    <View style={{flexDirection:'row', gap:10, justifyContent:'center'}}>
+                        <MaterialCommunityIcons name="ray-start-arrow" size={20} color={theme.background}/>
+                        <Text style={{fontSize:12, fontFamily:'Montserrat-SemiBold', color:theme.background}}>{t('transactions.types.transfer')}</Text>
+                    </View>}
+                onPress={()=>{router.push('/(tabs)/transactions/addTransaction?type=transfer')}}
+              />
+              <FloatActionButton.Item 
+                content={
+                    <View style={{flexDirection:'row', gap:10, justifyContent:'center'}}>
+                        <MaterialCommunityIcons name="wallet-plus" size={20} color={theme.background}/>
+                        <Text style={{fontSize:12, fontFamily:'Montserrat-SemiBold', color:theme.background}}>{t('transactions.types.income')}</Text>
+                    </View>}
+                onPress={()=>{router.push('/(tabs)/transactions/addTransaction?type=income')}}
+              />
+              <FloatActionButton.Item 
+                content={
+                    <View style={{flexDirection:'row', gap:10, justifyContent:'center'}}>
+                        <MaterialCommunityIcons name="shopping" size={20} color={theme.background}/>
+                        <Text style={{fontSize:12, fontFamily:'Montserrat-SemiBold', color:theme.background}}>{t('transactions.types.spending')}</Text>
+                    </View>}
+                onPress={()=>{router.push('/(tabs)/transactions/addTransaction?type=spending')}}
+              />
+          </FloatActionButton>
       </View>
     )
 }
