@@ -129,9 +129,11 @@ export default function NewAccount() {
             setFormData((prev) => ({ ...prev, account_type: text }))
           }
           options={accountsTypes}
+          optionlabel="type"
           labelInline={false}
           icon="credit-card"
           prompt={t("newAccount.selectAccountType")}
+          labelFormat={(label)=>t(`accounts.types.${label}`)}
         />
 
         <Input

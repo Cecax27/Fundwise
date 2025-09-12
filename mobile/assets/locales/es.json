@@ -28,7 +28,8 @@
             "incomes": "Ingresos",
             "spendings": "Gastos"
         },
-        "thanks":"Gracias"
+        "thanks":"Gracias",
+        "optional":"Opcional"
     },
     "welcome": {
         "title": "¡Bienvenido a Fundwise!",

@@ -28,7 +28,8 @@
             "incomes": "Incomes",
             "spendings": "Spendings"
         },
-        "thanks":"Thank you"
+        "thanks":"Thank you",
+        "optional":"Optional"
     },
     "welcome": {
         "title": "Welcome to Fundwise!",

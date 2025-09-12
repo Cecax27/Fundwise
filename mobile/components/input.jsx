@@ -2,6 +2,7 @@ import { View, TextInput, Text, TouchableOpacity } from "react-native";
 import { useTheme } from "../theme/useTheme";
 import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 export default function Input({
   label,
@@ -19,10 +20,13 @@ export default function Input({
   textContentType = "none",
   autoComplete = "off",
   labelInline = true,
-  optional = false
+  optional = false,
+  editable = true,
+  clear = true
 }) {
   const { theme } = useTheme();
   const borderColor = focusColor || theme.border;
+  const {t} = useTranslation();
 
   const [focus, setFocus] = useState(false);
 
@@ -38,7 +42,7 @@ export default function Input({
             fontFamily: focus ? "Montserrat-SemiBold" : "Montserrat-Regular",
           }}
         >
-         {label} 
+         {label} {optional?`(${t('common.optional')})`:''} 
         </Text>
       )}
       <View
@@ -49,7 +53,6 @@ export default function Input({
           height: 60,
           justifyContent: "center",
           paddingHorizontal: 8,
-          flex: 1,
         }}
       >
         {labelInline && (
@@ -65,7 +68,7 @@ export default function Input({
               fontFamily: focus ? "Montserrat-SemiBold" : "Montserrat-Regular",
             }}
           >
-            {label} 
+            {label} {optional?`(${t('common.optional')})`:''} 
           </Text>
         )}
         <View
@@ -98,7 +101,6 @@ export default function Input({
                 color: theme.text,
                 fontFamily: "Montserrat-Medium",
                 fontSize: 14,
-                width: 250,
               }}
               placeholder={placeholder}
               placeholderTextColor={theme.border}
@@ -112,14 +114,15 @@ export default function Input({
               keyboardType={numeric ? "numeric" : email ? "email" : text?"text":keyboardType}
               secureTextEntry={secureTextEntry}
               scrollEnabled
+              editable={editable}
             />
           </View>
-          <TouchableOpacity
+          {clear && <TouchableOpacity
             onPress={() => onChange("")}
             style={{ marginRight: 6 }}
           >
             <MaterialIcons name="clear" color={theme.border} size={18} />
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
       </View>
     </View>

@@ -1,12 +1,13 @@
-import { View, TextInput, Text, TouchableOpacity } from "react-native";
+import { View, TextInput, Text, TouchableOpacity, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useTheme } from "../theme/useTheme";
 import { useState, useMemo } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { makeStyles } from "../assets/uiStyles";
 import { useTranslation } from "react-i18next";
+import DateTimePicker from '@react-native-community/datetimepicker'
 
-export default function InputPicker({
+export default function InputDate({
   label,
   placeholder,
   value,
@@ -32,8 +33,17 @@ export default function InputPicker({
   const styles = useMemo(()=>makeStyles(theme), [theme]);
   const { t }= useTranslation();
 
-
+  const [visible, setVisible] = useState(false);
   const [focus, setFocus] = useState(false);
+
+  const handleDateConfirm = ({ type }, date) => {
+    if (type === 'set') {
+        onChange(date);
+        setVisible(false)
+    } else {
+      setVisible(!visible)
+    }
+  }
 
   return (
     <View style={{ paddingVertical: 10, flexDirection: "column", gap:8 }}>
@@ -58,9 +68,17 @@ export default function InputPicker({
           height: 60,
           justifyContent: "center",
           paddingHorizontal: 8,
-          flex: 1,
         }}
       >
+        {visible && (
+            <DateTimePicker 
+                mode='date'
+                display={Platform.OS === 'ios' ? 'default' : 'spinner'}
+                value={value}
+                onChange={handleDateConfirm}
+                style={{ width: '100%' }}
+            />
+        )}
         {labelInline && (
           <Text
             style={{
@@ -101,29 +119,22 @@ export default function InputPicker({
                 style={{ marginRight: 4 }}
               />
             )}
-            <Picker
-              selectedValue={value}
-              onValueChange={(itemValue) =>
-                onChange(itemValue)
-              }
-              style={{
-                fontSize:14,
-                fontFamily: 'Montserrat-Medium',
-                color: theme.text,
-                flex:1
-              }}
-              dropdownIconColor={theme.border}
-              prompt={prompt}
+            <TouchableOpacity 
+                onPress={()=>setVisible(true)}
+                style={[styles.dateInputContainer]}
             >
-              
-              {options.map((option) => (
-                <Picker.Item
-                  key={option.id}
-                  label={labelFormat(option[optionlabel])}
-                  value={option.id}
-                />
-              ))}
-            </Picker>
+                <TextInput 
+                    placeholder={t('transactions.date')}
+                    value={value.toLocaleDateString()}
+                    style={{
+                      outlineWidth: 0,
+                      color: theme.text,
+                      fontFamily: "Montserrat-Medium",
+                      fontSize: 14,
+                    }}
+                    editable={false}
+                />  
+            </TouchableOpacity>
           </View>
         </View>
       </View>

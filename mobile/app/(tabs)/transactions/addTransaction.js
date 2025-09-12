@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, View, Pressable, Alert, ScrollView, TextInput, Text, TouchableOpacity, Platform, Switch } from 'react-native'
-import DateTimePicker from '@react-native-community/datetimepicker'
+import { StyleSheet, View, Alert, ScrollView, TextInput, Text, TouchableOpacity, Platform, Switch, KeyboardAvoidingView } from 'react-native'
 import { makeStyles } from '../../../assets/uiStyles'
 import { getAccounts, getCategories, addTransaction, addIncome, addTransfer, addDeferred } from '../../../lib/supabase/transactions';
 import { Picker } from '@react-native-picker/picker'
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useTheme } from '../../../theme/useTheme';
 import Snackbar from '../../../components/Snackbar';
 import { useTranslation } from 'react-i18next';
 import FButton from '../../../components/fbutton'
+import { Sections } from '../../../components/categoriesMenu';
+import Input from '../../../components/input';
+import InputPicker from '../../../components/inputPicker';
+import InputDate from '../../../components/inputDate';
 
 export default function AddTransaction() {
     const router = useRouter()
@@ -20,10 +23,9 @@ export default function AddTransaction() {
     const styles = useMemo(() => makeStyles(theme), [theme]);
 
     const [type, setType] = useState(typeParam || 'spending')
-    const [dateVisible, setDateVisible] = useState(false)
-    const [selectedDate, setSelectedDate] = useState(new Date())
     const [accounts, setAccounts] = useState([])
     const [categories, setCategories] = useState([])
+    const [selectCategoryScreen,setSelectCategoryScreen ] = useState(false)
     const [formData, setFormData] = useState({
         date: new Date(),
         description: '',
@@ -49,20 +51,6 @@ export default function AddTransaction() {
         getCategories().then((categories) => {
             setCategories(categories)
         })
-    }
-
-    const handleDateConfirm = ({ type }, date) => {
-        if (type === 'set') {
-            setSelectedDate(date)
-            setFormData(prev => ({ ...prev, date: date }))
-            setDateVisible(false)
-        } else {
-            toggleDatepicker()
-        }
-    }
-
-    const toggleDatepicker = () => {
-        setDateVisible(!dateVisible)
     }
 
     const handleSubmit = async () => {
@@ -103,13 +91,26 @@ export default function AddTransaction() {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>{t('transactions.addTransaction')}</Text>
-                <TouchableOpacity onPress={onClose}>
-                    <Icon name="arrow-back" size={20} color={theme.primary} />
-                </TouchableOpacity>
-            </View>
+        <KeyboardAvoidingView 
+            style={styles.container}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={100}
+        >
+            <Stack.Screen
+                options={{
+                title: t("newAccount.title"),
+                headerLeft: () => (
+                    <TouchableOpacity
+                    onPress={() => router.back()}
+                    style={{ marginRight: 15 }}
+                    >
+                    <Icon name="close" size={24} color={theme.text} />
+                    </TouchableOpacity>
+                ),
+                }}
+            />
+            {selectCategoryScreen && <Sections onSelect={(category) => {setFormData(prev => ({ ...prev, category_id: category })); setSelectCategoryScreen(false)}}/>}
+            {!selectCategoryScreen && <>
 
             <ScrollView style={styles.modalContent}>
                 <View style={[styles.filterSection, transactionStyles.typeButtons]}>
@@ -118,139 +119,106 @@ export default function AddTransaction() {
                     <FButton text={t('transactions.types.transfer')} onPress={() => setType('transfer')} active={type==='transfer' ? true : false}/>
                 </View>
 
-                <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={styles.filterLabel}>{t('transactions.date')}</Text>
-                    <View style={{ position: 'relative' }}>
-                        {dateVisible && (
-                            <DateTimePicker 
-                                mode='date'
-                                display={Platform.OS === 'ios' ? 'default' : 'spinner'}
-                                value={selectedDate}
-                                onChange={handleDateConfirm}
-                                style={{ width: '100%' }}
-                            />
-                        )}
-                        <Pressable 
-                            onPress={toggleDatepicker}
-                            style={[styles.dateInputContainer]}
-                        >
-                            <TextInput 
-                                placeholder={t('transactions.date')}
-                                value={selectedDate.toLocaleDateString()}
-                                style={[styles.dateInput, { color: theme.text }]}
-                                editable={false}
-                            />  
-                        </Pressable>
-                    </View>
-                </View>
+                <Input
+                    label={t("transactions.amount")}
+                    value={formData.amount}
+                    onChange={(text) => setFormData((prev) => ({ ...prev, amount: text }))}
+                    placeholder={t("transactions.amountPlaceholder")}
+                    icon="attach-money"
+                    numeric
+                />
 
-                <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={styles.filterLabel}>{t('transactions.description')}</Text>
-                    <TextInput
-                        placeholder={t('transactions.descriptionPlaceholder')}
-                        value={formData.description}
-                        placeholderTextColor={theme.subtext}
-                        onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
-                        style={[styles.textInput]}
+                {(type==='spending' || type==='deferred') && <TouchableOpacity onPress={()=>{setSelectCategoryScreen(true)}}>
+                    <Input
+                        label={t("transactions.category")}
+                        value={formData.category_id ? t(`transactions.categories.${categories.find((category) => category.id === formData.category_id).name}`) : t('transactions.selectCategory')}
+                        onChange={(text) => {}}
+                        placeholder={t("transactions.amountPlaceholder")}
+                        icon={categories.find((category) => category.id === formData.category_id)?.icon??'help'}
+                        editable={false}
+                        clear={false}
                     />
-                </View>
+                </TouchableOpacity>}
 
-                <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={styles.filterLabel}>{t('transactions.amount')}</Text>
-                    <TextInput
-                        placeholder={t('transactions.amountPlaceholder')}
-                        value={formData.amount}
-                        placeholderTextColor={theme.subtext}
-                        onChangeText={(text) => setFormData(prev => ({ ...prev, amount: text }))}
-                        keyboardType='numeric'
-                        style={[styles.textInput]}
-                    />
-                </View>
+                <InputDate
+                    label={t("transactions.date")}
+                    value={formData.date}
+                    onChange={(date) => setFormData(prev => ({ ...prev, date: date }))}
+                    placeholder={t("transactions.amountPlaceholder")}
+                    icon="calendar-today"
+                    numeric
+                />
 
-                <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={styles.filterLabel}>{type==='transfer' ? t('transactions.fromAccount') : t('transactions.account')}</Text>
-                    <View>
-                        <Picker
-                            selectedValue={formData.account_id}
-                            onValueChange={(itemValue) => setFormData(prev => ({ ...prev, account_id: itemValue }))}
-                            style={styles.picker}
-                            dropdownIconColor={theme.text}
-                        >
-                            <Picker.Item label={t('transactions.selectAccount')} value={null} />
-                            {accounts.map((account) => (
-                                <Picker.Item key={account.id} label={account.name} value={account.id} />
-                            ))}
-                        </Picker>
-                    </View>
-                </View>
+                <Input
+                    label={t("transactions.description")}
+                    value={formData.description}
+                    onChange={(text) =>
+                        setFormData((prev) => ({ ...prev, description: text }))
+                    }
+                    placeholder={t("transactions.descriptionPlaceholder")}
+                    icon="text-format"
+                    optional
+                />
 
-                {type==='transfer' && <View style={[styles.filterSection, { marginBottom: 16 }]}>
-                    <Text style={styles.filterLabel}>{t('transactions.toAccount')}</Text>
-                    <View style={{ width: '100%'}}>
-                        <Picker
-                            selectedValue={formData.to_account_id}
-                            onValueChange={(itemValue) => setFormData(prev => ({ ...prev, to_account_id: itemValue }))}
-                            style={styles.picker}
-                            dropdownIconColor={theme.text}
-                        >
-                            <Picker.Item label={t('transactions.selectAccount')} value={null} />
-                            {accounts.map((account) => (
-                                <Picker.Item key={account.id} label={account.name} value={account.id} />
-                            ))}
-                        </Picker>
-                    </View>
-                </View>}
+                <InputPicker
+                    label={type==='transfer' ? t('transactions.fromAccount') : t('transactions.account')}
+                    value={formData.account_id}
+                    onChange={(text) =>
+                    setFormData((prev) => ({ ...prev, account_id: text }))
+                    }
+                    options={accounts}
+                    optionlabel='name'
+                    icon="credit-card"
+                    prompt={t("newAccount.selectAccountType")}
+                    
+                />
 
-                {(type==='spending' || type==='deferred') && <View style={styles.filterSection}>
-                    <Text style={styles.filterLabel}>{t('transactions.category')}</Text>
-                    <View style={{ width: '100%' }}>
-                        <Picker
-                            selectedValue={formData.category_id}
-                            onValueChange={(itemValue) => setFormData(prev => ({ ...prev, category_id: itemValue }))}
-                            style={styles.picker}
-                            dropdownIconColor={theme.text}
-                        >
-                            <Picker.Item label={t('transactions.selectCategory')} value={null} />
-                            {categories.map((category) => (
-                                <Picker.Item key={category.id} label={t(`transactions.categories.${category.name}`)} value={category.id} />
-                            ))}
-                        </Picker>
-                    </View>
-                </View>}
+                {type==='transfer' && <InputPicker
+                    label={t('transactions.toAccount')}
+                    value={formData.to_account_id}
+                    onChange={(text) =>
+                    setFormData((prev) => ({ ...prev, to_account_id: text }))
+                    }
+                    options={accounts}
+                    optionlabel='name'
+                    icon="credit-card"
+                    prompt={t("newAccount.selectAccountType")}
+                />}
 
-                {(type==='spending' || type==='deferred') && <View style={styles.filterSection}>
+                {(type==='spending' || type==='deferred') && <View style={[styles.filterSection, { flexDirection:'row', justifyContent:'space-between', alignItems:'center' }]}>
                     <Text style={styles.filterLabel}>{t('transactions.deferredSpending')}</Text>
-                        <Switch 
-                            value={type==='deferred'}
-                            onValueChange={(value) => setType(value ? 'deferred' : 'spending')}
-                            trackColor={{ false: theme.surface, true: theme.subtext }}
-                            thumbColor={theme.primary}
-                        />
-                </View>}
-
-                {type==='deferred' && <View style={styles.filterSection}>
-                    <Text style={styles.filterLabel}>{t('transactions.months')}</Text>
-                        <TextInput
-                        placeholder="12"
-                        value={formData.months}
-                        placeholderTextColor={theme.subtext}
-                        onChangeText={(text) => setFormData(prev => ({ ...prev, months: text }))}
-                        keyboardType='numeric'
-                        style={[styles.textInput]}
+                    <Switch 
+                        value={type==='deferred'}
+                        onValueChange={(value) => setType(value ? 'deferred' : 'spending')}
+                        trackColor={{ false: theme.surface, true: theme.subtext }}
+                        thumbColor={theme.primary}
                     />
                 </View>}
+
+                {type==='deferred' && <Input
+                    label={t("transactions.months")}
+                    value={formData.months}
+                    onChange={(text) =>
+                        setFormData((prev) => ({ ...prev, months: text }))
+                    }
+                    placeholder="12"
+                    icon="calendar-today"
+                    numeric
+                />}
+            
+                <View style={styles.modalFooter}>
+                    <TouchableOpacity
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={handleSubmit}
+                    >
+                        <Text style={styles.textStyle}>{t('transactions.add')} {t(`transactions.types.${type}`)}</Text>
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
             
-            <View style={styles.modalFooter}>
-                <TouchableOpacity
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={handleSubmit}
-                >
-                    <Text style={styles.textStyle}>{t('transactions.add')} {t(`transactions.types.${type}`)}</Text>
-                </TouchableOpacity>
-            </View>
+            </>}
             <Snackbar />
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 
