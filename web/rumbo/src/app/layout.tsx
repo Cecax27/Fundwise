@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${quicksand.variable} ${figtree.variable} antialiased`}
+        className={`${quicksand.variable} ${figtree.variable} antialiased ${figtree.className}`}
       >
         {children}
       </body>

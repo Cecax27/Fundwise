@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { quicksand, figtree } from "./ui/fonts";
 import Button from "./ui/components/button";
 
@@ -15,8 +14,8 @@ export default function Home() {
             </h1>
           </div>
           <nav className="flex items-center gap-6">
-            <Button href="/login" secondary>Iniciar sesión</Button>
-            <Button href="/login">Regístrate </Button>
+            <Button href="/login?mode=login" secondary>Iniciar sesión</Button>
+            <Button href="/login?mode=register">Regístrate </Button>
           </nav>
         </header>
         <main className="flex flex-1 items-center justify-center">
@@ -34,7 +33,7 @@ export default function Home() {
               con tu economía, paso a paso, hasta alcanzar estabilidad y
               libertad financiera.
             </p>
-            <Button href="/login">Comienza ahora</Button>
+            <Button href="/login?mode=register">Comienza ahora</Button>
           </div>
         </main>
         <footer className="p-6 text-right text-sm">
