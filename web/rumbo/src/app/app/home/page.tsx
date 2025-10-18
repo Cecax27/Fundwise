@@ -6,8 +6,15 @@ import { quicksand, figtree } from "../../ui/fonts";
 import Button from "../../ui/components/button";
 import NotificationIcon from "@mui/icons-material/Notifications";
 import Navigation from "../../ui/components/navigation";
+import { ToolsContext } from "@/contexts/ToolsContext";
+import { useContext } from "react";
 
 export default function Home() {
+
+  const budgetPlans = useContext(ToolsContext)!;
+
+  console.log(budgetPlans)
+
   return (
     <>
       <div id="header" className="flex justify-between items-center">
@@ -32,6 +39,22 @@ export default function Home() {
             Herramientas
           </h2>
           <Button href="#">+ Agregar</Button>
+          <div>
+            {budgetPlans.map((budgetPlan) => (
+              <div key={budgetPlan.name}>
+                <h3 className="font-bold text-lg text-neutral-700">
+                  {budgetPlan.name}
+                </h3>
+                <ul>
+                  {budgetPlan.groups.map((group) => (
+                    <li key={group.group_name} className="text-neutral-600">
+                      {group.group_name} - {group.limit_percentage}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
         <div></div>
       </div>
